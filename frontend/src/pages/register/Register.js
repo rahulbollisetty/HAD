@@ -1,6 +1,6 @@
-import { Form } from "./components/Form";
+import LinkHPR from "./components/LinkHPR";
 
 const Register = () => {
-    return (<Form></Form>);
-}
+  return <h1><LinkHPR /></h1>;
+};
 export default Register;
