@@ -1,6 +1,7 @@
 import React from "react";
 import Sidebar from "../Sidebar";
 import AllPatientList from "./components/AllPatientList";
+import AddRecords from "./AddRecords";
 export const PatientScreen = () => {
   return (
     <div className="flex flex-row">
@@ -11,7 +12,7 @@ export const PatientScreen = () => {
         <div className="flex flex-col h-full">
           <div className="h-[64px] bg-white"></div>
           <div className="bg-white grow m-3">
-              <AllPatientList/>
+              <AddRecords/>
           </div>
         </div>
 
