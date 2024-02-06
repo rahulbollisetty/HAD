@@ -12,40 +12,52 @@ function Profile() {
           </div>
           <div className='w-full'>
             <div className='mt-4 ml-8'>
-              <p className='text-lg'>Mukesh Kumar</p>
+              <p className='text-xl font-semibold'>Mukesh Kumar</p>
             </div>
             <div className='flex mt-2 ml-8 text-sm'>
-              <p className='font-semibold flex mr-20 text-[#7B7878]'>
-                Gender:
-                <p className='ml-6 text-black'>Male</p>
-              </p>
-              <p className='font-semibold flex ml-auto mr-20 text-[#7B7878]'>
-                Age:
-                <p className='ml-6 text-black'>32</p>
-              </p>
-              <p className='font-semibold flex ml-auto mr-20 text-[#7B7878]'>
-                ABHA Id:
-                <p className='ml-6 text-black'>123456789</p>
-              </p>
-              <p className='font-semibold flex ml-auto mr-20 text-[#7B7878]'>
-                Email id:
-                <p className='ml-6 text-black'>mukesh@gmail.com</p>
-              </p>
+              <div className='flex-1'>
+                <p className='font-semibold flex mr-20 text-[#7B7878]'>
+                  Gender:
+                  <p className='ml-6 text-black'>Male</p>
+                </p>
+              </div>
+              <div className='flex-1'>
+                <p className='font-semibold flex ml-auto mr-20 text-[#7B7878]'>
+                  Age:
+                  <p className='ml-6 text-black'>32</p>
+                </p>
+              </div>
+              <div className='flex-1'>
+                <p className='font-semibold flex ml-auto mr-20 text-[#7B7878]'>
+                  ABHA Id:
+                  <p className='ml-6 text-black'>123456789</p>
+                </p>
+              </div>
+              <div className='flex-1'>
+                <p className='font-semibold flex ml-auto mr-20 text-[#7B7878]'>
+                  Email id:
+                  <p className='ml-6 text-black'>mukesh@gmail.com</p>
+                </p>
+              </div>
             </div>
-            <div className='flex mt-2 ml-8 text-sm'>
-              <p className='font-semibold flex mr-52 text-[#7B7878]'>
-                Blood Group:
-                <p className='ml-6 text-black'>B+</p>
-              </p>
-              <p className='font-semibold flex mr-20 text-[#7B7878]'>
-                Mobile Number:
-                <p className='ml-6 text-black '>987654321</p>
-              </p>
+            <div className='flex mt-4 ml-8 text-sm'>
+              <div className='w-1/4'>
+                <p className='font-semibold flex mr-52 text-[#7B7878]'>
+                  Blood Group:
+                  <p className='ml-6 text-black'>B+</p>
+                </p>
+              </div>
+              <div className='w-1/4'>
+                <p className='font-semibold flex mr-20 text-[#7B7878]'>
+                  Mobile Number:
+                  <p className='ml-6 text-black '>987654321</p>
+                </p>
+              </div>
             </div>
           </div>
         </div>
       </div>
-      <div className='h-0.5 w-full bg-[#dad5d5] mt-4'></div>
+    <hr className="bg-[#7B7878] h-0.25 mt-4"/>
     </div>
   );
 }
