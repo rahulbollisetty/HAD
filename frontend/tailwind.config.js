@@ -6,6 +6,10 @@ export default {
   ],
   theme: {
     extend: {},
+    fontFamily: {
+      'sans' : ['Roboto','Helvetica']
+    },
   },
+  
   plugins: [require('@tailwindcss/forms')],
 }
