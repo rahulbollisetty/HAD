@@ -7,7 +7,7 @@ function AddRecords() {
           <div className='h-[64px] w-full pb-16 bg-white'></div>
           <div className='bg-white grow m-3'>
             <Profile />
-            <div className='w-full h-screen'>
+            <div className='w-full h-full'>
               <div className='flex mt-6 justify-center w-full'>
                 <div className='h-10 text-sm justify-center w-80 flex items-center border border-[#7B7878] rounded-l-sm bg-white'>
                   Import Records
