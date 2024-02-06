@@ -5,7 +5,7 @@ import { PatientScreen } from "./pages/PatientScreen/PatientScreen";
 
 import AddRecords from "./pages/PatientScreen/AddRecords";
 function App() {
-  return <AddRecords />;
+  return <PatientScreen />;
 }
 export default App;
 AddRecords;

@@ -1,6 +1,8 @@
 import React from "react";
 import Sidebar from "../Sidebar";
+import ConsentForm from "./components/ConsentForm";
 import AllPatientList from "./components/AllPatientList";
+import Profile from "./components/Profile";
 export const PatientScreen = () => {
   return (
     <div className="flex flex-row">
@@ -9,12 +11,11 @@ export const PatientScreen = () => {
       </div>
       <div  className="basis-full bg-[#F1F5FC] h-screen">
         <div className="flex flex-col h-full">
-          <div className="h-[64px] bg-white"></div>
+          <div className='h-[64px] w-full pb-16 bg-white'></div>
           <div className="bg-white grow m-3">
-              <AllPatientList/>
-          </div>
+            <ConsentForm/>
+          </div> 
         </div>
-
       </div>
     </div>
   );
