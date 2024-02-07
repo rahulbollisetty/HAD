@@ -4,7 +4,7 @@ import {PiStethoscope } from "react-icons/pi";
 const Sidebar = () =>{
     return (
         <>
-        <div className="h-screen top-0 bg-white w-[250px] left-0">
+        <div className="h-[100vh] top-0 bg-white w-[250px] left-0">
             <div className='h-[64px] bg-black'>
             <div className="h-full [font-family:'Inter',Helvetica] font-bold text-white text-[34px] flex items-center justify-center">
                 MediSync

@@ -3,10 +3,10 @@ import Sidebar from "../../Sidebar";
 
 const ConsentForm = () =>{
     return(
-            <div className='bg-white grow m-3'>
+            <div className='flex flex-col'>
                 <Profile/>
-                <div className='w-full h-full'>
-                    <div className='flex mt-6 justify-center w-full'>
+                <div className='w-full'>
+                    <div className='flex mt-6 justify-center'>
                         <div className='h-10 text-sm justify-center w-80 flex items-center border border-[#7B7878] rounded-l-sm bg-white'>
                             Import Records
                         </div>
@@ -18,7 +18,7 @@ const ConsentForm = () =>{
                         </div>
                     </div>
 
-                    <div className='border mx-8 my-6 border-[#006666] rounded-md border-l-4'>
+                    <div className='border mx-8 my-4 border-[#006666] rounded-md border-l-4 overflow-hidden'>
                         <p className='font-semibold text-2xl ml-4 mt-4 mb-4 text-[#444444]'>Consent Request Form</p>
                         <div className="h-[1px] bg-[#827F7F82]"></div>
                         
