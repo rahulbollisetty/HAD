@@ -7,7 +7,7 @@ import LinkHPR from "./pages/register/LinkHPR";
 import AccountDetails from "./pages/register/AccountDetails";
 
 function App() {
-  return <PracticeDetails />;
+  return <AccountDetails />;
 }
 export default App;
 AddRecords;

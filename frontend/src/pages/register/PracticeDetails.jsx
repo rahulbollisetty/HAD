@@ -45,7 +45,7 @@ function PracticeDetails() {
 
           <div className='flex my-3 mx-32'>
             <div className='flex-1'>
-              <p className='text-sm font-semibold text-[#787887]'>CLinic ID*</p>
+              <p className='text-sm font-semibold text-[#787887]'>Clinic ID*</p>
               <input className='mt-3 rounded-md w-full' type='text' />
             </div>
             <div className='flex-1 mx-10'>

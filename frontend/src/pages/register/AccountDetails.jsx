@@ -1,9 +1,9 @@
 function AccountDetails() {
   return (
-    <div className='bg-white h-screen'>
-      <div className='bg-white mx-10x text-white h-screen'>
+    <div className='bg-white'>
+      <div className='bg-white mx-10 text-white h-screen'>
         <div className='h-4'></div>
-        <div className='mx-40 m-10 border  border-black rounded-md'>
+        <div className='mx-40 border border-black rounded-md'>
           <div className='my-5 h-20 bg-[#98a2a3] flex items-center justify-center text-3xl font-semibold text-white py-5'>
             Welcome to MediSync
           </div>
@@ -12,7 +12,7 @@ function AccountDetails() {
             <div>
               <div className='h-full flex items-center justify-between'>
                 <div className='w-24 h-1 bg-[#02685A] my-2 rounded-l-lg'></div>
-                <div className='w-20 h-20 bg-[#02685A] mx-1.5 my-1.5 rounded-full'></div>
+                <div className='w-20 h-20 bg-[#02685A] my-1.5 rounded-full'></div>
                 <div className='w-36 h-1 bg-[#02685A] my-2'></div>
                 <div className='w-23 h-23 bg-[#5AAC74] rounded-full'>
                   <div className='w-20 h-20 bg-[#02685A] mx-1.5 my-1.5 rounded-full'></div>
@@ -43,7 +43,7 @@ function AccountDetails() {
             </p>
           </div>
 
-          <div className='my-12 bg-white px-32 text-black'>
+          <div className='my-12 bg-white px-32 text-black overflow-auto h-[350px]'>
             <div className='flex mb-3'>
               <div className='flex-1'>
                 <p className='text-sm font-semibold text-[#787887]'>Name*</p>
