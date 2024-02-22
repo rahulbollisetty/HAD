@@ -14,7 +14,7 @@ export const PatientScreen = () => {
         <div className="flex flex-col h-full">
           <div className='h-[64px] w-full pb-16 bg-white'></div>
           <div className="bg-white grow m-3">
-            <ConsentForm/>
+            <AddRecords/>
           </div> 
         </div>
       </div>

@@ -20,6 +20,7 @@ export default {
 
       'lg': '1024px',
       // => @media (min-width: 1024px) { ... }
+      'lg-s' : '1038px',
 
       'xl': '1280px',
       // => @media (min-width: 1280px) { ... }
@@ -28,6 +29,7 @@ export default {
       '2xl': '1440px',
       // => @media (min-width: 1536px) { ... }
       // 'tall': { 'raw': '(min-height: 800px)' },
+      '3xl': '1800px',
 
       '4xl' : '2560px'
       
