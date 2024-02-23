@@ -17,7 +17,6 @@ public class HprApi {
 
     @PostMapping(value = "/getdoctordetails",produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getDoctorDetails(@RequestBody JsonNode doctorHPR) throws JsonProcessingException {
-
         abdmService.setToken();
         String details = abdmService.getDoctorDetails(doctorHPR.get("hprId").asText(), doctorHPR.get("password").asText());
         return  ResponseEntity.ok(details);

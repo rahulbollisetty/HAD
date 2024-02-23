@@ -60,7 +60,6 @@ public class ABDMService {
                 .bodyToMono(String.class).block();
     }
     public void setToken() throws JsonProcessingException {
-
         var values = new HashMap<String, String>() {{
             put("clientId", "SBX_004922");
             put ("clientSecret", "ade1d968-7596-4826-8a9c-20408aa06962");
