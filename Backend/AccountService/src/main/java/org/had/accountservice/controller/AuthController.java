@@ -57,7 +57,7 @@ public class AuthController {
     }
 
     @PostMapping(value = "/registerDoctor", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> registerDoctor(@Valid @RequestBody DoctorHPR doctorHPR) {
+        public ResponseEntity<?> registerDoctor(@Valid @RequestBody DoctorHPR doctorHPR) {
         return  ResponseEntity.ok("details");
     }
     @PostMapping(value = "/get-doctor-details", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -69,6 +69,8 @@ public class AuthController {
     public ResponseEntity<?> validateT(@RequestParam String token){
          return authService.validateToken(token);
     }
+
+
 
 
 }
