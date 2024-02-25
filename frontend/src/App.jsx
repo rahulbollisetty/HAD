@@ -5,13 +5,13 @@ import { PatientScreen } from "./pages/PatientScreen/PatientScreen";
 import AddRecords from "./pages/PatientScreen/AddRecords";
 import LinkHPR from "./pages/register/LinkHPR";
 import AccountDetails from "./pages/register/AccountDetails";
-import {Router, Route, Routes} from 'react-router-dom'
+import { Router, Route, Routes } from "react-router-dom";
 
 function App() {
   return (
     <div>
       <Routes>
-        <Route path='/login' element={<Login />} />
+        <Route path='/Register' element={<LinkHPR />} />
       </Routes>
     </div>
   );
