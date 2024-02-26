@@ -45,9 +45,6 @@ public class StaffDetails {
     private String Town;
 
     @NotNull
-    private String Street;
-
-    @NotNull
     private String Username;
 
     @NotNull

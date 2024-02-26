@@ -22,7 +22,7 @@ public class DoctorDetails {
     private Integer Doctor_Id;
 
     @NotNull
-    private Integer hpr_Id;
+    private String hpr_Id;
 
     @NotNull
     private String First_Name;
@@ -53,9 +53,6 @@ public class DoctorDetails {
 
     @NotNull
     private String Town;
-
-    @NotNull
-    private String Street;
 
     @NotNull
     private String Username;

@@ -1,4 +1,18 @@
+import axios from "axios";
+import { useState } from "react";
+
 function LinkHPR() {
+  const [details, setDetails] = useState({
+    hprId: "",
+    password: "",
+  });
+  const { hprId, password } = details;
+
+  const onInputChange = (e) => {
+    console.log("jdsbfhds");
+    setDetails({ ...details, [e.target.name]: e.target.value });
+  };
+
   return (
     <div className='bg-white min-h-screen overflow-auto'>
       <div className='bg-white mx-10 text-white min-h-screen'>
@@ -41,7 +55,13 @@ function LinkHPR() {
               Create your HPR ID by Clicking on the link:
             </p>
             <button className='mx-8 bg-[#308EDC] h-10 rounded-md font-semibold text-lg w-56'>
-              LINK
+              <a
+                href='https://hpridsbx.abdm.gov.in/register'
+                target='_blank'
+                rel='noopener noreferrer'
+              >
+                LINK
+              </a>
             </button>
           </div>
           <div className='my-12 bg-white px-10 text-black'>
@@ -52,6 +72,9 @@ function LinkHPR() {
               <input
                 className='flex-1 h-10 rounded-l-md cursor-pointer'
                 type='text'
+                name='hprId'
+                value={hprId}
+                onChange={(e) => onInputChange(e)}
               />
               <p className='flex-2.84 bg-slate-200 rounded-r-md border border-[#787887] font-semibold py-1 text-lg px-20'>
                 @hpr.abdm
@@ -60,7 +83,13 @@ function LinkHPR() {
           </div>
           <div className='my-12 bg-white px-10 text-black'>
             <p className='text-sm font-semibold text-[#787887]'>Password</p>
-            <input className='w-full h-10 my-3 rounded-md' type='password' />
+            <input
+              className='w-full h-10 my-3 rounded-md'
+              type='password'
+              name='password'
+              value={password}
+              onChange={(e) => onInputChange(e)}
+            />
           </div>
           <div className='px-10'>
             <button className='bg-[#02685A] text-md font-semibold h-12 w-56 rounded-md'>

@@ -1,6 +1,5 @@
 package org.had.accountservice.service;
 
-//import com.netflix.discovery.converters.Auto;
 import org.had.accountservice.config.UserCredentialUserDetails;
 import org.had.accountservice.entity.UserCredential;
 import org.had.accountservice.repository.UserCredentialRepository;
