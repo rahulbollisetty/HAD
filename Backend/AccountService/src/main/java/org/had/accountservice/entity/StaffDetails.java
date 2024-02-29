@@ -21,34 +21,29 @@ public class StaffDetails {
     private Integer Staff_Id;
 
     @NotNull
-    private Integer hpr_Id;
+    private String first_Name;
 
     @NotNull
-    private String First_Name;
+    private  String last_Name;
 
     @NotNull
-    private  String Last_Name;
+    private Date dob;
 
     @NotNull
-    private Date DOB;
+    private String gender;
 
     @NotNull
-    private String Gender;
+    private String state;
 
     @NotNull
-    private String State;
+    private String district;
 
     @NotNull
-    private String District;
+    private Integer pincode;
 
     @NotNull
-    private String Town;
+    private String address;
 
-    @NotNull
-    private String Username;
-
-    @NotNull
-    private boolean isHeadDoctor;
 
     @OneToOne(targetEntity = UserCredential.class, cascade = CascadeType.ALL)
     @JoinColumn(name = "login_id", referencedColumnName = "UserCred_id", unique = true)

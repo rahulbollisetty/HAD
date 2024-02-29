@@ -1,6 +1,8 @@
 package org.had.accountservice.service;
 
+import org.had.accountservice.entity.DoctorDetails;
 import org.had.accountservice.entity.UserCredential;
+import org.had.accountservice.repository.DoctorDetailsRepository;
 import org.had.accountservice.repository.UserCredentialRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,6 +19,8 @@ public class AuthService {
     @Autowired
     private UserCredentialRepository repository;
 
+    @Autowired
+    private DoctorDetailsRepository doctorDetailsRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -24,11 +28,6 @@ public class AuthService {
     @Autowired
     private JwtService jwtService;
 
-    public String addUser(UserCredential userCredential) {
-        userCredential.setPassword(passwordEncoder.encode(userCredential.getPassword()));
-        repository.save(userCredential);
-        return "user added to system ";
-    }
 
     public String generateToken(String username, String role) {
         return jwtService.generateToken(username,role);

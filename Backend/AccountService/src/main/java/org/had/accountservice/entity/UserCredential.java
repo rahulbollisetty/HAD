@@ -17,7 +17,7 @@ public class UserCredential {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer UserCred_id;
 
-    @UniqueElements
+    @Column(unique = true)
     private String username;
 
     private String password;
