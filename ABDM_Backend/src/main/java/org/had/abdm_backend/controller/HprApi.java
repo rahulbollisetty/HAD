@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/hpr")
+@CrossOrigin("http://localhost:5173")
 public class HprApi {
 
     @Autowired

@@ -11,7 +11,8 @@ function App() {
   return (
     <div>
       <Routes>
-        <Route path='/register' element={<LinkHPR />} />
+        <Route path='/register' element={<LinkHPR />}></Route>
+        <Route path='/register/PracticeDetails' element={<AccountDetails />} />
       </Routes>
     </div>
   );
