@@ -12,12 +12,17 @@ import java.util.stream.Collectors;
 
 public class UserCredentialUserDetails implements UserDetails {
 
+    private Integer id;
+
+
+
     private String username;
     private String pwd;
     private List<GrantedAuthority> authorities;
 
 
     public UserCredentialUserDetails(UserCredential userCredential) {
+        this.id = userCredential.getUserCred_id();
         this.username = userCredential.getUsername();
         this.pwd = userCredential.getPassword();
         this.authorities = Arrays.stream(userCredential.getRole().split(","))
@@ -30,6 +35,9 @@ public class UserCredentialUserDetails implements UserDetails {
         return authorities;
     }
 
+    public Integer getId() {
+        return id;
+    }
     @Override
     public String getPassword() {
         return pwd;

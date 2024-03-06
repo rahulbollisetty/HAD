@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -33,9 +34,9 @@ public class AuthService {
         return jwtService.generateToken(username,role);
     }
 
-    public ResponseEntity<?> validateToken(String token){
+    public ResponseEntity<?> validateToken(String token, UserDetails userDetails){
         try {
-            jwtService.validateToken(token);
+            jwtService.validateToken(token,userDetails);
             return ResponseEntity.ok("Token valid");
         }
         catch (Exception e){
