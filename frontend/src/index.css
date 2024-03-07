@@ -15,5 +15,10 @@
         padding: theme('spacing.6');
         box-shadow: theme('boxShadow.xl');
       }
+
+      .errorMsg{
+        color: #d9534f;
+        font-size: 14px;
+      }
   }
 

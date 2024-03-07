@@ -1,6 +1,5 @@
-import axios from "axios";
 import { useState } from "react";
-
+import axios from "../../api/axios";
 function LinkHPR() {
   const [hprId, setHprId] = useState("");
   const [password, setPassword] = useState("");
@@ -30,7 +29,6 @@ function LinkHPR() {
       if (!response.ok) {
         throw new Error("Failed to fetch doctor details");
       }
-
       const data = await response.json();
       setDoctorDetails(data);
       await setErrorMessage("Doctor Details fetched!");

@@ -16,42 +16,42 @@ function Profile() {
             </div>
             <div className='flex mt-2 ml-8 text-sm'>
               <div className='flex-1'>
-                <p className='font-semibold flex mr-20 text-[#7B7878]'>
+                <span className='font-semibold flex mr-20 text-[#7B7878]'>
                   Gender:
                   <p className='ml-6 text-black'>Male</p>
-                </p>
+                </span>
               </div>
               <div className='flex-1'>
-                <p className='font-semibold flex ml-auto mr-20 text-[#7B7878]'>
+                <span className='font-semibold flex ml-auto mr-20 text-[#7B7878]'>
                   Age:
                   <p className='ml-6 text-black'>32</p>
-                </p>
+                </span>
               </div>
               <div className='flex-1'>
-                <p className='font-semibold flex ml-auto mr-20 text-[#7B7878]'>
+                <span className='font-semibold flex ml-auto mr-20 text-[#7B7878]'>
                   ABHA Id:
                   <p className='ml-6 text-black'>123456789</p>
-                </p>
+                </span>
               </div>
               <div className='flex-1'>
-                <p className='font-semibold flex ml-auto mr-20 text-[#7B7878]'>
+                <span className='font-semibold flex ml-auto mr-20 text-[#7B7878]'>
                   Email id:
                   <p className='ml-6 text-black'>mukesh@gmail.com</p>
-                </p>
+                </span>
               </div>
             </div>
             <div className='flex mt-4 ml-8 text-sm'>
               <div className='w-1/4'>
-                <p className='font-semibold flex mr-52 text-[#7B7878]'>
+                <span className='font-semibold flex mr-52 text-[#7B7878]'>
                   Blood Group:
                   <p className='ml-6 text-black'>B+</p>
-                </p>
+                </span>
               </div>
               <div className='w-1/4'>
-                <p className='font-semibold flex mr-20 text-[#7B7878]'>
+                <span className='font-semibold flex mr-20 text-[#7B7878]'>
                   Mobile Number:
                   <p className='ml-6 text-black '>987654321</p>
-                </p>
+                </span>
               </div>
             </div>
           </div>

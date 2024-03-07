@@ -6,6 +6,7 @@ import org.had.accountservice.exception.TokenRefreshException;
 import org.had.accountservice.repository.RefreshTokenRepository;
 import org.had.accountservice.repository.UserCredentialRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -27,7 +28,7 @@ public class RefreshTokenService {
     public RefreshToken createRefreshToken(Integer userId){
         RefreshToken refreshToken = new RefreshToken();
         refreshToken.setUser(userCredentialRepository.findById(userId).get());
-        refreshToken.setExpiryDate(Instant.now().plusMillis(24*60*60));
+        refreshToken.setExpiryDate(Instant.now().plusMillis(20*1000));
         refreshToken.setToken(UUID.randomUUID().toString());
         refreshToken = refreshTokenRepository.save(refreshToken);
         return refreshToken;
@@ -36,7 +37,7 @@ public class RefreshTokenService {
     public RefreshToken verifyExpiration(RefreshToken token){
         if(token.getExpiryDate().compareTo(Instant.now())<0){
             refreshTokenRepository.delete(token);
-            throw new TokenRefreshException(token.getToken(), "Refresh token was expired. Please Sign In again");
+            throw new TokenRefreshException(token.getToken(), "Refresh token was expired. Please Sign In again", HttpStatus.FORBIDDEN.value());
         }
         return token;
     }

@@ -13,11 +13,10 @@ import java.util.Map;
 @RestControllerAdvice
 @Slf4j
 public class ExpiredJwtExceptionHandler {
-    @ExceptionHandler(ExpiredJwtException.class)
+    @ExceptionHandler(value = ExpiredJwtException.class)
     public ResponseEntity<?> handleTokenRefreshException(ExpiredJwtException ex){
         Map<String, Object> errorResponse = new HashMap<>();
         errorResponse.put("status", HttpStatus.FORBIDDEN.value());
-        errorResponse.put("error", "JWT Expired. Login Again!!");
         errorResponse.put("message", ex.getMessage());
 
         log.error("Validation failed: {}", errorResponse);

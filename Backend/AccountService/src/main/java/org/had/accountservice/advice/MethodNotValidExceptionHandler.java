@@ -35,7 +35,6 @@ public class MethodNotValidExceptionHandler {
         // Create a custom error response as a Map
         Map<String, Object> errorResponse = new HashMap<>();
         errorResponse.put("status", HttpStatus.BAD_REQUEST.value());
-        errorResponse.put("error", "Bad Request");
         errorResponse.put("message", "Validation failed");
         errorResponse.put("errors", errors);
 

@@ -12,17 +12,16 @@ import java.util.Map;
 
 @RestControllerAdvice
 @Slf4j
-public class TokenRefreshException {
+public class TokenRefreshExceptionHandler {
     @ExceptionHandler(value = org.had.accountservice.exception.TokenRefreshException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public ResponseEntity<?> handleTokenRefreshException(org.had.accountservice.exception.TokenRefreshException ex) {
 
         Map<String, Object> errorResponse = new HashMap<>();
-        errorResponse.put("status", HttpStatus.BAD_REQUEST.value());
-        errorResponse.put("error", "Bad Request");
-        errorResponse.put("message", ex.getMessage());
+        errorResponse.put("status", ex.getStatus());
+        errorResponse.put("message", ex.getResponseBody());
 
         log.error("Validation failed: {}", errorResponse);
-        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(errorResponse, HttpStatus.valueOf(ex.getStatus()));
     }
 }

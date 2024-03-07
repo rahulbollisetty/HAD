@@ -61,7 +61,7 @@ public class JwtService {
         return extractExpiration(token).before(new Date());
     }
     public ResponseCookie generateRefreshJwtCookie(String refreshToken) {
-        return generateCookie("JWT-refresh", refreshToken, "/auth/refreshtoken");
+        return generateCookie("JWT-refresh", refreshToken, "/");
     }
 
     public String getJwtRefreshFromCookies(HttpServletRequest request) {
@@ -69,7 +69,7 @@ public class JwtService {
     }
 
     public ResponseCookie getCleanJwtRefreshCookie() {
-        return ResponseCookie.from("JWT-refresh", null).path("/api/auth/refreshtoken").build();
+        return ResponseCookie.from("JWT-refresh", null).path("/").build();
     }
 
     public Boolean validateToken(String token, UserDetails userDetails) {
@@ -104,7 +104,7 @@ public class JwtService {
     }
 
     private ResponseCookie generateCookie(String name, String value, String path) {
-        return ResponseCookie.from(name, value).path(path).maxAge(24 * 60 * 60).httpOnly(true).build();
+        return ResponseCookie.from(name, value).path(path).secure(false).sameSite("None").secure(true).maxAge(24 * 60 * 60).httpOnly(true).build();
     }
 
     private Key getSignKey() {

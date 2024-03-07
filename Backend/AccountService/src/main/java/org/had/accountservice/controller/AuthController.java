@@ -12,10 +12,7 @@ import org.had.accountservice.entity.RefreshToken;
 import org.had.accountservice.exception.TokenRefreshException;
 import org.had.accountservice.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseCookie;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -60,10 +57,12 @@ public class AuthController {
             ResponseCookie jwtRefreshCookie = jwtService.generateRefreshJwtCookie(refreshToken.getToken());
 
             Map<String, String> response = new HashMap<>();
+            response.put("status","Logged in successfully");
             response.put("token", token);
+
             return ResponseEntity.ok()
                     .header(HttpHeaders.SET_COOKIE,jwtRefreshCookie.toString())
-                    .body(token);
+                    .body(response);
         }
         else {
             throw new UsernameNotFoundException("invalid user request !");
@@ -142,7 +141,7 @@ public class AuthController {
                                 .body(response);
                     })
                     .orElseThrow(() -> new TokenRefreshException(refreshToken,
-                            "Refresh token is not in database!"));
+                            "Refresh token is not in database!", HttpStatus.FORBIDDEN.value()));
         }
 
         return ResponseEntity.badRequest().body("Refresh Token is empty!");

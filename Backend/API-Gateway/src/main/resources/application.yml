@@ -1,0 +1,12 @@
+spring:
+  cloud:
+    gateway:
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials, RETAIN_UNIQUE
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowed-origins: ["http://localhost:5173","http://127.0.0.1:5173"]
+            allowed-methods: "*"
+            allowed-headers: "*"
+            allow-credentials: true

@@ -1,7 +1,14 @@
 import { MdOutlineCalendarToday,MdOutlineSettings,MdPeopleOutline, MdExitToApp } from "react-icons/md";
 import {PiStethoscope } from "react-icons/pi";
-
+import { useNavigate } from "react-router-dom";
+import useLogout from "../hooks/useLogout";
 const Sidebar = () =>{
+    const navigate = useNavigate();
+    const logout = useLogout();
+    const signOut = async () => {
+        await logout();
+        navigate("/");
+    }
     return (
         <>
         <div className="h-[100vh] top-0 bg-white w-[250px] left-0">
@@ -11,7 +18,7 @@ const Sidebar = () =>{
           </div>
             </div>
             <div className='h-4/5'>
-                <div class="flex flex-col">
+                <div className="flex flex-col">
                     <div className='h-[80px] inactive align-center'>
                         <div className='inline-flex gap-[15px]  w-fit relative left-7 top-1/3'>
                             <MdOutlineCalendarToday className="h-[25px] w-[25px] m-auto"/>
@@ -51,7 +58,7 @@ const Sidebar = () =>{
             <div className="h-1/12 m-[10px]">
             <div className='inline-flex gap-[15px] px-[25px] py-[10px] text-white w-fit relative left-[15px] top-1/3 bg-[#006666] rounded-[10px] overflow-hidden shadow-[-2px_-1px_3px_#00000040]'>
                             <MdExitToApp className="h-[25px] w-[25px] m-auto"/>
-                            <div className="relative w-fit font-semibold text-[20px]">
+                            <div className="relative w-fit font-semibold text-[20px]" onClick={signOut}>
                                 Logout
                             </div>
                         </div>
