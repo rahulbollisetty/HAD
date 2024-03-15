@@ -2,7 +2,7 @@ import React from "react";
 import Sidebar from "../Sidebar";
 import ConsentForm from "./components/ConsentForm";
 import AllPatientList from "./components/AllPatientList";
-import AddRecords from "./AddRecords";
+import AddRecords from "./components/AddRecords";
 import Profile from "./components/Profile";
 export const PatientScreen = () => {
   return (
@@ -14,7 +14,7 @@ export const PatientScreen = () => {
         <div className="flex flex-col h-full">
           <div className='h-[64px] w-full pb-16 bg-white'></div>
           <div className="bg-white grow m-3">
-            <AddRecords/>
+            <AllPatientList/>
           </div> 
         </div>
       </div>

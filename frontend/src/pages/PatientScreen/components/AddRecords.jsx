@@ -1,5 +1,5 @@
-import Sidebar from "../Sidebar";
-import Profile from "./components/Profile";
+import Sidebar from "../../Sidebar";
+import Profile from "./Profile";
 function AddRecords() {
   return (
     <div className='flex flex-col'>
