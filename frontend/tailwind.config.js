@@ -1,15 +1,23 @@
 /** @type {import('tailwindcss').Config} */
-export default {
+const withMT = require("@material-tailwind/react/utils/withMT");
+
+
+
+export default withMT({
   content: [
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
-    extend: {},
+    extend: {colors: {
+      yo: {
+        950: '#17275c',
+      },}
+    },
     fontFamily: {
       'sans' : ['Roboto','Helvetica']
     },
-
+    
     screens: {
       'm-s' : '320px',
       'sm': '640px',
@@ -37,4 +45,4 @@ export default {
   },
   
   plugins: [require('@tailwindcss/forms')],
-}
+});
