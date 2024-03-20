@@ -13,7 +13,10 @@ import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
-import java.util.HashMap;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 
 @Service
 public class ABDMService {
@@ -45,7 +48,7 @@ public class ABDMService {
                     return clientResponse.bodyToMono(String.class)
                             .flatMap(errorBody -> Mono.error(new MyWebClientException(errorBody, clientResponse.statusCode().value())));
                 })
-                .bodyToMono(String.class).block();
+                .bodyToMono(String.class).block();//
         JSONObject jsonObject = new JSONObject(responseBody);
         String xtoken = jsonObject.get("token").toString();
 
@@ -84,8 +87,151 @@ public class ABDMService {
 
     }
 
+    public String aadharOtpInit(String aadhar) throws JsonProcessingException{
 
 
+        var values = new HashMap<String,Object>(){{
+            put("scope", Collections.singletonList("abha-enrol"));
+            put("loginHint", "aadhaar");
+            put("loginId",aadhar);
+            put("otpSystem", "aadhaar");
+        }};
+
+        var objectMapper = new ObjectMapper();
+        String requestBody = objectMapper
+                .writeValueAsString(values);
+
+        return webClient.post().uri("https://abhasbx.abdm.gov.in/abha/api/v3/enrollment/request/otp")
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization","Bearer "+token)
+                .header("REQUEST-ID",UUID.randomUUID().toString())
+                .header("TIMESTAMP", getISOTimestamp())
+                .body(BodyInserters.fromValue(requestBody.toString()))
+                .retrieve()
+                .onStatus(HttpStatusCode::isError,clientResponse -> {
+                    return clientResponse.bodyToMono(String.class)
+                            .flatMap(errorBody -> Mono.error(new MyWebClientException(errorBody, clientResponse.statusCode().value())));
+                })
+                .bodyToMono(String.class).block();//
+    }
+
+    public String getISOTimestamp(){
+        Instant now = Instant.now();
+        return now.toString();
+    }
+    public String getCurrentSimpleTimestamp(){
+        LocalDateTime now = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        return now.format(formatter);
+    }
+    public String aadharOtpVerify(String otp, String mobile, String txnId) throws JsonProcessingException{
+        String timeStamp = getCurrentSimpleTimestamp();
+
+        Map<String, Object> root = new HashMap<>();
+
+        Map<String, Object> authData = new HashMap<>();
+
+        List<String> authMethods = Arrays.asList("otp");
+        authData.put("authMethods", authMethods);
+
+        Map<String, String> otpDetails = new HashMap<>();
+        otpDetails.put("timeStamp", timeStamp);
+        otpDetails.put("txnId", txnId);
+        otpDetails.put("otpValue", otp);
+        otpDetails.put("mobile", mobile);
+        authData.put("otp", otpDetails);
+
+        root.put("authData", authData);
+
+        Map<String, String> consent = new HashMap<>();
+        consent.put("code", "abha-enrollment");
+        consent.put("version", "1.4");
+
+        root.put("consent", consent);
+
+        var objectMapper = new ObjectMapper();
+        String requestBody = objectMapper
+                .writeValueAsString(root);
+
+        return webClient.post().uri("https://abhasbx.abdm.gov.in/abha/api/v3/enrollment/enrol/byAadhaar")
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization","Bearer "+token)
+                .header("REQUEST-ID",UUID.randomUUID().toString())
+                .header("TIMESTAMP", getISOTimestamp())
+                .body(BodyInserters.fromValue(requestBody.toString()))
+                .retrieve()
+                .onStatus(HttpStatusCode::isError,clientResponse -> {
+                    return clientResponse.bodyToMono(String.class)
+                            .flatMap(errorBody -> Mono.error(new MyWebClientException(errorBody, clientResponse.statusCode().value())));
+                })
+                .bodyToMono(String.class).block();//
+    }
+
+    public String mobileOtpInit(String txnId, String loginId) throws JsonProcessingException{
+        var values = new HashMap<String,Object>(){{
+            put("txnId", txnId);
+            put("scope", Arrays.asList("abha-enrol", "mobile-verify"));
+            put("loginHint", "mobile");
+            put("loginId",loginId);
+            put("otpSystem", "abdm");
+        }};
+
+        var objectMapper = new ObjectMapper();
+        String requestBody = objectMapper
+                .writeValueAsString(values);
+
+        return webClient.post().uri("https://abhasbx.abdm.gov.in/abha/api/v3/enrollment/request/otp")
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization","Bearer "+token)
+                .header("REQUEST-ID",UUID.randomUUID().toString())
+                .header("TIMESTAMP", getISOTimestamp())
+                .body(BodyInserters.fromValue(requestBody.toString()))
+                .retrieve()
+                .onStatus(HttpStatusCode::isError,clientResponse -> {
+                    return clientResponse.bodyToMono(String.class)
+                            .flatMap(errorBody -> Mono.error(new MyWebClientException(errorBody, clientResponse.statusCode().value())));
+                })
+                .bodyToMono(String.class).block();//
+    }
+
+    public String mobileOtpVerify(String otp, String txnId) throws JsonProcessingException{
+        String timeStamp = getCurrentSimpleTimestamp();
+
+        Map<String, Object> root = new HashMap<>();
+
+        Map<String, String> otpMap = new HashMap<>();
+        otpMap.put("timeStamp", timeStamp);
+        otpMap.put("txnId", txnId);
+        otpMap.put("otpValue", otp);
+
+        List<String> authMethods = Arrays.asList("otp");
+
+        Map<String, Object> authData = new HashMap<>();
+        authData.put("authMethods", authMethods);
+        authData.put("otp", otpMap);
+
+        List<String> scope = Arrays.asList("abha-enrol", "mobile-verify");
+
+        root.put("scope", scope);
+        root.put("authData", authData);
+
+        var objectMapper = new ObjectMapper();
+        String requestBody = objectMapper
+                .writeValueAsString(root);
+
+        return webClient.post().uri("https://abhasbx.abdm.gov.in/abha/api/v3/enrollment/auth/byAbdm")
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization","Bearer "+token)
+                .header("REQUEST-ID",UUID.randomUUID().toString())
+                .header("TIMESTAMP", getISOTimestamp())
+                .body(BodyInserters.fromValue(requestBody.toString()))
+                .retrieve()
+                .onStatus(HttpStatusCode::isError,clientResponse -> {
+                    return clientResponse.bodyToMono(String.class)
+                            .flatMap(errorBody -> Mono.error(new MyWebClientException(errorBody, clientResponse.statusCode().value())));
+                })
+                .bodyToMono(String.class).block();//
+    }
 //    private String handleErrorResponse(ClientResponse response) {
 //        // Handle the error response
 //        HttpStatus status = (HttpStatus) response.statusCode();
