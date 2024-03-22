@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/patient")
+@RequestMapping("/abdm/patient")
 @CrossOrigin("http://localhost:5173")
 public class PatientRegisterApi {
     @Autowired
@@ -29,8 +29,8 @@ public class PatientRegisterApi {
     public ResponseEntity<?> aadhaarOTPverify(@RequestBody JsonNode jsonNode) throws JsonProcessingException {
         abdmService.setToken();
         String otp = jsonNode.get("otp").asText();
-        String txnId = jsonNode.get("txnId").asText();
-        String mobile = jsonNode.get("mobile").asText();
+        String txnId = jsonNode.get("transactionId").asText();
+        String mobile = jsonNode.get("mobileNumber").asText();
         String details = abdmService.aadharOtpVerify(otp,mobile,txnId);
         return ResponseEntity.ok(details);
     }
@@ -52,4 +52,5 @@ public class PatientRegisterApi {
         String details = abdmService.mobileOtpVerify(otp,txnId);
         return ResponseEntity.ok(details);
     }
+
 }

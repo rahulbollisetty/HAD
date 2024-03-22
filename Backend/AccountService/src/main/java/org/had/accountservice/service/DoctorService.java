@@ -9,7 +9,6 @@ import org.had.accountservice.exception.MyWebClientException;
 import org.had.accountservice.repository.DoctorDetailsRepository;
 import org.had.accountservice.repository.UserCredentialRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
@@ -17,7 +16,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.util.UriComponentsBuilder;
 import reactor.core.publisher.Mono;
 
 import java.util.HashMap;
@@ -55,7 +53,7 @@ public class DoctorService {
             throw new RuntimeException(e);
         }
 
-        return webClient.post().uri("http://127.0.0.1:9008/hpr/getdoctordetails")
+        return webClient.post().uri("http://127.0.0.1:9008/abdm/hpr/getdoctordetails")
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(BodyInserters.fromValue(requestBody))
                 .retrieve()

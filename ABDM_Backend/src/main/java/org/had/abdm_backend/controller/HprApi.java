@@ -8,8 +8,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/hpr")
-@CrossOrigin("http://localhost:5173")
+@RequestMapping("/abdm/hpr")
+@CrossOrigin("http://localhost:5173 ")
 public class HprApi {
 
     @Autowired

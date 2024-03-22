@@ -2,7 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="9bfbb693-2299-47dc-9cf0-4cf62fb5c8f7" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/ABDM_Backend/src/main/java/org/had/abdm_backend/controller/HprApi.java" beforeDir="false" afterPath="$PROJECT_DIR$/ABDM_Backend/src/main/java/org/had/abdm_backend/controller/HprApi.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/appLog.log" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/appLog.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/App.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/App.jsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -26,7 +28,7 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "git-widget-placeholder": "main",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "/home/shubham/Desktop/HAD/ABDM_Backend",
+    "last_opened_file_path": "/home/shubham/Desktop/Springtutorial",
     "nodejs_package_manager_path": "npm",
     "vue.rearranger.settings.migration": "true"
   }
@@ -41,6 +43,8 @@
       <updated>1707472529474</updated>
       <workItem from="1707472530509" duration="26000" />
       <workItem from="1708706419814" duration="152000" />
+      <workItem from="1710479924811" duration="11000" />
+      <workItem from="1710480821267" duration="9000" />
     </task>
     <servers />
   </component>
