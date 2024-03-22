@@ -1,13 +1,13 @@
 package org.had.accountservice.service;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
-import org.had.accountservice.entity.UserCredential;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -49,6 +49,7 @@ public class JwtService {
     }
 
     private Claims extractAllClaims(String token) {
+
         return Jwts
                 .parser()
                 .verifyWith((SecretKey) getSignKey())
@@ -89,7 +90,7 @@ public class JwtService {
                 .subject(username)
                 .claim("role",role)
                 .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis()+1000*30))
+                .expiration(new Date(System.currentTimeMillis()+1000*5*60))
                 .signWith(getSignKey()).compact();
     }
 

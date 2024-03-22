@@ -1,4 +1,4 @@
-package org.had.accountservice.filter;
+package org.had.patientservice.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -8,14 +8,13 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.had.accountservice.exception.JwtExpiredException;
-import org.had.accountservice.service.JwtService;
-import org.had.accountservice.service.UserCredentialUserDetailsService;
+import org.had.patientservice.service.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
@@ -27,20 +26,16 @@ import java.util.Map;
 
 @Component
 @Slf4j
-public class AuthTokenFilter extends OncePerRequestFilter {
-
+public class AuthorizationTokenFilter extends OncePerRequestFilter {
     @Autowired
     private JwtService jwtService;
-
-    @Autowired
-    private UserCredentialUserDetailsService userDetailsService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException, java.io.IOException {
 
-            String authHeader = request.getHeader("Authorization");
-            String token = null;
-            String username = null;
+        String authHeader = request.getHeader("Authorization");
+        String token = null;
+        String username = null;
         try {
             if (authHeader != null && authHeader.startsWith("Bearer ")) {
                 token = authHeader.substring(7);
@@ -48,11 +43,13 @@ public class AuthTokenFilter extends OncePerRequestFilter {
             }
 
             if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-                if (jwtService.validateToken(token, userDetails)) {
-                    UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                if (jwtService.validateToken(token)) {
+                    User user = jwtService.getUserPrincipal(token);
+
+                    UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(user,null,user.getAuthorities());
                     authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(authToken);
+                    System.out.println(SecurityContextHolder.getContext().toString());
                 }
             }
         }
@@ -74,5 +71,4 @@ public class AuthTokenFilter extends OncePerRequestFilter {
         }
         filterChain.doFilter(request, response);
     }
-
 }

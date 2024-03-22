@@ -21,6 +21,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import reactor.core.publisher.Mono;
 
 import java.util.HashMap;
+import java.util.List;
 
 @Service
 public class DoctorService {
@@ -88,6 +89,10 @@ public class DoctorService {
         doctorDetailsRepository.save(doctorDetails);
 
         return "Doctor added to system";
+    }
+
+    public List<DoctorDetails> getdoctorDetailsList(){
+        return doctorDetailsRepository.findAll();
     }
 
 

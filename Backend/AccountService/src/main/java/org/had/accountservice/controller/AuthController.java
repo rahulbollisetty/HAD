@@ -90,6 +90,11 @@ public class AuthController {
         return  ResponseEntity.badRequest().body(result);
     }
 
+    @PostMapping(value = "/get-doctor-details", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getDoctorDetails(@Valid @RequestBody DoctorHPR doctorHPR) {
+        String details = doctorService.getDoctorDetails(doctorHPR.getHprId(),doctorHPR.getPassword());
+        return  ResponseEntity.ok(details);
+    }
     @PostMapping(value = "/registerStaff" ,produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> registerStaff(@Valid @RequestBody StaffDetailsDTO staffDetailsDTO) {
         String result = staffService.addStaff(staffDetailsDTO);
@@ -98,13 +103,6 @@ public class AuthController {
         }
         return  ResponseEntity.badRequest().body(result);
     }
-
-    @PostMapping(value = "/get-doctor-details", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getDoctorDetails(@Valid @RequestBody DoctorHPR doctorHPR) {
-        String details = doctorService.getDoctorDetails(doctorHPR.getHprId(),doctorHPR.getPassword());
-        return  ResponseEntity.ok(details);
-    }
-
 
     @PostMapping("/signout")
     public ResponseEntity<?> logout() {
