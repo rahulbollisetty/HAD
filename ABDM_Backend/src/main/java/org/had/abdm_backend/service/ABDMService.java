@@ -230,8 +230,48 @@ public class ABDMService {
                     return clientResponse.bodyToMono(String.class)
                             .flatMap(errorBody -> Mono.error(new MyWebClientException(errorBody, clientResponse.statusCode().value())));
                 })
-                .bodyToMono(String.class).block();//
+                .bodyToMono(String.class).block();
     }
+
+    public String userAuthInit(String patientSBXId, String requesterId, String requesterType) throws JsonProcessingException {
+        String timeStamp = getCurrentSimpleTimestamp();
+
+        Map<String, Object> content = new HashMap<>();
+
+        Map<String, String> requester = new HashMap<>();
+        requester.put("type", requesterType);
+        requester.put("id", requesterId);
+
+        Map<String, Object> query = new HashMap<>();
+        query.put("id", patientSBXId);
+        query.put("purpose", "KYC_AND_LINK");
+        query.put("authMode", "MOBILE_OTP");
+        query.put("requester", requester);
+
+        content.put("requestId", UUID.randomUUID().toString());
+        content.put("timestamp", timeStamp);
+        content.put("query", query);
+
+        var objectMapper = new ObjectMapper();
+        String requestBody = objectMapper.writeValueAsString(content);
+
+        return webClient.post().uri("https://dev.abdm.gov.in/gateway/v0.5/users/auth/init")
+                .header("Authorization","Bearer "+token)
+                .header("accept", "*/*")
+                .header("X-CM-ID", "sbx")
+                .header("Content-Type", MediaType.APPLICATION_JSON_VALUE)
+                .header("Accept", MediaType.APPLICATION_JSON_VALUE)
+                .body(BodyInserters.fromValue(requestBody.toString()))
+                .retrieve()
+                .onStatus(HttpStatusCode::isError,clientResponse -> {
+                    return clientResponse.bodyToMono(String.class)
+                            .flatMap(errorBody -> Mono.error(new MyWebClientException(errorBody, clientResponse.statusCode().value())));
+                })
+                .bodyToMono(String.class).block();
+    }
+
+
+
 //    private String handleErrorResponse(ClientResponse response) {
 //        // Handle the error response
 //        HttpStatus status = (HttpStatus) response.statusCode();

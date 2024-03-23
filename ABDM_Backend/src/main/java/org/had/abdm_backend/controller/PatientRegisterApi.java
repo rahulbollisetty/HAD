@@ -53,4 +53,15 @@ public class PatientRegisterApi {
         return ResponseEntity.ok(details);
     }
 
+    @PostMapping(value = "/userAuthInit",produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> userAuthInit(@RequestBody JsonNode jsonNode) throws JsonProcessingException {
+        abdmService.setToken();
+        String patientSBXId = jsonNode.get("patientSBXId").asText();
+        String requesterId = jsonNode.get("requesterId").asText();
+        String requesterType = jsonNode.get("requesterType").asText();
+        String details = abdmService.userAuthInit(patientSBXId, requesterId, requesterType);
+        return ResponseEntity.ok(details);
+    }
+
+
 }
