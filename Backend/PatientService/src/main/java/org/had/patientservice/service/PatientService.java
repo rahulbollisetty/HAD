@@ -117,5 +117,30 @@ public class PatientService {
                 })
                 .bodyToMono(String.class).block();
     }
+
+    public String userAuthInit(String patientSBXId, String requesterId, String requesterType) {
+        var values = new HashMap<String, String>() {{
+            put("patientSBXId", patientSBXId);
+            put("requesterId",requesterId);
+            put("requesterType",requesterType);
+        }};
+
+        String requestBody = null;
+        var objectMapper = new ObjectMapper();
+        try {
+            requestBody = objectMapper.writeValueAsString(values);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+        return webClient.post().uri("http://127.0.0.1:9008/abdm/patient/userAuthInit")
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(BodyInserters.fromValue(requestBody))
+                .retrieve()
+                .onStatus(HttpStatusCode::isError, clientResponse -> {
+                    return clientResponse.bodyToMono(String.class)
+                            .flatMap(errorBody -> Mono.error(new MyWebClientException(errorBody, clientResponse.statusCode().value())));
+                })
+                .bodyToMono(String.class).block();
+    }
 }
 

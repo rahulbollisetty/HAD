@@ -62,4 +62,14 @@ public class PatientController {
         return ResponseEntity.ok(result);
     }
 
+    @PreAuthorize("hasAnyAuthority('DOCTOR','STAFF')")
+    @PostMapping(value = "/userAuthInit",produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> userAuthInit(@RequestBody JsonNode jsonNode) {
+        String patientSBXId = jsonNode.get("patientSBXId").asText();
+        String requesterId = jsonNode.get("requesterId").asText();
+        String requesterType = jsonNode.get("requesterType").asText();
+        String details = patientService.userAuthInit(patientSBXId, requesterId, requesterType);
+        return ResponseEntity.ok(details);
+    }
+
 }
