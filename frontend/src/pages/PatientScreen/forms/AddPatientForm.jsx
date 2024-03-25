@@ -1,13 +1,29 @@
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-import { Radio } from "@material-tailwind/react";
 
 function AddPatientForm() {
   const {
     register,
     handleSubmit,
     reset,
+    getValues,
     formState: { errors },
+  } = useForm();
+
+  const {
+    register: register1,
+    handleSubmit: handleSubmit1,
+    reset: reset1,
+    getValues: getValues1,
+    formState: { errors: error1 },
+  } = useForm();
+
+  const {
+    register: register2,
+    handleSubmit: handleSubmit2,
+    reset: reset2,
+    getValues: getValues2,
+    formState: { errors: errors2 },
   } = useForm();
 
   return (
@@ -75,9 +91,7 @@ function AddPatientForm() {
             <p className="text-sm">Gender</p>
             <div className="flex gap-10">
               <select className="w-full rounded-md" name="gender" id="">
-                <option disabled >
-                  Select Gender
-                </option>
+                <option disabled>Select Gender</option>
                 <option value="male">Male</option>
                 <option value="female">Female</option>
               </select>
@@ -94,7 +108,7 @@ function AddPatientForm() {
           <div className="flex flex-col">
             <p className="text-sm">Blood Group</p>
             <select className="w-full rounded-md" name="bloodGroup" id="">
-              <option value="" disabled >
+              <option value="" disabled>
                 Select Blood Group
               </option>
               <option value="A+">A+</option>
@@ -158,25 +172,36 @@ function AddPatientForm() {
       </div>
       <hr className="h-[2px] bg-[#7B7878] mx-2 mt-6 opacity-50	" />
       <div>
-      <p className="font-semibold text-xl ml-4 mt-4 mb-4 text-[#444444]">
-        Creating ABHA ID
-      </p>
+        <p className="font-semibold text-xl ml-4 mt-4 mb-4 text-[#444444]">
+          Creating ABHA ID
+        </p>
       </div>
       <div className="grid grid-cols-2 gap-5 text-[#7B7878] font-medium	text-xl mt-8">
         <div>
           <div className="flex flex-col">
-            <p className="mr-48 text-sm">ABHA ID</p>
+            <p className="mr-48 text-sm">Aadhaar Number</p>
             <div className="relative flex w-full">
               <input
                 className="rounded-md pr-32 w-full"
                 type="text"
                 name=""
-                id=""
+                {...register2("aadhaar", {
+                  pattern: {
+                    value: /^[0-9]+$/,
+                    message: "Only Numbers are allowed",
+                  },
+                })}
               />
-              <button className="!absolute p-1 bg-[#006666] text-white right-1 top-[3px] rounded">
+              <button
+                className="!absolute p-1 bg-[#006666] text-white right-1 top-[3px] rounded"
+                onClick={handleSubmit2(() => {
+                  console.log("das");
+                })}
+              >
                 Send OTP
               </button>
             </div>
+            <p className="errorMsg">{errors2.aadhaar?.message}</p>
           </div>
         </div>
 
@@ -189,32 +214,67 @@ function AddPatientForm() {
                 type="text"
                 name=""
                 id=""
+                {...register2("mobile", {
+                  pattern: {
+                    value: /^[0-9]+$/,
+                    message: "Only Numbers are allowed",
+                  },
+                })}
               />
-              <button className="!absolute p-1 bg-[#006666] text-white right-1 top-[3px] rounded">
+              <button
+                className="!absolute p-1 bg-[#006666] text-white right-1 top-[3px] rounded"
+                onClick={handleSubmit2(() => {
+                  console.log(getValues2());
+                })}
+              >
                 Send OTP
               </button>
             </div>
+            <p className="errorMsg">{errors2.mobile?.message}</p>
           </div>
         </div>
         <div>
           <div className="flex flex-col">
             <p className="mr-48 text-sm">OTP</p>
-            <input className="rounded-md w-72" type="text" name="" id="" />
+            <input
+              className="rounded-md w-72"
+              type="text"
+              name=""
+              id=""
+              {...register2("otp", {
+                pattern: {
+                  value: /^[0-9]+$/,
+                  message: "Only Numbers are allowed",
+                },
+              })}
+            />
+            <p className="errorMsg">{errors2.otp?.message}</p>
           </div>
         </div>
         <div>
-        <div className="flex flex-col">
+          <div className="flex h-full items-end justify-center w-72">
+            <button
+              type="submit"
+              className="w-40 p-2 bg-[#006666] text-white rounded-md"
+              onClick={handleSubmit2(() => {
+                console.log(getValues2());
+              })}
+            >
+              Confirm
+            </button>
+          </div>
+        </div>
+        <div>
+          <div className="flex flex-col">
             <p className="text-sm">Select ID</p>
             <select className="w-full rounded-md" name="bloodGroup" id="">
-              <option value="" disabled >
+              <option value="" disabled>
                 Select ID
               </option>
             </select>
           </div>
-          
         </div>
       </div>
-      
     </div>
   );
 }

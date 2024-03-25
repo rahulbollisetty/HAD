@@ -35,7 +35,7 @@ const AllPatientList = () => {
             </div>
           </div>
           <div className="">
-            <div
+            <button
               onClick={handleOpen}
               className="inline-flex gap-[15px] px-[1.25rem] m-4 py-[0.625rem] h-[3.375rem] justify-center items-center text-white w-fit hover:bg-[#276059] bg-[#006666] rounded-[10px]"
             >
@@ -43,7 +43,7 @@ const AllPatientList = () => {
               <div className="relative w-fit font-semibold m-auto text-[20px]">
                 Add Patients
               </div>
-            </div>
+            </button>
 
             <Dialog open={open} handler={handleOpen} size="md">
               <DialogHeader>Add Patient</DialogHeader>
