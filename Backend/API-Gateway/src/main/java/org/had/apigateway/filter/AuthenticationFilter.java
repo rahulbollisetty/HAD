@@ -46,7 +46,7 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<AbstractG
 
                 } catch (ExpiredJwtException ex) {
 
-                    exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
+                    exchange.getResponse().setStatusCode(HttpStatus.FORBIDDEN);
                     exchange.getResponse().getHeaders().setContentType(MediaType.APPLICATION_JSON);
                     String responseBody = "{\"error\": \"Unauthorized: Invalid JWT token\"}";
                     return exchange.getResponse().writeWith(Mono.just(exchange.getResponse().bufferFactory().wrap(responseBody.getBytes())))
