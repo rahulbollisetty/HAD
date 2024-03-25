@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 [2m2024-03-22 09:37:19.292[0;39m [32m- INFO[0;39m [35m5924[0;39m [2m---[0;39m [2m[           main][0;39m [36mo.h.a.AccountServiceApplication         [0;39m [2m:[0;39m Starting AccountServiceApplication using Java 21.0.2 with PID 5924 (/home/fledlucifer/Desktop/HAD/Backend/AccountService/target/classes started by fledlucifer in /home/fledlucifer/Desktop/HAD/Backend)
 -[2m2024-03-22 09:37:19.298[0;39m [32m- INFO[0;39m [35m5924[0;39m [2m---[0;39m [2m[           main][0;39m [36mo.h.a.AccountServiceApplication         [0;39m [2m:[0;39m No active profile set, falling back to 1 default profile: "default"
 -[2m2024-03-22 09:37:19.955[0;39m [32m- INFO[0;39m [35m5924[0;39m [2m---[0;39m [2m[           main][0;39m [36m.s.d.r.c.RepositoryConfigurationDelegate[0;39m [2m:[0;39m Bootstrapping Spring Data JPA repositories in DEFAULT mode.
@@ -13744,4 +13745,11 @@ This generated password is for development use only. Your security configuration
 -[2m2024-03-23 16:05:10.093[0;39m [32m- INFO[0;39m [35m10386[0;39m [2m---[0;39m [2m[trap-executor-0][0;39m [36mc.n.d.s.r.aws.ConfigClusterResolver     [0;39m [2m:[0;39m Resolving eureka endpoints via configuration
 -[2m2024-03-23 16:08:18.712[0;39m [32m- INFO[0;39m [35m10095[0;39m [2m---[0;39m [2m[trap-executor-0][0;39m [36mc.n.d.s.r.aws.ConfigClusterResolver     [0;39m [2m:[0;39m Resolving eureka endpoints via configuration
 >>>>>>> origin/main
+=======
+[2m2024-03-23 00:04:10.164[0;39m [32m- INFO[0;39m [35m29750[0;39m [2m---[0;39m [2m[trap-executor-0][0;39m [36mc.n.d.s.r.aws.ConfigClusterResolver     [0;39m [2m:[0;39m Resolving eureka endpoints via configuration
+-[2m2024-03-23 00:09:10.178[0;39m [32m- INFO[0;39m [35m29750[0;39m [2m---[0;39m [2m[trap-executor-0][0;39m [36mc.n.d.s.r.aws.ConfigClusterResolver     [0;39m [2m:[0;39m Resolving eureka endpoints via configuration
+-[2m2024-03-23 00:14:10.179[0;39m [32m- INFO[0;39m [35m29750[0;39m [2m---[0;39m [2m[trap-executor-0][0;39m [36mc.n.d.s.r.aws.ConfigClusterResolver     [0;39m [2m:[0;39m Resolving eureka endpoints via configuration
+-[2m2024-03-23 00:19:10.180[0;39m [32m- INFO[0;39m [35m29750[0;39m [2m---[0;39m [2m[trap-executor-0][0;39m [36mc.n.d.s.r.aws.ConfigClusterResolver     [0;39m [2m:[0;39m Resolving eureka endpoints via configuration
+-[2m2024-03-23 00:24:10.181[0;39m [32m- INFO[0;39m [35m29750[0;39m [2m---[0;39m [2m[trap-executor-0][0;39m [36mc.n.d.s.r.aws.ConfigClusterResolver     [0;39m [2m:[0;39m Resolving eureka endpoints via configuration
+>>>>>>> Stashed changes
 -
