@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-import AbhaRegister from "./AbhaRegister";
 
 function AddPatientForm() {
   const {
@@ -177,7 +176,105 @@ function AddPatientForm() {
           Creating ABHA ID
         </p>
       </div>
-      <AbhaRegister />
+      <div className="grid grid-cols-2 gap-5 text-[#7B7878] font-medium	text-xl mt-8">
+        <div>
+          <div className="flex flex-col">
+            <p className="mr-48 text-sm">Aadhaar Number</p>
+            <div className="relative flex w-full">
+              <input
+                className="rounded-md pr-32 w-full"
+                type="text"
+                name=""
+                {...register2("aadhaar", {
+                  pattern: {
+                    value: /^[0-9]+$/,
+                    message: "Only Numbers are allowed",
+                  },
+                })}
+              />
+              <button
+                className="!absolute p-1 bg-[#006666] text-white right-1 top-[3px] rounded"
+                onClick={handleSubmit2(() => {
+                  console.log("das");
+                })}
+              >
+                Send OTP
+              </button>
+            </div>
+            <p className="errorMsg">{errors2.aadhaar?.message}</p>
+          </div>
+        </div>
+
+        <div>
+          <div className="flex flex-col">
+            <p className="mr-48 text-sm">Mobile</p>
+            <div className="relative flex w-full">
+              <input
+                className="rounded-md pr-32 w-full"
+                type="text"
+                name=""
+                id=""
+                {...register2("mobile", {
+                  pattern: {
+                    value: /^[0-9]+$/,
+                    message: "Only Numbers are allowed",
+                  },
+                })}
+              />
+              <button
+                className="!absolute p-1 bg-[#006666] text-white right-1 top-[3px] rounded"
+                onClick={handleSubmit2(() => {
+                  console.log(getValues2());
+                })}
+              >
+                Send OTP
+              </button>
+            </div>
+            <p className="errorMsg">{errors2.mobile?.message}</p>
+          </div>
+        </div>
+        <div>
+          <div className="flex flex-col">
+            <p className="mr-48 text-sm">OTP</p>
+            <input
+              className="rounded-md w-72"
+              type="text"
+              name=""
+              id=""
+              {...register2("otp", {
+                pattern: {
+                  value: /^[0-9]+$/,
+                  message: "Only Numbers are allowed",
+                },
+              })}
+            />
+            <p className="errorMsg">{errors2.otp?.message}</p>
+          </div>
+        </div>
+        <div>
+          <div className="flex h-full items-end justify-center w-72">
+            <button
+              type="submit"
+              className="w-40 p-2 bg-[#006666] text-white rounded-md"
+              onClick={handleSubmit2(() => {
+                console.log(getValues2());
+              })}
+            >
+              Confirm
+            </button>
+          </div>
+        </div>
+        <div>
+          <div className="flex flex-col">
+            <p className="text-sm">Select ID</p>
+            <select className="w-full rounded-md" name="bloodGroup" id="">
+              <option value="" disabled>
+                Select ID
+              </option>
+            </select>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
