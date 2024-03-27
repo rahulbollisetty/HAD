@@ -20,6 +20,9 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import java.net.InetAddress;
 import java.util.Arrays;
 
+import java.net.InetAddress;
+import java.util.Arrays;
+
 @RestController
 @RequestMapping("/patient")
 @Slf4j
@@ -73,12 +76,21 @@ public class PatientController {
     }
 
     @PreAuthorize("hasAnyAuthority('DOCTOR','STAFF')")
+<<<<<<< HEAD
     @PostMapping(value = "/userAuthInit")
     public SseEmitter userAuthInit(@RequestBody JsonNode jsonNode, HttpServletRequest request) {
         String patientSBXId = jsonNode.get("patientSBXId").asText();
         String requesterId = jsonNode.get("requesterId").asText();
         String requesterType = jsonNode.get("requesterType").asText();
         return patientService.userAuthInit(patientSBXId, requesterId, requesterType);
+=======
+    @PostMapping(value = "/userAuthInit",produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> userAuthInit(@RequestBody JsonNode jsonNode, HttpServletRequest request) {
+        String patientSBXId = jsonNode.get("patientSBXId").asText();
+        String requesterId = jsonNode.get("requesterId").asText();
+        String requesterType = jsonNode.get("requesterType").asText();
+        String details = patientService.userAuthInit(patientSBXId, requesterId, requesterType, "df");
+        return ResponseEntity.ok(details);
+>>>>>>> 758bc15 (webhook added)
     }
-
 }

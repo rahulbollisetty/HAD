@@ -8,6 +8,10 @@ import org.had.abdm_backend.repository.AbdmIdVerifyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+<<<<<<< HEAD
+=======
+import java.util.Optional;
+>>>>>>> 758bc15 (webhook added)
 
 @Service
 public class UserAuthService {

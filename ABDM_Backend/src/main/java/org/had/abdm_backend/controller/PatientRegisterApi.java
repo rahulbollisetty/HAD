@@ -62,8 +62,12 @@ public class PatientRegisterApi {
         String requesterId = jsonNode.get("requesterId").asText();
         String requesterType = jsonNode.get("requesterType").asText();
         String remoteAddr = jsonNode.get("routingKey").asText();
+<<<<<<< HEAD
         String requestId = jsonNode.get("requestId").asText();
         String details = abdmService.userAuthInit(patientSBXId, requesterId, requesterType,remoteAddr,requestId);
+=======
+        String details = abdmService.userAuthInit(patientSBXId, requesterId, requesterType,remoteAddr);
+>>>>>>> 758bc15 (webhook added)
         return ResponseEntity.ok("OTP Sent");
     }
 
