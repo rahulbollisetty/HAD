@@ -3,7 +3,9 @@ package org.had.abdm_backend.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
+import org.had.abdm_backend.entity.AbdmIdVerify;
 import org.had.abdm_backend.exception.MyWebClientException;
+import org.had.abdm_backend.repository.AbdmIdVerifyRepository;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatusCode;
@@ -25,6 +27,12 @@ public class ABDMService {
 
     @Getter
     public String token;
+
+    @Autowired
+    private AbdmIdVerifyRepository abdmIdVerifyRepository;
+
+    @Autowired
+    private RabbitMqService rabbitMqService;
 
     public String getDoctorDetails(String hprid, String password) throws JsonProcessingException {
 
@@ -233,7 +241,7 @@ public class ABDMService {
                 .bodyToMono(String.class).block();
     }
 
-    public String userAuthInit(String patientSBXId, String requesterId, String requesterType) throws JsonProcessingException {
+    public String userAuthInit(String patientSBXId, String requesterId, String requesterType, String routingKey) throws JsonProcessingException {
         String timeStamp = getCurrentSimpleTimestamp();
 
         Map<String, Object> content = new HashMap<>();
@@ -247,10 +255,16 @@ public class ABDMService {
         query.put("purpose", "KYC_AND_LINK");
         query.put("authMode", "MOBILE_OTP");
         query.put("requester", requester);
-
-        content.put("requestId", UUID.randomUUID().toString());
+        String requestid = UUID.randomUUID().toString();
+        content.put("requestId", requestid);
         content.put("timestamp", timeStamp);
         content.put("query", query);
+
+        // Storing in AbdmIdVerify entity
+        AbdmIdVerify entity = new AbdmIdVerify();
+        entity.setInitRequestId(requestid);
+        entity.setRoutingKey(routingKey);
+        abdmIdVerifyRepository.save(entity);
 
         var objectMapper = new ObjectMapper();
         String requestBody = objectMapper.writeValueAsString(content);
@@ -268,6 +282,37 @@ public class ABDMService {
                             .flatMap(errorBody -> Mono.error(new MyWebClientException(errorBody, clientResponse.statusCode().value())));
                 })
                 .bodyToMono(String.class).block();
+    }
+
+    public String userAuthOTPVerify(String txnId, String authCode) throws JsonProcessingException {
+        String timeStamp = getCurrentSimpleTimestamp();
+
+        Map<String, Object> content = new HashMap<>();
+
+        Map<String, Object> credential = new HashMap<>();
+        credential.put("authCode", authCode);
+        String requestid = UUID.randomUUID().toString();
+        content.put("requestId", requestid);
+        content.put("timestamp", timeStamp);
+        content.put("transactionId", txnId);
+        content.put("credential",credential);
+
+        var objectMapper = new ObjectMapper();
+        String requestBody = objectMapper.writeValueAsString(content);
+
+        return webClient.post().uri("https://dev.abdm.gov.in/gateway/v0.5/users/auth/confirm")
+                .header("Authorization","Bearer "+token)
+                .header("accept", "*/*")
+                .header("X-CM-ID", "sbx")
+                .header("Content-Type", MediaType.APPLICATION_JSON_VALUE)
+                .body(BodyInserters.fromValue(requestBody.toString()))
+                .retrieve()
+                .onStatus(HttpStatusCode::isError,clientResponse -> {
+                    return clientResponse.bodyToMono(String.class)
+                            .flatMap(errorBody -> Mono.error(new MyWebClientException(errorBody, clientResponse.statusCode().value())));
+                })
+                .bodyToMono(String.class).block();
+
     }
 
 

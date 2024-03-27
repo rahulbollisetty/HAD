@@ -49,7 +49,7 @@ public class AuthorizationTokenFilter extends OncePerRequestFilter {
                     UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(user,null,user.getAuthorities());
                     authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(authToken);
-                    System.out.println(SecurityContextHolder.getContext().toString());
+//                    System.out.println(SecurityContextHolder.getContext().toString());
                 }
             }
         }

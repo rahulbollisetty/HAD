@@ -2,8 +2,10 @@ package org.had.abdm_backend.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
+import jakarta.servlet.http.HttpServletRequest;
 import org.had.abdm_backend.service.ABDMService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -59,9 +61,21 @@ public class PatientRegisterApi {
         String patientSBXId = jsonNode.get("patientSBXId").asText();
         String requesterId = jsonNode.get("requesterId").asText();
         String requesterType = jsonNode.get("requesterType").asText();
-        String details = abdmService.userAuthInit(patientSBXId, requesterId, requesterType);
-        return ResponseEntity.ok(details);
+        String remoteAddr = jsonNode.get("routingKey").asText();
+        String details = abdmService.userAuthInit(patientSBXId, requesterId, requesterType,remoteAddr);
+        return ResponseEntity.ok("OTP Sent");
     }
+
+    @PostMapping(value = "/userAuthOtpVerify",produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> userAuthOtpVerify(@RequestBody JsonNode jsonNode) throws JsonProcessingException {
+        abdmService.setToken();
+        String transactionId = jsonNode.get("transactionId").asText();
+        String authCode = jsonNode.get("authCode").asText();
+        String details = abdmService.userAuthOTPVerify(transactionId, authCode);
+        return ResponseEntity.ok("OTP Verified");
+    }
+
+
 
 
 }
