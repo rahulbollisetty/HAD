@@ -11618,6 +11618,7 @@ Caused by: org.springframework.security.access.AccessDeniedException: Access Den
 	... 65 common frames omitted
 
 [2m2024-03-28 14:21:04.065[0;39m [32m- INFO[0;39m [35m131962[0;39m [2m---[0;39m [2m[trap-executor-0][0;39m [36mc.n.d.s.r.aws.ConfigClusterResolver     [0;39m [2m:[0;39m Resolving eureka endpoints via configuration
+<<<<<<< HEAD
 =======
 [2m2024-03-27 18:21:49.818[0;39m [32m- INFO[0;39m [35m14372[0;39m [2m---[0;39m [2m[trap-executor-0][0;39m [36mc.n.d.s.r.aws.ConfigClusterResolver     [0;39m [2m:[0;39m Resolving eureka endpoints via configuration
 -[2m2024-03-27 18:23:35.377[0;39m [32m- INFO[0;39m [35m51788[0;39m [2m---[0;39m [2m[           main][0;39m [36mo.h.p.PatientServiceApplication         [0;39m [2m:[0;39m Starting PatientServiceApplication using Java 21.0.2 with PID 51788 (/home/fledlucifer/Desktop/HAD/Backend/PatientService/target/classes started by fledlucifer in /home/fledlucifer/Desktop/HAD/Backend)
@@ -23268,3 +23269,6 @@ Caused by: org.springframework.security.access.AccessDeniedException: Access Den
 	... 65 common frames omitted
 
 >>>>>>> 3229706 (sse added and connected with rabbitmq)
+=======
+-
+>>>>>>> 5793efb (sse added and connected with rabbitmq)
