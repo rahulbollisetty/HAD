@@ -62,7 +62,8 @@ public class PatientRegisterApi {
         String requesterId = jsonNode.get("requesterId").asText();
         String requesterType = jsonNode.get("requesterType").asText();
         String remoteAddr = jsonNode.get("routingKey").asText();
-        String details = abdmService.userAuthInit(patientSBXId, requesterId, requesterType,remoteAddr);
+        String requestId = jsonNode.get("requestId").asText();
+        String details = abdmService.userAuthInit(patientSBXId, requesterId, requesterType,remoteAddr,requestId);
         return ResponseEntity.ok("OTP Sent");
     }
 
