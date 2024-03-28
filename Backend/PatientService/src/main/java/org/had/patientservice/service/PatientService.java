@@ -132,7 +132,7 @@ public class PatientService {
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
-        return webClient.post().uri("http://127.0.0.1:9008/abdm/patient/userAuthInit")
+        return webClient.post().uri("https://e4b2-119-161-98-68.ngrok-free.app/abdm/patient/userAuthInit")
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(BodyInserters.fromValue(requestBody))
                 .retrieve()
