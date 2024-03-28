@@ -8,14 +8,6 @@ import org.had.abdm_backend.repository.AbdmIdVerifyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-import java.util.Optional;
->>>>>>> 758bc15 (webhook added)
-=======
->>>>>>> 3229706 (sse added and connected with rabbitmq)
-
 @Service
 public class UserAuthService {
 
@@ -28,6 +20,7 @@ public class UserAuthService {
     public void userAuthOnInit(JsonNode jsonNode){
         String requestId = jsonNode.get("resp").get("requestId").asText();
         AbdmIdVerify abdmIdVerify = abdmIdVerifyRepository.findByInitRequestId(requestId).get();
+//        abdmIdVerify.setTxnId(jsonNode.get("transactionId").asText());
         ((ObjectNode) jsonNode).put("type", "userAuthInit");
         String data = jsonNode.toString();
         System.out.println(data);

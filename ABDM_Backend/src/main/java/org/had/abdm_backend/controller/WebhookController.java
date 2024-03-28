@@ -23,13 +23,6 @@ public class WebhookController {
     @PostMapping("/v0.5/users/auth/on-init")
     public void userAuthOnInit(@RequestBody JsonNode jsonNode){
         userAuthService.userAuthOnInit(jsonNode);
-<<<<<<< HEAD
-<<<<<<< HEAD
         System.out.println(userAuthService);
-=======
->>>>>>> 758bc15 (webhook added)
-=======
-        System.out.println(userAuthService);
->>>>>>> 3229706 (sse added and connected with rabbitmq)
     }
 }

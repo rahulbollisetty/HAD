@@ -241,15 +241,7 @@ public class ABDMService {
                 .bodyToMono(String.class).block();
     }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
     public String userAuthInit(String patientSBXId, String requesterId, String requesterType, String routingKey, String requestId) throws JsonProcessingException {
-=======
-    public String userAuthInit(String patientSBXId, String requesterId, String requesterType, String routingKey) throws JsonProcessingException {
->>>>>>> 758bc15 (webhook added)
-=======
-    public String userAuthInit(String patientSBXId, String requesterId, String requesterType, String routingKey, String requestId) throws JsonProcessingException {
->>>>>>> 3229706 (sse added and connected with rabbitmq)
         String timeStamp = getCurrentSimpleTimestamp();
 
         Map<String, Object> content = new HashMap<>();
@@ -263,30 +255,13 @@ public class ABDMService {
         query.put("purpose", "KYC_AND_LINK");
         query.put("authMode", "MOBILE_OTP");
         query.put("requester", requester);
-<<<<<<< HEAD
-<<<<<<< HEAD
         content.put("requestId", requestId);
-=======
-        String requestid = UUID.randomUUID().toString();
-        content.put("requestId", requestid);
->>>>>>> 758bc15 (webhook added)
-=======
-        content.put("requestId", requestId);
->>>>>>> 3229706 (sse added and connected with rabbitmq)
         content.put("timestamp", timeStamp);
         content.put("query", query);
 
         // Storing in AbdmIdVerify entity
         AbdmIdVerify entity = new AbdmIdVerify();
-<<<<<<< HEAD
-<<<<<<< HEAD
         entity.setInitRequestId(requestId);
-=======
-        entity.setInitRequestId(requestid);
->>>>>>> 758bc15 (webhook added)
-=======
-        entity.setInitRequestId(requestId);
->>>>>>> 3229706 (sse added and connected with rabbitmq)
         entity.setRoutingKey(routingKey);
         abdmIdVerifyRepository.save(entity);
 

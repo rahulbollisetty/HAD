@@ -62,17 +62,8 @@ public class PatientRegisterApi {
         String requesterId = jsonNode.get("requesterId").asText();
         String requesterType = jsonNode.get("requesterType").asText();
         String remoteAddr = jsonNode.get("routingKey").asText();
-<<<<<<< HEAD
-<<<<<<< HEAD
         String requestId = jsonNode.get("requestId").asText();
         String details = abdmService.userAuthInit(patientSBXId, requesterId, requesterType,remoteAddr,requestId);
-=======
-        String details = abdmService.userAuthInit(patientSBXId, requesterId, requesterType,remoteAddr);
->>>>>>> 758bc15 (webhook added)
-=======
-        String requestId = jsonNode.get("requestId").asText();
-        String details = abdmService.userAuthInit(patientSBXId, requesterId, requesterType,remoteAddr,requestId);
->>>>>>> 3229706 (sse added and connected with rabbitmq)
         return ResponseEntity.ok("OTP Sent");
     }
 
