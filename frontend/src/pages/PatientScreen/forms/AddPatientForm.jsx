@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import AbhaRegister from "./AbhaRegister";
+import AbhaVerify from "./AbhaVerify";
 
 function AddPatientForm() {
   const {
@@ -29,44 +30,7 @@ function AddPatientForm() {
 
   return (
     <div className="2xl:max-h-[43rem] 4xl:max-h-[70rem] overflow-auto p-4">
-      <div className="grid grid-cols-2 gap-5 text-[#7B7878] font-medium	text-xl mt-8">
-        <div>
-          <div className="flex flex-col">
-            <p className="mr-48 text-sm">ABHA ID</p>
-            <div className="relative flex w-full">
-              <input
-                className="rounded-md pr-32 w-full"
-                type="text"
-                name=""
-                id=""
-              />
-              <button className="!absolute p-1 bg-[#006666] text-white right-1 top-[3px] rounded">
-                Send OTP
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <div>
-          <div className="flex flex-col">
-            <p className="mr-48 text-sm">ABHA Number</p>
-            <input className="rounded-md w-full" type="text" name="" id="" />
-          </div>
-        </div>
-        <div>
-          <div className="flex flex-col">
-            <p className="mr-48 text-sm">OTP</p>
-            <input className="rounded-md w-72" type="text" name="" id="" />
-          </div>
-        </div>
-        <div>
-          <div className="flex h-full items-end justify-center w-72">
-            <button className="w-40 p-2 bg-[#006666] text-white rounded-md">
-              Get Details
-            </button>
-          </div>
-        </div>
-      </div>
+      <AbhaVerify />
       <hr className="h-[2px] bg-[#7B7878] mx-2 mt-6 opacity-50	" />
       <div className="grid grid-cols-3 gap-5 text-[#7B7878] font-medium	text-xl mt-8">
         <div>

@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import useAxiosPrivate from "../../../hooks/useAxiosPrivate";
-import axios from "../../../api/axios";
 import encryptData from "../../../utils/encryptData";
 function AbhaRegister() {
   const {
@@ -57,14 +56,10 @@ function AbhaRegister() {
                 const data = {
                   aadhaar: encryptData(getValues("aadhaar")),
                 };
-                const headers = {
-                  "Content-Type": "application/json",
-                };
                 try {
                   const resp = await axiosPrivate.post(
                     "/patient/aadhaarOTPinit",
                     data,
-                    { headers }
                   );
                   console.log(resp);
                   setTxn(resp.data.txnId);

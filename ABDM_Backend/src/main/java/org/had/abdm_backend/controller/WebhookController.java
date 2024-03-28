@@ -23,5 +23,6 @@ public class WebhookController {
     @PostMapping("/v0.5/users/auth/on-init")
     public void userAuthOnInit(@RequestBody JsonNode jsonNode){
         userAuthService.userAuthOnInit(jsonNode);
+        System.out.println(userAuthService);
     }
 }
