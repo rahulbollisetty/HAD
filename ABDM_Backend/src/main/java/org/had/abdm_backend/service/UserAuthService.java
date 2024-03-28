@@ -9,9 +9,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 import java.util.Optional;
 >>>>>>> 758bc15 (webhook added)
+=======
+>>>>>>> 3229706 (sse added and connected with rabbitmq)
 
 @Service
 public class UserAuthService {

@@ -16,9 +16,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
+<<<<<<< HEAD
 
 import java.net.InetAddress;
 import java.util.Arrays;
+=======
+>>>>>>> 3229706 (sse added and connected with rabbitmq)
 
 import java.net.InetAddress;
 import java.util.Arrays;
@@ -77,6 +80,7 @@ public class PatientController {
 
     @PreAuthorize("hasAnyAuthority('DOCTOR','STAFF')")
 <<<<<<< HEAD
+<<<<<<< HEAD
     @PostMapping(value = "/userAuthInit")
     public SseEmitter userAuthInit(@RequestBody JsonNode jsonNode, HttpServletRequest request) {
         String patientSBXId = jsonNode.get("patientSBXId").asText();
@@ -92,5 +96,14 @@ public class PatientController {
         String details = patientService.userAuthInit(patientSBXId, requesterId, requesterType, "df");
         return ResponseEntity.ok(details);
 >>>>>>> 758bc15 (webhook added)
+=======
+    @PostMapping(value = "/userAuthInit")
+    public SseEmitter userAuthInit(@RequestBody JsonNode jsonNode, HttpServletRequest request) {
+        String patientSBXId = jsonNode.get("patientSBXId").asText();
+        String requesterId = jsonNode.get("requesterId").asText();
+        String requesterType = jsonNode.get("requesterType").asText();
+        return patientService.userAuthInit(patientSBXId, requesterId, requesterType);
+>>>>>>> 3229706 (sse added and connected with rabbitmq)
     }
+
 }
