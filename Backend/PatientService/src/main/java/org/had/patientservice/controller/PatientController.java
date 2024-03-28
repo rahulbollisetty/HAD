@@ -2,6 +2,7 @@ package org.had.patientservice.controller;
 
 
 import com.fasterxml.jackson.databind.JsonNode;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.had.patientservice.service.PatientService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.net.InetAddress;
+import java.util.Arrays;
 
 @RestController
 @RequestMapping("/patient")
@@ -64,12 +68,11 @@ public class PatientController {
 
     @PreAuthorize("hasAnyAuthority('DOCTOR','STAFF')")
     @PostMapping(value = "/userAuthInit",produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> userAuthInit(@RequestBody JsonNode jsonNode) {
+    public ResponseEntity<?> userAuthInit(@RequestBody JsonNode jsonNode, HttpServletRequest request) {
         String patientSBXId = jsonNode.get("patientSBXId").asText();
         String requesterId = jsonNode.get("requesterId").asText();
         String requesterType = jsonNode.get("requesterType").asText();
-        String details = patientService.userAuthInit(patientSBXId, requesterId, requesterType);
+        String details = patientService.userAuthInit(patientSBXId, requesterId, requesterType, "df");
         return ResponseEntity.ok(details);
     }
-
 }

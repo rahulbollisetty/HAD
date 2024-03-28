@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.had.accountservice.exception.MyWebClientException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,9 @@ public class PatientService {
 
     @Autowired
     private WebClient webClient;
+
+    @Value("${routingKey.name}")
+    private String routingKey;
 
     public String requestAadharOtp(String aadhar) {
         var values = new HashMap<String, String>() {{
@@ -118,11 +122,12 @@ public class PatientService {
                 .bodyToMono(String.class).block();
     }
 
-    public String userAuthInit(String patientSBXId, String requesterId, String requesterType) {
+    public String userAuthInit(String patientSBXId, String requesterId, String requesterType, String remoteAddr) {
         var values = new HashMap<String, String>() {{
             put("patientSBXId", patientSBXId);
             put("requesterId",requesterId);
             put("requesterType",requesterType);
+            put("routingKey",routingKey);
         }};
 
         String requestBody = null;
