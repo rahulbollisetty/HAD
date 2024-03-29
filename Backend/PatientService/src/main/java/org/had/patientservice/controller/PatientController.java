@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
-import java.io.IOException;
 
 
 @RestController
@@ -104,9 +103,8 @@ public class PatientController {
         return ResponseEntity.ok(result);
     }
 
-    @PreAuthorize("hasAnyAuthority('DOCTOR','STAFF')")
-    @PostMapping(value = "/auth/userAuthInit",produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public ResponseEntity<SseEmitter> userAuthInit(@RequestBody JsonNode jsonNode, HttpServletRequest request) throws IOException {
+    @PostMapping(value = "/userAuthInit")
+    public SseEmitter userAuthInit(@RequestBody JsonNode jsonNode, HttpServletRequest request) {
         String patientSBXId = jsonNode.get("patientSBXId").asText();
         String requesterId = jsonNode.get("requesterId").asText();
         String requesterType = jsonNode.get("requesterType").asText();
