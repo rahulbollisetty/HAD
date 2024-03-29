@@ -1,12 +1,56 @@
 import { MdSearch, MdAdd } from "react-icons/md";
 import { FaCaretRight } from "react-icons/fa";
+import React from "react";
+import {
+  Button,
+  Dialog,
+  DialogHeader,
+  DialogBody,
+  DialogFooter,
+} from "@material-tailwind/react";
+import AddAppointmentForm from "../forms/AddAppointmentForm";
+
 function PastRecords() {
+
+  const [open, setOpen] = React.useState(false);
+
+  const handleOpen = () => setOpen(!open);
+
   return (
     <div className="border mx-3 my-4 border-[#006666] rounded-md border-l-4">
+      <div className="flex justify-between items-center">
         <p className="font-semibold relative text-2xl ml-4 mt-4 mb-4 text-[#444444]">
-          Past Records Details
+          Consent Request Details
         </p>
-      
+        <button onClick={handleOpen} className="inline-flex gap-[15px] px-[1.05rem] m-2 py-[0.25rem] h-[2.8rem] justify-center items-center text-white w-fit hover:bg-[#276059] bg-[#006666] rounded-[10px]">
+          <MdAdd className="h-[35px] w-[35px] m-auto" />
+          <div className="relative w-fit font-semibold m-auto text-[20px]">
+            Add Appointment
+          </div>
+        </button>
+
+        <Dialog open={open} handler={handleOpen} size="lg">
+              <DialogHeader>New Appointment</DialogHeader>
+              <div className="h-[1px] bg-[#827F7F82]"></div>
+              <DialogBody>
+                <AddAppointmentForm />
+              </DialogBody>
+              <DialogFooter>
+                <Button
+                  variant="text"
+                  color="red"
+                  onClick={handleOpen}
+                  className="mr-1"
+                >
+                  <span>Cancel</span>
+                </Button>
+                
+                <Button variant="filled" className="bg-[#FFA000]" onClick={handleOpen}>
+                  <span>Confirm</span>
+                </Button>
+              </DialogFooter>
+            </Dialog>
+      </div>
       <div className="h-[1px] bg-[#827F7F82]"></div>
       <div className="sm:rounded-lg 2xl:max-h-[500px] 4xl:max-h-[800px] lg:max-h-[50px] flex flex-col overflow-auto">
         <table className="w-full text-sm text-left rtl:text-right text-gray-500">
