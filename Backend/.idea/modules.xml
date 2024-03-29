@@ -2,7 +2,11 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+<<<<<<< HEAD
       <module fileurl="file://$PROJECT_DIR$/PatientService/PatientService.iml" filepath="$PROJECT_DIR$/PatientService/PatientService.iml" />
+=======
+      <module fileurl="file://$PROJECT_DIR$/AccountService/AccountService.iml" filepath="$PROJECT_DIR$/AccountService/AccountService.iml" />
+>>>>>>> fb39001 (blank)
     </modules>
   </component>
 </project>

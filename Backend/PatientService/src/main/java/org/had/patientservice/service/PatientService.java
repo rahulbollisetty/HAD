@@ -168,6 +168,7 @@ public class PatientService {
 
     }
 
+<<<<<<< HEAD
     public ResponseEntity<SseEmitter> userAuthVerify(String txnId, String name, String gender, String dob) throws IOException {
         String requestId = UUID.randomUUID().toString();
         var values = new HashMap<String, String>() {{
@@ -206,6 +207,8 @@ public class PatientService {
 
     }
 
+=======
+>>>>>>> fb39001 (blank)
     public String userOTPVerify(String transactionId, String otp) {
         var values = new HashMap<String, String>() {{
             put("otp", otp);
