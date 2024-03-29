@@ -22,6 +22,23 @@
       </jdbc-additional-properties>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
+<<<<<<< HEAD
+=======
+    <data-source source="LOCAL" name="Account@localhost" uuid="57e60d2b-56e0-43d7-8b2b-9e5535d3aef6">
+      <driver-ref>mysql.8</driver-ref>
+      <synchronize>true</synchronize>
+      <imported>true</imported>
+      <remarks>$PROJECT_DIR$/AccountService/src/main/resources/application.properties</remarks>
+      <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>
+      <jdbc-url>jdbc:mysql://localhost:3306/Account?createDatabaseIfNotExist=true</jdbc-url>
+      <jdbc-additional-properties>
+        <property name="com.intellij.clouds.kubernetes.db.host.port" />
+        <property name="com.intellij.clouds.kubernetes.db.enabled" value="false" />
+        <property name="com.intellij.clouds.kubernetes.db.container.port" />
+      </jdbc-additional-properties>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
+>>>>>>> fb39001 (blank)
     <data-source source="LOCAL" name="Patient@localhost" uuid="27241298-1323-45f6-9770-f76b79ec899f">
       <driver-ref>mysql.8</driver-ref>
       <synchronize>true</synchronize>
