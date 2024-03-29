@@ -23,34 +23,13 @@ public class PatientDetails {
     private String address;
 
     @Column(nullable = false)
-    private String abhaNumber;
+    private String abha_id;
 
-    @Column(nullable = false)
-    private String abhaAddress;
+    private Integer year_of_birth;
 
-    private String year_of_birth;
+    private String mobile_number;
 
     private String gender;
-
-    private String mobileNumber;
-
-    private String email;
-
-    private String DOB;
-
-    private String bloodGroup;
-
-    private String occupation;
-
-    private String familyMemberName;
-
-    private String relationship;
-
-    private String town;
-
-    private String pincode;
-
-    private String state;
 
     private String hospital_id;
 
