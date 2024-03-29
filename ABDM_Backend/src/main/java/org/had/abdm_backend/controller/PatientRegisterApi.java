@@ -63,15 +63,16 @@ public class PatientRegisterApi {
         String requesterType = jsonNode.get("requesterType").asText();
         String remoteAddr = jsonNode.get("routingKey").asText();
         String requestId = jsonNode.get("requestId").asText();
-        String details = abdmService.userAuthInit(patientSBXId, requesterId, requesterType,remoteAddr,requestId);
+        abdmService.userAuthInit(patientSBXId, requesterId, requesterType,remoteAddr,requestId);
         return ResponseEntity.ok("OTP Sent");
     }
+
 
     @PostMapping(value = "/userAuthOtpVerify",produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> userAuthOtpVerify(@RequestBody JsonNode jsonNode) throws JsonProcessingException {
         abdmService.setToken();
         String transactionId = jsonNode.get("transactionId").asText();
-        String authCode = jsonNode.get("authCode").asText();
+        String authCode = jsonNode.get("otp").asText();
         String details = abdmService.userAuthOTPVerify(transactionId, authCode);
         return ResponseEntity.ok("OTP Verified");
     }

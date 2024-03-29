@@ -79,4 +79,11 @@ public class PatientController {
         return patientService.userAuthInit(patientSBXId, requesterId, requesterType);
     }
 
+    @PostMapping(value = "/userOTPVerify")
+    public String userOTPVerify(@RequestBody JsonNode jsonNode, HttpServletRequest request) {
+        String transactionId = jsonNode.get("transactionId").asText();
+        String OTP = jsonNode.get("OTP").asText();
+        return patientService.userOTPVerify(transactionId, OTP);
+    }
+
 }
