@@ -1,1 +1,3 @@
-appLog.*
+.idea/
+appLog.log
+appLog.*.*.*.*
