@@ -105,8 +105,6 @@ public class PatientController {
     }
 
     @PreAuthorize("hasAnyAuthority('DOCTOR','STAFF')")
-    @PostMapping(value = "/userAuthInit")
-    public SseEmitter userAuthInit(@RequestBody JsonNode jsonNode, HttpServletRequest request) {
     @PostMapping(value = "/auth/userAuthInit",produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public ResponseEntity<SseEmitter> userAuthInit(@RequestBody JsonNode jsonNode, HttpServletRequest request) throws IOException {
         String patientSBXId = jsonNode.get("patientSBXId").asText();
