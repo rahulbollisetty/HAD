@@ -26,11 +26,12 @@ public class RabbitMqService {
 
                 switch (type) {
                     case "userAuthInit":
-                        sseService.sendUserAuthData(jsonData);
+                        sseService.sendUserAuthInitData(jsonNode);
                         System.out.println("Received userAuthInit: " + jsonData);
                         break;
-                    case "userAuthOtpVerify":
-                        System.out.println("Received userAuthOtpVerify: " + jsonData);
+                    case "userAuthOnConfirm":
+                        sseService.sendUserAuthVerifyData(jsonNode);
+                        System.out.println("Received userAuthOnConfirm: " + jsonData);
                         break;
                     default:
                     System.out.println("Unknown data type");

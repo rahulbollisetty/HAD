@@ -360,13 +360,13 @@ public class ABDMService {
 
         Map<String, String> requester = new HashMap<>();
         requester.put("type", requesterType);
-        requester.put("id", requesterId);
+        requester.put("id", patientSBXId);
 
         Map<String, Object> query = new HashMap<>();
         query.put("id", patientSBXId);
         query.put("purpose", "KYC_AND_LINK");
-        query.put("authMode", "MOBILE_OTP");
-        query.put("requester", requester);
+        query.put("authMode", "DEMOGRAPHICS");
+        query.put("requester", requesterId);
         content.put("requestId", requestId);
         content.put("timestamp", timeStamp);
         content.put("query", query);
@@ -395,18 +395,26 @@ public class ABDMService {
                 .bodyToMono(String.class).block();
     }
 
-    public String userAuthOTPVerify(String txnId, String authCode) throws JsonProcessingException {
+    public String userAuthOTPVerify(String txnId, String name, String gender, String dob, String requestId) throws JsonProcessingException {
         String timeStamp = getCurrentSimpleTimestamp();
 
         Map<String, Object> content = new HashMap<>();
-
         Map<String, Object> credential = new HashMap<>();
-        credential.put("authCode", authCode);
-        String requestid = UUID.randomUUID().toString();
-        content.put("requestId", requestid);
+        Map<String, Object> demographic = new HashMap<>();
+
+        demographic.put("name", name);
+        demographic.put("gender",gender);
+        demographic.put("dateOfBirth",dob);
+
+        content.put("requestId", requestId);
         content.put("timestamp", timeStamp);
         content.put("transactionId", txnId);
+        credential.put("demographic",demographic);
         content.put("credential",credential);
+
+        AbdmIdVerify entity = abdmIdVerifyRepository.findByTxnId(txnId).get();
+        entity.setVerifyRequestId(requestId);
+        abdmIdVerifyRepository.save(entity);
 
         var objectMapper = new ObjectMapper();
         String requestBody = objectMapper.writeValueAsString(content);
@@ -423,7 +431,6 @@ public class ABDMService {
                             .flatMap(errorBody -> Mono.error(new MyWebClientException(errorBody, clientResponse.statusCode().value())));
                 })
                 .bodyToMono(String.class).block();
-
     }
 
 

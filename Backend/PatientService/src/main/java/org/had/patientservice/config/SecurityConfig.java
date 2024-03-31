@@ -25,6 +25,7 @@ public class SecurityConfig {
         http.csrf((csrf) -> csrf.disable()).cors(cors -> cors.disable())
                 .cors(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers("/patient/auth/**").permitAll()
                                 .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session

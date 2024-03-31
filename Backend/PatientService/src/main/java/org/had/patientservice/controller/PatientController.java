@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
+import java.io.IOException;
 
 
 @RestController
@@ -106,6 +107,8 @@ public class PatientController {
     @PreAuthorize("hasAnyAuthority('DOCTOR','STAFF')")
     @PostMapping(value = "/userAuthInit")
     public SseEmitter userAuthInit(@RequestBody JsonNode jsonNode, HttpServletRequest request) {
+    @PostMapping(value = "/auth/userAuthInit",produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    public ResponseEntity<SseEmitter> userAuthInit(@RequestBody JsonNode jsonNode, HttpServletRequest request) throws IOException {
         String patientSBXId = jsonNode.get("patientSBXId").asText();
         String requesterId = jsonNode.get("requesterId").asText();
         String requesterType = jsonNode.get("requesterType").asText();
@@ -131,6 +134,13 @@ public class PatientController {
         String gender = jsonNode.get("gender").asText();
 
         return patientService.savePatient(fullName, abhaAddress, address, yearOfBirth, mobileNumber, gender);
+    @PostMapping(value = "/auth/userAuthVerify",produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    public ResponseEntity<SseEmitter> userAuthVerify(@RequestBody JsonNode jsonNode, HttpServletRequest request) throws IOException {
+        String txnId = jsonNode.get("transactionId").asText();
+        String name = jsonNode.get("name").asText();
+        String gender = jsonNode.get("requesterType").asText();
+        String dob = jsonNode.get("dob").asText();
+        return patientService.userAuthVerify(txnId, name, gender, dob);
     }
 
 }

@@ -13,7 +13,7 @@ import { Toaster } from 'react-hot-toast';
 function App() {
   return (
     <div>
-      <Toaster position="bottom-right" reverseOrder={false} containerStyle={{zIndex: 99999}}/>
+      <Toaster position="top-right" reverseOrder={false} containerStyle={{zIndex: 99999}}/>
       <Routes>
         <Route path="/" element={<Layout />}>
           {/* public routes */}
