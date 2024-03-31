@@ -14,22 +14,39 @@ public class PatientDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String mrn;
+    private Integer mrn;
 
-    @Column(nullable = false)
     private String full_name;
 
-    @Column(nullable = false)
     private String address;
 
-    @Column(nullable = false)
-    private String abha_id;
+    private String abhaAddress;
 
-    private Integer year_of_birth;
+    private String abhaNumber;
 
-    private String mobile_number;
+    private String year_of_birth;
 
     private String gender;
+
+    private String mobileNumber;
+
+    private String email;
+
+    private String DOB;
+
+    private String bloodGroup;
+
+    private String occupation;
+
+    private String familyMemberName;
+
+    private String relationship;
+
+    private String town;
+
+    private String pincode;
+
+    private String state;
 
     private String hospital_id;
 
