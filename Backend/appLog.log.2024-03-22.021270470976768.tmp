@@ -1,7 +1,0 @@
-[2m2024-03-23 00:00:59.934[0;39m [32m- INFO[0;39m [35m27392[0;39m [2m---[0;39m [2m[trap-executor-0][0;39m [36mc.n.d.s.r.aws.ConfigClusterResolver     [0;39m [2m:[0;39m Resolving eureka endpoints via configuration
--[2m2024-03-23 00:05:59.951[0;39m [32m- INFO[0;39m [35m27392[0;39m [2m---[0;39m [2m[trap-executor-0][0;39m [36mc.n.d.s.r.aws.ConfigClusterResolver     [0;39m [2m:[0;39m Resolving eureka endpoints via configuration
--[2m2024-03-23 00:10:59.952[0;39m [32m- INFO[0;39m [35m27392[0;39m [2m---[0;39m [2m[trap-executor-0][0;39m [36mc.n.d.s.r.aws.ConfigClusterResolver     [0;39m [2m:[0;39m Resolving eureka endpoints via configuration
--[2m2024-03-23 00:15:59.953[0;39m [32m- INFO[0;39m [35m27392[0;39m [2m---[0;39m [2m[trap-executor-0][0;39m [36mc.n.d.s.r.aws.ConfigClusterResolver     [0;39m [2m:[0;39m Resolving eureka endpoints via configuration
--[2m2024-03-23 00:20:59.954[0;39m [32m- INFO[0;39m [35m27392[0;39m [2m---[0;39m [2m[trap-executor-0][0;39m [36mc.n.d.s.r.aws.ConfigClusterResolver     [0;39m [2m:[0;39m Resolving eureka endpoints via configuration
--[2m2024-03-23 00:25:59.955[0;39m [32m- INFO[0;39m [35m27392[0;39m [2m---[0;39m [2m[trap-executor-0][0;39m [36mc.n.d.s.r.aws.ConfigClusterResolver     [0;39m [2m:[0;39m Resolving eureka endpoints via configuration
--

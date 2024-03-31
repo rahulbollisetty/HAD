@@ -228,6 +228,10 @@ public class PatientService {
 
     }
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> d059e56 (gitogonre updated)
     public ResponseEntity<SseEmitter> userAuthInit(String patientSBXId, String requesterId, String requesterType) throws IOException {
         String requestId = UUID.randomUUID().toString();
         var values = new HashMap<String, String>() {{
@@ -265,47 +269,6 @@ public class PatientService {
 
     }
 
-<<<<<<< HEAD
-    public ResponseEntity<SseEmitter> userAuthVerify(String txnId, String name, String gender, String dob) throws IOException {
-        String requestId = UUID.randomUUID().toString();
-        var values = new HashMap<String, String>() {{
-            put("transactionId", txnId);
-            put("name",name);
-            put("gender",gender);
-            put("dob",dob);
-            put("requestId",requestId);
-        }};
-
-        String requestBody = null;
-        var objectMapper = new ObjectMapper();
-        try {
-            requestBody = objectMapper.writeValueAsString(values);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
-
-        SseEmitter sseEmitter = sseService.createSseEmitter(requestId);
-        try{
-            String response = webClient.post().uri("http://127.0.0.1:9008/abdm/patient/userAuthVerify")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .body(BodyInserters.fromValue(requestBody))
-                    .retrieve()
-                    .onStatus(HttpStatusCode::isError, clientResponse -> {
-                        return clientResponse.bodyToMono(String.class)
-                                .flatMap(errorBody -> Mono.error(new MyWebClientException(errorBody, clientResponse.statusCode().value())));
-                    })
-                    .bodyToMono(String.class).block();
-            return ResponseEntity.ok().body(sseEmitter);
-        }
-        catch (MyWebClientException e){
-            sseService.sendErrorMessage(e.getMessage(),e.getStatus(),sseEmitter);
-            return ResponseEntity.badRequest().body(sseEmitter);
-        }
-
-    }
-
-=======
->>>>>>> fb39001 (blank)
     public String userOTPVerify(String transactionId, String otp) {
         var values = new HashMap<String, String>() {{
             put("otp", otp);
