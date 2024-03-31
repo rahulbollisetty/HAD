@@ -25,17 +25,13 @@ public class AppointmentDetails {
 //    @NotNull
 //    private Integer hospital_id;
 
-    @NotNull
-    private Integer doctor_id;
+    private String doctor_id;
 
-    @NotNull
     private Integer patient_id;
 
-    @NotNull
-    private Date date;
+    private String date;
 
-    @NotNull
-    private Time time;
+    private String time;
 
 
 }
