@@ -1,13 +1,1 @@
-<<<<<<< HEAD
-<<<<<<< HEAD
-.idea/
-appLog.log
-appLog.*.*.*.*
-=======
 appLog.*
->>>>>>> 9dc9f5c (patient Auth added)
-=======
-.idea/
-appLog.log
-appLog.*.*.*.*
->>>>>>> 911fbe4 (added gitignore)
