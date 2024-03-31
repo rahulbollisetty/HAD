@@ -8,6 +8,7 @@ import org.had.abdm_backend.exception.MyWebClientException;
 import org.had.abdm_backend.repository.AbdmIdVerifyRepository;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
@@ -18,7 +19,9 @@ import reactor.core.publisher.Mono;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 @Service
 public class ABDMService {
@@ -97,30 +100,26 @@ public class ABDMService {
 
     public String aadharOtpInit(String aadhar) throws JsonProcessingException{
 
-
         var values = new HashMap<String,Object>(){{
-            put("scope", Collections.singletonList("abha-enrol"));
-            put("loginHint", "aadhaar");
-            put("loginId",aadhar);
-            put("otpSystem", "aadhaar");
+            put("aadhaar",aadhar);
         }};
 
         var objectMapper = new ObjectMapper();
         String requestBody = objectMapper
                 .writeValueAsString(values);
 
-        return webClient.post().uri("https://abhasbx.abdm.gov.in/abha/api/v3/enrollment/request/otp")
+        return webClient.post().uri("https://healthidsbx.abdm.gov.in/api/v2/registration/aadhaar/generateOtp")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization","Bearer "+token)
-                .header("REQUEST-ID",UUID.randomUUID().toString())
-                .header("TIMESTAMP", getISOTimestamp())
+                .header("accept", "*/*")
+                .header("Accept-Language", "en-US")
                 .body(BodyInserters.fromValue(requestBody.toString()))
                 .retrieve()
                 .onStatus(HttpStatusCode::isError,clientResponse -> {
                     return clientResponse.bodyToMono(String.class)
                             .flatMap(errorBody -> Mono.error(new MyWebClientException(errorBody, clientResponse.statusCode().value())));
                 })
-                .bodyToMono(String.class).block();//
+                .bodyToMono(String.class).block();
     }
 
     public String getISOTimestamp(){
@@ -132,67 +131,21 @@ public class ABDMService {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         return now.format(formatter);
     }
-    public String aadharOtpVerify(String otp, String mobile, String txnId) throws JsonProcessingException{
-        String timeStamp = getCurrentSimpleTimestamp();
-
-        Map<String, Object> root = new HashMap<>();
-
-        Map<String, Object> authData = new HashMap<>();
-
-        List<String> authMethods = Arrays.asList("otp");
-        authData.put("authMethods", authMethods);
-
-        Map<String, String> otpDetails = new HashMap<>();
-        otpDetails.put("timeStamp", timeStamp);
-        otpDetails.put("txnId", txnId);
-        otpDetails.put("otpValue", otp);
-        otpDetails.put("mobile", mobile);
-        authData.put("otp", otpDetails);
-
-        root.put("authData", authData);
-
-        Map<String, String> consent = new HashMap<>();
-        consent.put("code", "abha-enrollment");
-        consent.put("version", "1.4");
-
-        root.put("consent", consent);
-
-        var objectMapper = new ObjectMapper();
-        String requestBody = objectMapper
-                .writeValueAsString(root);
-
-        return webClient.post().uri("https://abhasbx.abdm.gov.in/abha/api/v3/enrollment/enrol/byAadhaar")
-                .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization","Bearer "+token)
-                .header("REQUEST-ID",UUID.randomUUID().toString())
-                .header("TIMESTAMP", getISOTimestamp())
-                .body(BodyInserters.fromValue(requestBody.toString()))
-                .retrieve()
-                .onStatus(HttpStatusCode::isError,clientResponse -> {
-                    return clientResponse.bodyToMono(String.class)
-                            .flatMap(errorBody -> Mono.error(new MyWebClientException(errorBody, clientResponse.statusCode().value())));
-                })
-                .bodyToMono(String.class).block();//
-    }
-
-    public String mobileOtpInit(String txnId, String loginId) throws JsonProcessingException{
+    public String aadharOtpVerify(String otp, String txnId) throws JsonProcessingException{
         var values = new HashMap<String,Object>(){{
-            put("txnId", txnId);
-            put("scope", Arrays.asList("abha-enrol", "mobile-verify"));
-            put("loginHint", "mobile");
-            put("loginId",loginId);
-            put("otpSystem", "abdm");
+            put("otp",otp);
+            put("txnId",txnId);
         }};
 
         var objectMapper = new ObjectMapper();
         String requestBody = objectMapper
                 .writeValueAsString(values);
 
-        return webClient.post().uri("https://abhasbx.abdm.gov.in/abha/api/v3/enrollment/request/otp")
+        return webClient.post().uri("https://healthidsbx.abdm.gov.in/api/v2/registration/aadhaar/verifyOTP")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization","Bearer "+token)
-                .header("REQUEST-ID",UUID.randomUUID().toString())
-                .header("TIMESTAMP", getISOTimestamp())
+                .header("accept", "*/*")
+                .header("Accept-Language", "en-US")
                 .body(BodyInserters.fromValue(requestBody.toString()))
                 .retrieve()
                 .onStatus(HttpStatusCode::isError,clientResponse -> {
@@ -202,36 +155,21 @@ public class ABDMService {
                 .bodyToMono(String.class).block();//
     }
 
-    public String mobileOtpVerify(String otp, String txnId) throws JsonProcessingException{
-        String timeStamp = getCurrentSimpleTimestamp();
-
-        Map<String, Object> root = new HashMap<>();
-
-        Map<String, String> otpMap = new HashMap<>();
-        otpMap.put("timeStamp", timeStamp);
-        otpMap.put("txnId", txnId);
-        otpMap.put("otpValue", otp);
-
-        List<String> authMethods = Arrays.asList("otp");
-
-        Map<String, Object> authData = new HashMap<>();
-        authData.put("authMethods", authMethods);
-        authData.put("otp", otpMap);
-
-        List<String> scope = Arrays.asList("abha-enrol", "mobile-verify");
-
-        root.put("scope", scope);
-        root.put("authData", authData);
+    public String mobileOtpInit(String txnId, String mobile) throws JsonProcessingException{
+        var values = new HashMap<String,Object>(){{
+            put("txnId", txnId);
+            put("mobile", mobile);
+        }};
 
         var objectMapper = new ObjectMapper();
         String requestBody = objectMapper
-                .writeValueAsString(root);
+                .writeValueAsString(values);
 
-        return webClient.post().uri("https://abhasbx.abdm.gov.in/abha/api/v3/enrollment/auth/byAbdm")
+        return webClient.post().uri("https://healthidsbx.abdm.gov.in/api/v2/registration/aadhaar/checkAndGenerateMobileOTP")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization","Bearer "+token)
-                .header("REQUEST-ID",UUID.randomUUID().toString())
-                .header("TIMESTAMP", getISOTimestamp())
+                .header("accept", "*/*")
+                .header("Accept-Language", "en-US")
                 .body(BodyInserters.fromValue(requestBody.toString()))
                 .retrieve()
                 .onStatus(HttpStatusCode::isError,clientResponse -> {
@@ -240,6 +178,180 @@ public class ABDMService {
                 })
                 .bodyToMono(String.class).block();
     }
+
+    public String mobileOTPVerify(String txnId, String otp) {
+        var values = new HashMap<String,Object>(){{
+            put("txnId", txnId);
+            put("otp", otp);
+        }};
+
+        var objectMapper = new ObjectMapper();
+        String requestBody = null;
+        try {
+            requestBody = objectMapper
+                    .writeValueAsString(values);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+
+        return webClient.post().uri("https://healthidsbx.abdm.gov.in/api/v2/registration/aadhaar/verifyMobileOTP")
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization","Bearer "+token)
+                .header("accept", "*/*")
+                .header("Accept-Language", "en-US")
+                .body(BodyInserters.fromValue(requestBody.toString()))
+                .retrieve()
+                .onStatus(HttpStatusCode::isError,clientResponse -> {
+                    return clientResponse.bodyToMono(String.class)
+                            .flatMap(errorBody -> Mono.error(new MyWebClientException(errorBody, clientResponse.statusCode().value())));
+                })
+                .bodyToMono(String.class).block();
+
+    }
+
+    public String createHealthId(String txnId) throws JsonProcessingException{
+        var values = new HashMap<String,Object>(){{
+            put("txnId", txnId);
+        }};
+
+        var objectMapper = new ObjectMapper();
+        String requestBody = objectMapper
+                .writeValueAsString(values);
+
+        return webClient.post().uri("https://healthidsbx.abdm.gov.in/api/v2/registration/aadhaar/createHealthIdByAdhaar")
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization","Bearer "+token)
+                .header("accept", "*/*")
+                .header("Accept-Language", "en-US")
+                .body(BodyInserters.fromValue(requestBody.toString()))
+                .retrieve()
+                .onStatus(HttpStatusCode::isError,clientResponse -> {
+                    return clientResponse.bodyToMono(String.class)
+                            .flatMap(errorBody -> Mono.error(new MyWebClientException(errorBody, clientResponse.statusCode().value())));
+                })
+                .bodyToMono(String.class).block();
+    }
+
+    public String getProfileDetails(String authToken) {
+        var values = new HashMap<String,Object>(){{
+            put("authToken", authToken);
+        }};
+
+        var objectMapper = new ObjectMapper();
+        String requestBody = null;
+        try {
+            requestBody = objectMapper
+                    .writeValueAsString(values);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+
+        return webClient.post().uri("https://phrsbx.abdm.gov.in/api/v1/phr/profile/link/profileDetails")
+                .header("sec-ch-ua", "\"Not_A Brand;v=99\", \"Google Chrome;v=109\", \"Chromium;v=109\"")
+                .header("sec-ch-ua-mobile", "?0")
+                .header("Authorization", "Bearer " + token)
+                .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36")
+                .header("Content-Type", "application/json;charset=UTF-8")
+                .header("Referer", "https://phr.abdm.gov.in/register/health-id")
+                .header("sec-ch-ua-platform", "Linux")
+                .header("Sec-Fetch-Mode", "cors")
+                .body(BodyInserters.fromValue(requestBody))
+                .retrieve()
+                .onStatus(HttpStatusCode::isError,clientResponse -> {
+                    return clientResponse.bodyToMono(String.class)
+                            .flatMap(errorBody -> Mono.error(new MyWebClientException(errorBody, clientResponse.statusCode().value())));
+                })
+                .bodyToMono(String.class)
+                .block();
+    }
+
+    public String healthIdSuggestions(String transactionId) {
+        var values = new HashMap<String,Object>(){{
+            put("transactionId", transactionId);
+        }};
+
+        var objectMapper = new ObjectMapper();
+        String requestBody = null;
+        try {
+            requestBody = objectMapper
+                    .writeValueAsString(values);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+
+        return webClient.post().uri("https://phrsbx.abdm.gov.in/api/v1/phr/registration/phr/suggestion")
+                .header("sec-ch-ua", "\"Not_A Brand;v=99\", \"Google Chrome;v=109\", \"Chromium;v=109\"")
+                .header("sec-ch-ua-mobile", "?0")
+                .header("Authorization", "Bearer " + token)
+                .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36")
+                .header("Content-Type", "application/json;charset=UTF-8")
+                .header("Referer", "https://phr.abdm.gov.in/register/health-id")
+                .header("sec-ch-ua-platform", "Linux")
+                .body(BodyInserters.fromValue(requestBody))
+                .retrieve()
+                .onStatus(HttpStatusCode::isError,clientResponse -> {
+                    return clientResponse.bodyToMono(String.class)
+                            .flatMap(errorBody -> Mono.error(new MyWebClientException(errorBody, clientResponse.statusCode().value())));
+                })
+                .bodyToMono(String.class)
+                .block();
+    }
+
+    public String checkPHRAddressExist(String Id) {
+
+        return webClient.get().uri("https://phrsbx.abdm.gov.in/api/v1/phr/search/isExist?phrAddress=" + Id)
+                .header("sec-ch-ua", "\"Not_A Brand;v=99\", \"Google Chrome;v=109\", \"Chromium;v=109\"")
+                .header("sec-ch-ua-mobile", "?0")
+                .header("Authorization", "Bearer " + token)
+                .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36")
+                .header("Content-Type", "application/json;charset=UTF-8")
+                .header("Referer", "https://phr.abdm.gov.in/register/health-id")
+                .header("sec-ch-ua-platform", "Linux")
+                .retrieve()
+                .onStatus(HttpStatusCode::isError,clientResponse -> {
+                    return clientResponse.bodyToMono(String.class)
+                            .flatMap(errorBody -> Mono.error(new MyWebClientException(errorBody, clientResponse.statusCode().value())));
+                })
+                .bodyToMono(String.class)
+                .block();
+    }
+
+    public String createPHRAddress(String phrAddress, String transactionId) {
+        var values = new HashMap<String,Object>(){{
+            put("transactionId", transactionId);
+            put("phrAddress", phrAddress);
+            put("alreadyExistedPHR", "false");
+        }};
+
+        var objectMapper = new ObjectMapper();
+        String requestBody = null;
+        try {
+            requestBody = objectMapper
+                    .writeValueAsString(values);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+
+        return webClient.post().uri("https://phrsbx.abdm.gov.in/api/v1/phr/registration/hid/create-phr-address")
+                .header("sec-ch-ua", "\"Not_A Brand;v=99\", \"Google Chrome;v=109\", \"Chromium;v=109\"")
+                .header("sec-ch-ua-mobile", "?0")
+                .header("Authorization", "Bearer " + token)
+                .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36")
+                .header("Content-Type", "application/json;charset=UTF-8")
+                .header("Referer", "https://phr.abdm.gov.in/register/health-id")
+                .header("sec-ch-ua-platform", "Linux")
+                .body(BodyInserters.fromValue(requestBody))
+                .retrieve()
+                .onStatus(HttpStatusCode::isError,clientResponse -> {
+                    return clientResponse.bodyToMono(String.class)
+                            .flatMap(errorBody -> Mono.error(new MyWebClientException(errorBody, clientResponse.statusCode().value())));
+                })
+                .bodyToMono(String.class)
+                .block();
+
+    }
+
+
 
     public String userAuthInit(String patientSBXId, String requesterId, String requesterType, String routingKey, String requestId) throws JsonProcessingException {
         String timeStamp = getCurrentSimpleTimestamp();
@@ -313,6 +425,7 @@ public class ABDMService {
                 .bodyToMono(String.class).block();
 
     }
+
 
 
 
