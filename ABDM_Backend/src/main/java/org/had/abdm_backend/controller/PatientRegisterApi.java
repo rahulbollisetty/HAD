@@ -19,41 +19,79 @@ public class PatientRegisterApi {
     @Autowired
     private ABDMService abdmService;
 
-    @PostMapping(value = "/aadhaarOTPinit",produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> aadhaarOTPinit(@RequestBody JsonNode jsonNode) throws JsonProcessingException {
+    @PostMapping(value = "/aadhaarOTPInit",produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> aadhaarOTPInit(@RequestBody JsonNode jsonNode) throws JsonProcessingException {
         abdmService.setToken();
         String aadhar = jsonNode.get("aadhaar").asText();
         String details = abdmService.aadharOtpInit(aadhar);
         return ResponseEntity.ok(details);
     }
 
-    @PostMapping(value = "/aadhaarOTPverify",produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> aadhaarOTPverify(@RequestBody JsonNode jsonNode) throws JsonProcessingException {
+    @PostMapping(value = "/aadhaarOTPVerify",produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> aadhaarOTPVerify(@RequestBody JsonNode jsonNode) throws JsonProcessingException {
         abdmService.setToken();
         String otp = jsonNode.get("otp").asText();
         String txnId = jsonNode.get("transactionId").asText();
-        String mobile = jsonNode.get("mobileNumber").asText();
-        String details = abdmService.aadharOtpVerify(otp,mobile,txnId);
+        String details = abdmService.aadharOtpVerify(otp, txnId);
         return ResponseEntity.ok(details);
     }
 
-    @PostMapping(value = "/mobileOTPinit",produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> mobileOTPinit(@RequestBody JsonNode jsonNode) throws JsonProcessingException {
+    @PostMapping(value = "/checkAndMobileOTPInit",produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> checkAndMobileOTPInit(@RequestBody JsonNode jsonNode) throws JsonProcessingException {
         abdmService.setToken();
         String txnId = jsonNode.get("txnId").asText();
-        String loginId = jsonNode.get("loginId").asText();
-        String details = abdmService.mobileOtpInit(txnId,loginId);
+        String mobile = jsonNode.get("mobile").asText();
+        String details = abdmService.mobileOtpInit(txnId, mobile);
         return ResponseEntity.ok(details);
     }
 
-    @PostMapping(value = "/mobileOTPverify",produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> mobileOTPverify(@RequestBody JsonNode jsonNode) throws JsonProcessingException {
+    @PostMapping(value = "/mobileOTPVerify",produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> mobileOTPVerify(@RequestBody JsonNode jsonNode) throws JsonProcessingException {
         abdmService.setToken();
         String txnId = jsonNode.get("txnId").asText();
         String otp = jsonNode.get("otp").asText();
-        String details = abdmService.mobileOtpVerify(otp,txnId);
+        String details = abdmService.mobileOTPVerify(txnId, otp);
         return ResponseEntity.ok(details);
     }
+    @PostMapping(value = "/createHealthId",produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> createHealthId(@RequestBody JsonNode jsonNode) throws JsonProcessingException {
+        abdmService.setToken();
+        String txnId = jsonNode.get("txnId").asText();
+        String details = abdmService.createHealthId(txnId);
+        return ResponseEntity.ok(details);
+    }
+
+
+    @PostMapping(value = "/getProfileDetails", produces = MediaType.APPLICATION_JSON_VALUE)
+    public String getProfileDetails(@RequestBody JsonNode jsonNode) throws JsonProcessingException {
+            abdmService.setToken();
+            String authToken = jsonNode.get("authToken").asText();
+            return abdmService.getProfileDetails(authToken);
+    }
+
+    @PostMapping(value = "/healthIdSuggestions", produces = MediaType.APPLICATION_JSON_VALUE)
+    public String healthIdSuggestions(@RequestBody JsonNode jsonNode) throws JsonProcessingException {
+        abdmService.setToken();
+        String transactionId = jsonNode.get("transactionId").asText();
+        return abdmService.healthIdSuggestions(transactionId);
+    }
+
+    @PostMapping(value = "/checkPHRAddressExist", produces = MediaType.APPLICATION_JSON_VALUE)
+    public String checkPHRAddressExist(@RequestBody JsonNode jsonNode) throws JsonProcessingException {
+        abdmService.setToken();
+        String Id = jsonNode.get("Id").asText();
+        return abdmService.checkPHRAddressExist(Id);
+    }
+
+    @PostMapping(value = "/createPHRAddress", produces = MediaType.APPLICATION_JSON_VALUE)
+    public String createPHRAddress(@RequestBody JsonNode jsonNode) throws JsonProcessingException {
+        abdmService.setToken();
+        String phrAddress = jsonNode.get("phrAddress").asText();
+        String transactionId = jsonNode.get("transactionId").asText();
+        return abdmService.createPHRAddress(phrAddress, transactionId);
+    }
+
+
 
     @PostMapping(value = "/userAuthInit",produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> userAuthInit(@RequestBody JsonNode jsonNode) throws JsonProcessingException {
@@ -76,6 +114,8 @@ public class PatientRegisterApi {
         String details = abdmService.userAuthOTPVerify(transactionId, authCode);
         return ResponseEntity.ok("OTP Verified");
     }
+
+
 
 
 

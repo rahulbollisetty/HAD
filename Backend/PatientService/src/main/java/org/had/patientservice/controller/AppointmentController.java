@@ -13,6 +13,6 @@ public class AppointmentController {
     @Autowired
     private AppointmentService appointmentService;
 
-    @PostMapping("/createAppointment")
+//    @PostMapping("/createAppointment")
 
 }

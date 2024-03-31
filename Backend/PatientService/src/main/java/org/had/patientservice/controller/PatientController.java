@@ -36,7 +36,7 @@ public class PatientController {
     }
 
     @PreAuthorize("hasAnyAuthority('DOCTOR','STAFF')")
-    @PostMapping(value = "/aadhaarOTPinit",produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/aadhaarOTPInit",produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> requestAadharOTP(@RequestBody JsonNode jsonNode){
         String aadhaar = jsonNode.get("aadhaar").asText();
         String result = patientService.requestAadharOtp(aadhaar);
@@ -44,33 +44,66 @@ public class PatientController {
     }
 
     @PreAuthorize("hasAnyAuthority('DOCTOR','STAFF')")
-    @PostMapping(value = "/aadharOTPverify",produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/aadharOTPVerify",produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> verifyAadharOTP(@RequestBody JsonNode jsonNode) {
         String otp = jsonNode.get("otp").asText();
-        String mobileNumber = jsonNode.get("mobileNumber").asText();
         String transactionId = jsonNode.get("transactionId").asText();
-        String result = patientService.verifyAadharOTP(otp, mobileNumber, transactionId);
+        String result = patientService.verifyAadharOTP(otp, transactionId);
         return ResponseEntity.ok(result);
     }
 
     @PreAuthorize("hasAnyAuthority('DOCTOR','STAFF')")
-    @PostMapping(value = "/mobileOTPinit",produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> requestMobileOTP(@RequestBody JsonNode jsonNode) {
-        String loginId = jsonNode.get("loginId").asText();
+    @PostMapping(value = "/checkAndMobileOTPInit",produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> checkAndMobileOTPinit(@RequestBody JsonNode jsonNode) {
+        String mobile = jsonNode.get("mobile").asText();
         String txnId = jsonNode.get("txnId").asText();
-        String result = patientService.requestMobileOTP(loginId, txnId);
+        String result = patientService.checkAndMobileOTPinit(mobile, txnId);
         return ResponseEntity.ok(result);
     }
 
     @PreAuthorize("hasAnyAuthority('DOCTOR','STAFF')")
-    @PostMapping(value = "/mobileOTPverify",produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> verifyMobileOTP(@RequestBody JsonNode jsonNode) {
+    @PostMapping(value = "/mobileOTPVerify",produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> mobileOTPVerify(@RequestBody JsonNode jsonNode) {
         String otp = jsonNode.get("otp").asText();
         String txnId = jsonNode.get("txnId").asText();
-        String result = patientService.verifyMobileOTP(otp, txnId);
+        String result = patientService.mobileOTPVerify(otp, txnId);
         return ResponseEntity.ok(result);
     }
 
+    @PreAuthorize("hasAnyAuthority('DOCTOR','STAFF')")
+    @PostMapping(value = "/createHealthId",produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> createHealthId(@RequestBody JsonNode jsonNode) {
+        String txnId = jsonNode.get("txnId").asText();
+        String result = patientService.createHealthId(txnId);
+        return ResponseEntity.ok(result);
+    }
+
+    @PreAuthorize("hasAnyAuthority('DOCTOR','STAFF')")
+    @PostMapping(value = "/getProfileDetails",produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getProfileDetails(@RequestBody JsonNode jsonNode) {
+        String authToken = jsonNode.get("authToken").asText();
+        String result = patientService.getProfileDetails(authToken);
+        return ResponseEntity.ok(result);
+    }
+
+    @PreAuthorize("hasAnyAuthority('DOCTOR','STAFF')")
+    @PostMapping(value = "/checkPHRAddressExist",produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> checkPHRAddressExist(@RequestBody JsonNode jsonNode) {
+        String Id = jsonNode.get("Id").asText();
+        String result = patientService.checkPHRAddressExist(Id);
+        return ResponseEntity.ok(result);
+    }
+
+    @PreAuthorize("hasAnyAuthority('DOCTOR','STAFF')")
+    @PostMapping(value = "/createPHRAddress",produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> createPHRAddress(@RequestBody JsonNode jsonNode) {
+        String phrAddress = jsonNode.get("phrAddress").asText();
+        String transactionId = jsonNode.get("transactionId").asText();
+        String result = patientService.createPHRAddress(phrAddress, transactionId);
+        return ResponseEntity.ok(result);
+    }
+
+    @PreAuthorize("hasAnyAuthority('DOCTOR','STAFF')")
     @PostMapping(value = "/userAuthInit")
     public SseEmitter userAuthInit(@RequestBody JsonNode jsonNode, HttpServletRequest request) {
         String patientSBXId = jsonNode.get("patientSBXId").asText();
@@ -79,11 +112,25 @@ public class PatientController {
         return patientService.userAuthInit(patientSBXId, requesterId, requesterType);
     }
 
+    @PreAuthorize("hasAnyAuthority('DOCTOR','STAFF')")
     @PostMapping(value = "/userOTPVerify")
     public String userOTPVerify(@RequestBody JsonNode jsonNode, HttpServletRequest request) {
         String transactionId = jsonNode.get("transactionId").asText();
         String OTP = jsonNode.get("OTP").asText();
         return patientService.userOTPVerify(transactionId, OTP);
+    }
+
+    @PreAuthorize("hasAnyAuthority('DOCTOR','STAFF')")
+    @PostMapping(value = "/savePatient")
+    public String savePatient(@RequestBody JsonNode jsonNode, HttpServletRequest request) {
+        String fullName = jsonNode.get("fullName").asText();
+        String abhaAddress = jsonNode.get("abhaAddress").asText();
+        String address = jsonNode.get("address").asText();
+        String yearOfBirth = jsonNode.get("yearOfBirth").asText();
+        String mobileNumber = jsonNode.get("mobileNumber").asText();
+        String gender = jsonNode.get("gender").asText();
+
+        return patientService.savePatient(fullName, abhaAddress, address, yearOfBirth, mobileNumber, gender);
     }
 
 }
