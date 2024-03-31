@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.had.abdm_backend.service.ABDMService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -67,13 +68,16 @@ public class PatientRegisterApi {
         return ResponseEntity.ok("OTP Sent");
     }
 
-    @PostMapping(value = "/userAuthOtpVerify",produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> userAuthOtpVerify(@RequestBody JsonNode jsonNode) throws JsonProcessingException {
+    @PostMapping(value = "/userAuthVerify",produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> userAuthVerify(@RequestBody JsonNode jsonNode) throws JsonProcessingException {
         abdmService.setToken();
         String transactionId = jsonNode.get("transactionId").asText();
-        String authCode = jsonNode.get("authCode").asText();
-        String details = abdmService.userAuthOTPVerify(transactionId, authCode);
-        return ResponseEntity.ok("OTP Verified");
+        String name = jsonNode.get("name").asText();
+        String gender = jsonNode.get("gender").asText();
+        String dob = jsonNode.get("dob").asText();
+        String requestId = jsonNode.get("requestId").asText();
+        String details = abdmService.userAuthOTPVerify(transactionId, name, gender, dob, requestId);
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body("Details Sent for Verification");
     }
 
 

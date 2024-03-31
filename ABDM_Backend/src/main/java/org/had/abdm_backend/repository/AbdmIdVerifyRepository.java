@@ -8,4 +8,7 @@ import java.util.Optional;
 public interface AbdmIdVerifyRepository extends JpaRepository<AbdmIdVerify,Integer> {
 
     Optional<AbdmIdVerify> findByInitRequestId(String requestId);
+    Optional<AbdmIdVerify> findByVerifyRequestId(String requestId);
+
+    Optional<AbdmIdVerify> findByTxnId(String txnId);
 }

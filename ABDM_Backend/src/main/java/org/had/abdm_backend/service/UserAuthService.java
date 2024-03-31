@@ -20,8 +20,27 @@ public class UserAuthService {
     public void userAuthOnInit(JsonNode jsonNode){
         String requestId = jsonNode.get("resp").get("requestId").asText();
         AbdmIdVerify abdmIdVerify = abdmIdVerifyRepository.findByInitRequestId(requestId).get();
-//        abdmIdVerify.setTxnId(jsonNode.get("transactionId").asText());
+        if(!jsonNode.hasNonNull("error")){
+            System.err.println("errror has occurred");
+            abdmIdVerifyRepository.delete(abdmIdVerify);
+        } else if (jsonNode.hasNonNull("auth")) {
+            abdmIdVerify.setTxnId(jsonNode.get("auth").get("transactionId").asText());
+            abdmIdVerifyRepository.save(abdmIdVerify);
+        }
         ((ObjectNode) jsonNode).put("type", "userAuthInit");
+        String data = jsonNode.toString();
+        System.out.println(data);
+        rabbitMqService.sendMessage(data, abdmIdVerify.getRoutingKey());
+    }
+
+    public void userAuthOnConfirm(JsonNode jsonNode){
+        String requestId = jsonNode.get("resp").get("requestId").asText();
+        AbdmIdVerify abdmIdVerify = abdmIdVerifyRepository.findByVerifyRequestId(requestId).get();
+        if(!jsonNode.hasNonNull("error")){
+            System.err.println("errror has occurred");
+        }
+        abdmIdVerifyRepository.delete(abdmIdVerify);
+        ((ObjectNode) jsonNode).put("type", "userAuthOnConfirm");
         String data = jsonNode.toString();
         System.out.println(data);
         rabbitMqService.sendMessage(data, abdmIdVerify.getRoutingKey());

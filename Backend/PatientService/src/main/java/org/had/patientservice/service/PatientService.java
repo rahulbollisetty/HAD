@@ -13,9 +13,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyEmitter;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import reactor.core.publisher.Mono;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.UUID;
 
@@ -129,8 +131,7 @@ public class PatientService {
                 .bodyToMono(String.class).block();
     }
 
-    public SseEmitter userAuthInit(String patientSBXId, String requesterId, String requesterType) {
-
+    public ResponseEntity<SseEmitter> userAuthInit(String patientSBXId, String requesterId, String requesterType) throws IOException {
         String requestId = UUID.randomUUID().toString();
         var values = new HashMap<String, String>() {{
             put("patientSBXId", patientSBXId);
@@ -158,11 +159,49 @@ public class PatientService {
                             .flatMap(errorBody -> Mono.error(new MyWebClientException(errorBody, clientResponse.statusCode().value())));
                 })
                 .bodyToMono(String.class).block();
-        return sseEmitter;
+        return ResponseEntity.ok().body(sseEmitter);
         }
-        catch (Exception e){
-            System.out.println(e.getMessage());
-            return sseEmitter;
+        catch (MyWebClientException e){
+            sseService.sendErrorMessage(e.getMessage(),e.getStatus(),sseEmitter);
+            return ResponseEntity.badRequest().body(sseEmitter);
+        }
+
+    }
+
+    public ResponseEntity<SseEmitter> userAuthVerify(String txnId, String name, String gender, String dob) throws IOException {
+        String requestId = UUID.randomUUID().toString();
+        var values = new HashMap<String, String>() {{
+            put("transactionId", txnId);
+            put("name",name);
+            put("gender",gender);
+            put("dob",dob);
+            put("requestId",requestId);
+        }};
+
+        String requestBody = null;
+        var objectMapper = new ObjectMapper();
+        try {
+            requestBody = objectMapper.writeValueAsString(values);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+
+        SseEmitter sseEmitter = sseService.createSseEmitter(requestId);
+        try{
+            String response = webClient.post().uri("http://127.0.0.1:9008/abdm/patient/userAuthVerify")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(BodyInserters.fromValue(requestBody))
+                    .retrieve()
+                    .onStatus(HttpStatusCode::isError, clientResponse -> {
+                        return clientResponse.bodyToMono(String.class)
+                                .flatMap(errorBody -> Mono.error(new MyWebClientException(errorBody, clientResponse.statusCode().value())));
+                    })
+                    .bodyToMono(String.class).block();
+            return ResponseEntity.ok().body(sseEmitter);
+        }
+        catch (MyWebClientException e){
+            sseService.sendErrorMessage(e.getMessage(),e.getStatus(),sseEmitter);
+            return ResponseEntity.badRequest().body(sseEmitter);
         }
 
     }
