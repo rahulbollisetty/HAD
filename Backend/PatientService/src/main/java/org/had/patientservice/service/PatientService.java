@@ -228,7 +228,6 @@ public class PatientService {
 
     }
 
-    public SseEmitter userAuthInit(String patientSBXId, String requesterId, String requesterType) {
 
     public ResponseEntity<SseEmitter> userAuthInit(String patientSBXId, String requesterId, String requesterType) throws IOException {
         String requestId = UUID.randomUUID().toString();

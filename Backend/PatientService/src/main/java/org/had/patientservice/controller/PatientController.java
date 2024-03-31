@@ -28,14 +28,6 @@ public class PatientController {
     @Autowired
     private PatientService patientService;
 
-
-
-    @PreAuthorize("hasAnyAuthority('DOCTOR','STAFF')")
-    @PostMapping("/hello")
-    public String hello(){
-        return "hello";
-    }
-
     @PreAuthorize("hasAnyAuthority('DOCTOR','STAFF')")
     @PostMapping(value = "/aadhaarOTPInit",produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> requestAadharOTP(@RequestBody JsonNode jsonNode){
@@ -105,27 +97,26 @@ public class PatientController {
     }
 
     @PreAuthorize("hasAnyAuthority('DOCTOR','STAFF')")
-    @PostMapping(value = "/userAuthInit")
-    public SseEmitter userAuthInit(@RequestBody JsonNode jsonNode, HttpServletRequest request) {
     @PostMapping(value = "/auth/userAuthInit",produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public ResponseEntity<SseEmitter> userAuthInit(@RequestBody JsonNode jsonNode, HttpServletRequest request) throws IOException {
+    public ResponseEntity<SseEmitter> userAuthInit(@RequestBody JsonNode jsonNode) throws IOException {
         String patientSBXId = jsonNode.get("patientSBXId").asText();
         String requesterId = jsonNode.get("requesterId").asText();
         String requesterType = jsonNode.get("requesterType").asText();
         return patientService.userAuthInit(patientSBXId, requesterId, requesterType);
     }
 
-    @PreAuthorize("hasAnyAuthority('DOCTOR','STAFF')")
-    @PostMapping(value = "/userOTPVerify")
-    public String userOTPVerify(@RequestBody JsonNode jsonNode, HttpServletRequest request) {
-        String transactionId = jsonNode.get("transactionId").asText();
-        String OTP = jsonNode.get("OTP").asText();
-        return patientService.userOTPVerify(transactionId, OTP);
+    @PostMapping(value = "/auth/userAuthVerify",produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    public ResponseEntity<SseEmitter> userAuthVerify(@RequestBody JsonNode jsonNode) throws IOException {
+        String txnId = jsonNode.get("transactionId").asText();
+        String name = jsonNode.get("name").asText();
+        String gender = jsonNode.get("requesterType").asText();
+        String dob = jsonNode.get("dob").asText();
+        return patientService.userAuthVerify(txnId, name, gender, dob);
     }
 
     @PreAuthorize("hasAnyAuthority('DOCTOR','STAFF')")
     @PostMapping(value = "/savePatient")
-    public String savePatient(@RequestBody JsonNode jsonNode, HttpServletRequest request) {
+    public String savePatient(@RequestBody JsonNode jsonNode) {
         String fullName = jsonNode.get("fullName").asText();
         String abhaAddress = jsonNode.get("abhaAddress").asText();
         String address = jsonNode.get("address").asText();
@@ -134,13 +125,6 @@ public class PatientController {
         String gender = jsonNode.get("gender").asText();
 
         return patientService.savePatient(fullName, abhaAddress, address, yearOfBirth, mobileNumber, gender);
-    @PostMapping(value = "/auth/userAuthVerify",produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public ResponseEntity<SseEmitter> userAuthVerify(@RequestBody JsonNode jsonNode, HttpServletRequest request) throws IOException {
-        String txnId = jsonNode.get("transactionId").asText();
-        String name = jsonNode.get("name").asText();
-        String gender = jsonNode.get("requesterType").asText();
-        String dob = jsonNode.get("dob").asText();
-        return patientService.userAuthVerify(txnId, name, gender, dob);
-    }
+        }
 
 }
