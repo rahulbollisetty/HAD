@@ -245,10 +245,6 @@ public class ABDMService {
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
-<<<<<<< HEAD
-
-=======
->>>>>>> dev
         return webClient.post().uri("https://phrsbx.abdm.gov.in/api/v1/phr/profile/link/profileDetails")
                 .header("sec-ch-ua", "\"Not_A Brand;v=99\", \"Google Chrome;v=109\", \"Chromium;v=109\"")
                 .header("sec-ch-ua-mobile", "?0")
@@ -369,11 +365,7 @@ public class ABDMService {
         query.put("id", patientSBXId);
         query.put("purpose", "KYC_AND_LINK");
         query.put("authMode", "DEMOGRAPHICS");
-<<<<<<< HEAD
-        query.put("requester", requesterId);
-=======
         query.put("requester", requester);
->>>>>>> dev
         content.put("requestId", requestId);
         content.put("timestamp", timeStamp);
         content.put("query", query);

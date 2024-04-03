@@ -91,11 +91,6 @@ public class PatientRegisterApi {
         String transactionId = jsonNode.get("transactionId").asText();
         return abdmService.createPHRAddress(phrAddress, transactionId);
     }
-<<<<<<< HEAD
-
-
-=======
->>>>>>> dev
 
     @PostMapping(value = "/userAuthInit",produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> userAuthInit(@RequestBody JsonNode jsonNode) throws JsonProcessingException {
@@ -121,12 +116,4 @@ public class PatientRegisterApi {
         return ResponseEntity.status(HttpStatus.ACCEPTED).body("Details Sent for Verification");
     }
 
-<<<<<<< HEAD
-
-
-
-
-
-=======
->>>>>>> dev
 }
