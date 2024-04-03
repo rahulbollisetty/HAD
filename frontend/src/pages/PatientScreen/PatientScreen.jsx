@@ -16,15 +16,15 @@ export const PatientScreen = () => {
         <div className="flex flex-col h-full">
           <div className="h-[64px] w-full pb-16 bg-white"></div>
           <div className="bg-white grow m-3">
-            <div className="flex flex-col">
+            {/* <div className="flex flex-col">
               <Profile />
               <div className="">
                 <div className="flex mt-6 mb-8  justify-center">
                   <DoctorTab />
                 </div>
               </div>
-            </div>
-            {/* <AllPatientList/> */}
+            </div> */}
+            <AllPatientList/>
           </div>
         </div>
       </div>

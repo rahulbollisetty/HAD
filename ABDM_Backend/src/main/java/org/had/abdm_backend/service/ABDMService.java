@@ -245,7 +245,6 @@ public class ABDMService {
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
-
         return webClient.post().uri("https://phrsbx.abdm.gov.in/api/v1/phr/profile/link/profileDetails")
                 .header("sec-ch-ua", "\"Not_A Brand;v=99\", \"Google Chrome;v=109\", \"Chromium;v=109\"")
                 .header("sec-ch-ua-mobile", "?0")
@@ -360,13 +359,13 @@ public class ABDMService {
 
         Map<String, String> requester = new HashMap<>();
         requester.put("type", requesterType);
-        requester.put("id", patientSBXId);
+        requester.put("id", requesterId);
 
         Map<String, Object> query = new HashMap<>();
         query.put("id", patientSBXId);
         query.put("purpose", "KYC_AND_LINK");
         query.put("authMode", "DEMOGRAPHICS");
-        query.put("requester", requesterId);
+        query.put("requester", requester);
         content.put("requestId", requestId);
         content.put("timestamp", timeStamp);
         content.put("query", query);
@@ -379,7 +378,6 @@ public class ABDMService {
 
         var objectMapper = new ObjectMapper();
         String requestBody = objectMapper.writeValueAsString(content);
-
         return webClient.post().uri("https://dev.abdm.gov.in/gateway/v0.5/users/auth/init")
                 .header("Authorization","Bearer "+token)
                 .header("accept", "*/*")
@@ -433,7 +431,17 @@ public class ABDMService {
                 .bodyToMono(String.class).block();
     }
 
-
+    public String getLgdStatesList(){
+        return webClient.get().uri("https://hpridsbx.abdm.gov.in/api/v1/ha/lgd/states")
+                .header("Authorization","Bearer "+token)
+                .header("Content-Type", MediaType.APPLICATION_JSON_VALUE)
+                .retrieve()
+                .onStatus(HttpStatusCode::isError,clientResponse -> {
+                    return clientResponse.bodyToMono(String.class)
+                            .flatMap(errorBody -> Mono.error(new MyWebClientException(errorBody, clientResponse.statusCode().value())));
+                })
+                .bodyToMono(String.class).block();
+    }
 
 
 //    private String handleErrorResponse(ClientResponse response) {

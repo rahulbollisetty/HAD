@@ -14,11 +14,17 @@ public class HprApi {
 
     @Autowired
     private ABDMService abdmService;
-
     @PostMapping(value = "/getdoctordetails",produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getDoctorDetails(@RequestBody JsonNode doctorHPR) throws JsonProcessingException {
         abdmService.setToken();
         String details = abdmService.getDoctorDetails(doctorHPR.get("hprId").asText(), doctorHPR.get("password").asText());
+        return  ResponseEntity.ok(details);
+    }
+
+    @PostMapping(value = "/getLgdStatesList",produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getStatesList() throws JsonProcessingException {
+        abdmService.setToken();
+        String details = abdmService.getLgdStatesList();
         return  ResponseEntity.ok(details);
     }
 }

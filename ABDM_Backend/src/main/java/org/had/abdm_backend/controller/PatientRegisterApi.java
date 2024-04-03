@@ -92,8 +92,6 @@ public class PatientRegisterApi {
         return abdmService.createPHRAddress(phrAddress, transactionId);
     }
 
-
-
     @PostMapping(value = "/userAuthInit",produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> userAuthInit(@RequestBody JsonNode jsonNode) throws JsonProcessingException {
         abdmService.setToken();
@@ -117,10 +115,5 @@ public class PatientRegisterApi {
         String details = abdmService.userAuthOTPVerify(transactionId, name, gender, dob, requestId);
         return ResponseEntity.status(HttpStatus.ACCEPTED).body("Details Sent for Verification");
     }
-
-
-
-
-
 
 }

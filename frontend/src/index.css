@@ -20,6 +20,9 @@
         color: #d9534f;
         font-size: 14px;
       }
+      :root{
+        --toastify-z-index:999999;
+      }
 
      
       

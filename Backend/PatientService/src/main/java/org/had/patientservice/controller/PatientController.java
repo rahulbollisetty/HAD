@@ -3,7 +3,9 @@ package org.had.patientservice.controller;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import org.had.patientservice.dto.PatientDetailsDto;
 import org.had.patientservice.service.PatientService;
 import org.had.patientservice.service.RabbitMqService;
 import org.had.patientservice.service.SSEService;
@@ -88,6 +90,14 @@ public class PatientController {
     }
 
     @PreAuthorize("hasAnyAuthority('DOCTOR','STAFF')")
+    @PostMapping(value = "/healthIdSuggestions",produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> healthIdSuggestions(@RequestBody JsonNode jsonNode) {
+        String transactionId = jsonNode.get("transactionId").asText();
+        String result = patientService.healthIdSuggestions(transactionId);
+        return ResponseEntity.ok(result);
+    }
+
+    @PreAuthorize("hasAnyAuthority('DOCTOR','STAFF')")
     @PostMapping(value = "/createPHRAddress",produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> createPHRAddress(@RequestBody JsonNode jsonNode) {
         String phrAddress = jsonNode.get("phrAddress").asText();
@@ -109,22 +119,22 @@ public class PatientController {
     public ResponseEntity<SseEmitter> userAuthVerify(@RequestBody JsonNode jsonNode) throws IOException {
         String txnId = jsonNode.get("transactionId").asText();
         String name = jsonNode.get("name").asText();
-        String gender = jsonNode.get("requesterType").asText();
+        String gender = jsonNode.get("gender").asText();
         String dob = jsonNode.get("dob").asText();
         return patientService.userAuthVerify(txnId, name, gender, dob);
     }
 
     @PreAuthorize("hasAnyAuthority('DOCTOR','STAFF')")
     @PostMapping(value = "/savePatient")
-    public String savePatient(@RequestBody JsonNode jsonNode) {
-        String fullName = jsonNode.get("fullName").asText();
-        String abhaAddress = jsonNode.get("abhaAddress").asText();
-        String address = jsonNode.get("address").asText();
-        String yearOfBirth = jsonNode.get("yearOfBirth").asText();
-        String mobileNumber = jsonNode.get("mobileNumber").asText();
-        String gender = jsonNode.get("gender").asText();
-
-        return patientService.savePatient(fullName, abhaAddress, address, yearOfBirth, mobileNumber, gender);
+    public ResponseEntity<?> savePatient(@Valid @RequestBody PatientDetailsDto patientDetailsDto) {
+        return patientService.savePatient(patientDetailsDto);
         }
+
+    @PreAuthorize("hasAnyAuthority('DOCTOR','STAFF')")
+    @PostMapping(value = "/getLgdStatesList",produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getLgdStatesList(){
+        String result = patientService.getLgdStatesList();
+        return ResponseEntity.ok(result);
+    }
 
 }
