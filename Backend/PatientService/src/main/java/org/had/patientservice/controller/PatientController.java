@@ -119,7 +119,6 @@ public class PatientController {
     public ResponseEntity<SseEmitter> userAuthVerify(@RequestBody JsonNode jsonNode) throws IOException {
         String txnId = jsonNode.get("transactionId").asText();
         String name = jsonNode.get("name").asText();
-        String gender = jsonNode.get("requesterType").asText();
         String gender = jsonNode.get("gender").asText();
         String dob = jsonNode.get("dob").asText();
         return patientService.userAuthVerify(txnId, name, gender, dob);

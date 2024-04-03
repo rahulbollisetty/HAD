@@ -24,7 +24,6 @@ export const PatientScreen = () => {
                 </div>
               </div>
             </div>
-            {/* <AllPatientList/> */}
           </div>
         </div>
       </div>

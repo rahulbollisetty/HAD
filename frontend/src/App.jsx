@@ -14,12 +14,10 @@ import {
   Bounce,
 } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import AllPatientList from "./pages/PatientScreen/components/AllPatientList";
 function App() {
   return (
     <div>
-<<<<<<< HEAD
-      <Toaster position="top-right" reverseOrder={false} containerStyle={{zIndex: 99999}}/>
-=======
       <ToastContainer
         position="top-right"
         autoClose={5000}
@@ -33,7 +31,6 @@ function App() {
         theme="light"
         transition={Bounce}
       />
->>>>>>> dev
       <Routes>
         <Route path="/" element={<Layout />}>
           {/* public routes */}
@@ -45,7 +42,8 @@ function App() {
           {/* we want to protect these routes */}
           <Route element={<PersistLogin />}>
             <Route element={<RequireAuth allowedRoles={["DOCTOR"]} />}>
-              <Route path="/" element={<PatientScreen />} />
+              <Route path="/" element={<AllPatientList />} />
+              <Route path="/patientScreen" element={<PatientScreen />} />
             </Route>
 
             {/* <Route element={<RequireAuth allowedRoles={[ROLES.Editor]} />}>

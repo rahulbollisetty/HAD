@@ -1,17 +1,8 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-<<<<<<< HEAD
-import { fetchEventSource } from "@microsoft/fetch-event-source";
-import useFetchEventSource from "../../../hooks/useFetchEventSource";
-import toast from "react-hot-toast";
-import dayjs from "dayjs";
-
-function AbhaVerify() {
-=======
 import useFetchEventSource from "../../../hooks/useFetchEventSource";
 import { toast } from 'react-toastify';
 function AbhaVerify({sendDataToParent}) {
->>>>>>> dev
   const {
     register: register1,
     handleSubmit: handleSubmit1,
@@ -30,49 +21,6 @@ function AbhaVerify({sendDataToParent}) {
 
   const eventSource = useFetchEventSource();
 
-<<<<<<< HEAD
-  const [showOtpInput, setShowOtpInput] = useState(false);
-  const [txnId, setTxnId] = useState("");
-
-  return (
-    <div className="grid grid-cols-2 gap-5 text-[#7B7878] font-medium	text-xl mt-8">
-      <div>
-        <div className="flex flex-col">
-          <p className="mr-48 text-sm">ABHA ID</p>
-          <div className="relative flex w-full">
-            <input
-              className="rounded-md pr-32 w-full"
-              type="text"
-              name=""
-              id=""
-              {...register1("patientSBXId", {
-                required: "Required",
-                pattern: {
-                  value: /^(.+)@sbx$/,
-                  message: "ABHA Id should end with @sbx",
-                },
-              })}
-            />
-            <button
-              className="!absolute p-1 bg-[#006666] text-white right-1 top-[3px] rounded"
-              onClick={handleSubmit1(async () => {
-                console.log("jlkjlkj;lkj");
-                const data = {
-                  patientSBXId: getValues1("patientSBXId"),
-                  requesterId: "IN2210000259",
-                  requesterType: "HIP",
-                };
-
-                try {
-                  const abortController = new AbortController();
-                  await eventSource(
-                    "/patient/auth/userAuthInit",
-                    {
-                      method: "POST",
-                      body: JSON.stringify(data),
-                      onmessage(response) {
-                        console.log("response ", response);
-=======
   const [txnId, setTxnId] = useState("");
 
   const sendData = (data) => {
@@ -114,21 +62,14 @@ function AbhaVerify({sendDataToParent}) {
                       method: "POST",
                       body: JSON.stringify(data),
                       onmessage(response) {
->>>>>>> dev
                         var status = JSON.parse(response.data).statusCodeValue;
                         if (status >= 400)
                           toast.error(JSON.parse(response.data).body);
                         else if ((status = 200)) {
-<<<<<<< HEAD
-                          setShowOtpInput(true);
-                          setTxnId(JSON.parse(response.data).body.auth.transactionId);
-                          toast.success("OTP Sent");
-=======
                           setTxnId(
                             JSON.parse(response.data).body.auth.transactionId
                           );
                           toast.success("Verification Initiated");
->>>>>>> dev
                         }
                         abortController.abort();
                       },
@@ -142,18 +83,6 @@ function AbhaVerify({sendDataToParent}) {
                         throw new Error(error);
                       },
                       signal: abortController.signal,
-<<<<<<< HEAD
-                    }
-                  );
-                } catch (err) {
-                  console.log(err);
-                  //   toast.error(err);
-                }
-              })}
-            >
-              Confirm
-            </button>
-=======
                     });
                   } catch (err) {
                     console.log(err);
@@ -164,14 +93,9 @@ function AbhaVerify({sendDataToParent}) {
               </button>
             </div>
             <p className="errorMsg">{errors1.patientSBXId?.message}</p>
->>>>>>> dev
           </div>
-          <p className="errorMsg">{errors1.patientSBXId?.message}</p>
         </div>
       </div>
-<<<<<<< HEAD
-      
-=======
       <div className="grid grid-cols-4 gap-5 text-[#7B7878] font-medium	text-xl mt-8">
         <div>
           <div className="flex flex-col">
@@ -274,7 +198,6 @@ function AbhaVerify({sendDataToParent}) {
           </div>
         </div>
       </div>
->>>>>>> dev
     </div>
   );
 }
