@@ -359,7 +359,7 @@ public class ABDMService {
 
         Map<String, String> requester = new HashMap<>();
         requester.put("type", requesterType);
-        requester.put("id", patientSBXId);
+        requester.put("id", requesterId);
 
         Map<String, Object> query = new HashMap<>();
         query.put("id", patientSBXId);
