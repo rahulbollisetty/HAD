@@ -9,11 +9,31 @@ import Layout from "./pages/Layout";
 import Unauthorized from "./pages/exceptions/Unauthorized";
 import RequireAuth from "./routes/RequireAuth";
 import PersistLogin from "./PersistLogin";
-import { Toaster } from 'react-hot-toast';
+import {
+  ToastContainer,
+  Bounce,
+} from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 function App() {
   return (
     <div>
+<<<<<<< HEAD
       <Toaster position="top-right" reverseOrder={false} containerStyle={{zIndex: 99999}}/>
+=======
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+        transition={Bounce}
+      />
+>>>>>>> dev
       <Routes>
         <Route path="/" element={<Layout />}>
           {/* public routes */}

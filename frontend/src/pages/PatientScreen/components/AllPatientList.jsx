@@ -1,20 +1,11 @@
 import { MdSearch, MdAdd } from "react-icons/md";
 import { FaCaretRight } from "react-icons/fa";
 import React from "react";
-import {
-  Button,
-  Dialog,
-  DialogHeader,
-  DialogBody,
-  DialogFooter,
-} from "@material-tailwind/react";
+
 import AddPatientForm from "../forms/AddPatientForm";
 
 const AllPatientList = () => {
-  const [open, setOpen] = React.useState(false);
-
-  const handleOpen = () => setOpen(!open);
-
+  
   return (
     <div className="flex flex-col h-full">
       <div className="basis-[15%]">
@@ -34,39 +25,7 @@ const AllPatientList = () => {
               <MdSearch className="h-[25px] w-[25px]" />
             </div>
           </div>
-          <div className="">
-            <button
-              onClick={handleOpen}
-              className="inline-flex gap-[15px] px-[1.25rem] m-4 py-[0.625rem] h-[3.375rem] justify-center items-center text-white w-fit hover:bg-[#276059] bg-[#006666] rounded-[10px]"
-            >
-              <MdAdd className="h-[35px] w-[35px] m-auto" />
-              <div className="relative w-fit font-semibold m-auto text-[20px]">
-                Add Patients
-              </div>
-            </button>
-
-            <Dialog open={open} handler={handleOpen} size="md">
-              <DialogHeader>Add Patient</DialogHeader>
-              <div className="h-[1px] bg-[#827F7F82]"></div>
-              <DialogBody>
-                <AddPatientForm />
-              </DialogBody>
-              <DialogFooter>
-                <Button
-                  variant="text"
-                  color="red"
-                  onClick={handleOpen}
-                  className="mr-1"
-                >
-                  <span>Cancel</span>
-                </Button>
-                
-                <Button variant="filled" className="bg-[#FFA000]" onClick={handleOpen}>
-                  <span>Confirm</span>
-                </Button>
-              </DialogFooter>
-            </Dialog>
-          </div>
+          <AddPatientForm />
         </div>
       </div>
       <div className="basis-[85%]">

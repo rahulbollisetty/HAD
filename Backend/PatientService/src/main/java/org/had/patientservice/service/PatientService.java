@@ -4,6 +4,7 @@ package org.had.patientservice.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.had.accountservice.exception.MyWebClientException;
+import org.had.patientservice.dto.PatientDetailsDto;
 import org.had.patientservice.entity.PatientDetails;
 import org.had.patientservice.repository.PatientDetailsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -180,6 +181,28 @@ public class PatientService {
                 .bodyToMono(String.class).block();
     }
 
+    public String healthIdSuggestions(String txnId) {
+        var values = new HashMap<String, String>() {{
+            put("transactionId",txnId);
+        }};
+        String requestBody = null;
+        var objectMapper = new ObjectMapper();
+        try {
+            requestBody = objectMapper.writeValueAsString(values);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+        return webClient.post().uri("http://127.0.0.1:9008/abdm/patient/healthIdSuggestions")
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(BodyInserters.fromValue(requestBody))
+                .retrieve()
+                .onStatus(HttpStatusCode::isError, clientResponse -> {
+                    return clientResponse.bodyToMono(String.class)
+                            .flatMap(errorBody -> Mono.error(new MyWebClientException(errorBody, clientResponse.statusCode().value())));
+                })
+                .bodyToMono(String.class).block();
+    }
+
     public String checkPHRAddressExist(String Id) {
         var values = new HashMap<String, String>() {{
             put("Id",Id);
@@ -228,10 +251,6 @@ public class PatientService {
 
     }
 
-<<<<<<< HEAD
-=======
-
->>>>>>> d059e56 (gitogonre updated)
     public ResponseEntity<SseEmitter> userAuthInit(String patientSBXId, String requesterId, String requesterType) throws IOException {
         String requestId = UUID.randomUUID().toString();
         var values = new HashMap<String, String>() {{
@@ -269,23 +288,74 @@ public class PatientService {
 
     }
 
-    public String userOTPVerify(String transactionId, String otp) {
+    public ResponseEntity<SseEmitter> userAuthVerify(String txnId, String name, String gender, String dob) throws IOException {
+        String requestId = UUID.randomUUID().toString();
         var values = new HashMap<String, String>() {{
-            put("otp", otp);
-            put("transactionId",transactionId);
+            put("transactionId", txnId);
+            put("name",name);
+            put("gender",gender);
+            put("dob",dob);
+            put("requestId",requestId);
         }};
 
         String requestBody = null;
-
         var objectMapper = new ObjectMapper();
         try {
             requestBody = objectMapper.writeValueAsString(values);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
-        return webClient.post().uri("http://127.0.0.1:9008/abdm/patient/userAuthOtpVerify")
+
+        SseEmitter sseEmitter = sseService.createSseEmitter(requestId);
+        try{
+            String response = webClient.post().uri("http://127.0.0.1:9008/abdm/patient/userAuthVerify")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(BodyInserters.fromValue(requestBody))
+                    .retrieve()
+                    .onStatus(HttpStatusCode::isError, clientResponse -> {
+                        return clientResponse.bodyToMono(String.class)
+                                .flatMap(errorBody -> Mono.error(new MyWebClientException(errorBody, clientResponse.statusCode().value())));
+                    })
+                    .bodyToMono(String.class).block();
+            return ResponseEntity.ok().body(sseEmitter);
+        }
+        catch (MyWebClientException e){
+            sseService.sendErrorMessage(e.getMessage(),e.getStatus(),sseEmitter);
+            return ResponseEntity.badRequest().body(sseEmitter);
+        }
+
+    }
+
+    public ResponseEntity<?> savePatient(PatientDetailsDto patientDetailsDto) {
+        if (patientDetailsRepository.existsByAbhaAddress(patientDetailsDto.getAbhaAddress())) {
+            return ResponseEntity.badRequest().body("Abha Address already exists, Patient already exists");
+        }
+
+        PatientDetails patient = new PatientDetails();
+        patient.setName(patientDetailsDto.getName());
+        patient.setAbhaAddress(patientDetailsDto.getAbhaAddress());
+        patient.setAbhaNumber(patientDetailsDto.getAbhaNumber());
+        patient.setAddress(patientDetailsDto.getAddress());
+        patient.setMobileNumber(patientDetailsDto.getMobileNumber());
+        patient.setGender(patientDetailsDto.getGender());
+        patient.setDob(patientDetailsDto.getDob());
+        patient.setEmail(patientDetailsDto.getEmail());
+        patient.setBloodGroup(patientDetailsDto.getBloodGroup());
+        patient.setOccupation(patientDetailsDto.getOccupation());
+        patient.setFamilyMemberName(patientDetailsDto.getFamilyMemberName());
+        patient.setRelationship(patientDetailsDto.getRelationship());
+        patient.setTown(patientDetailsDto.getTown());
+        patient.setPincode(patientDetailsDto.getPincode());
+        patient.setState(patientDetailsDto.getState());
+        patientDetailsRepository.save(patient);
+        return ResponseEntity.ok().body("Patient Saved");
+
+    }
+
+
+    public String getLgdStatesList() {
+        return webClient.post().uri("http://127.0.0.1:9008/abdm/hpr/getLgdStatesList")
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(BodyInserters.fromValue(requestBody))
                 .retrieve()
                 .onStatus(HttpStatusCode::isError, clientResponse -> {
                     return clientResponse.bodyToMono(String.class)
@@ -293,26 +363,6 @@ public class PatientService {
                 })
                 .bodyToMono(String.class).block();
     }
-
-    public String savePatient(String fullName, String abhaAddress, String address, String yearOfBirth, String mobileNumber, String gender) {
-        if (patientDetailsRepository.existsByAbhaAddress(abhaAddress)) {
-            return "Abha Address already exists";
-        }
-
-        PatientDetails patient = new PatientDetails();
-        patient.setFull_name(fullName);
-        patient.setAbhaAddress(abhaAddress);
-        patient.setAddress(address);
-        patient.setYear_of_birth(yearOfBirth);
-        patient.setMobileNumber(mobileNumber);
-        patient.setGender(gender);
-
-        patientDetailsRepository.save(patient);
-
-        return "Patient Saved to Database";
-
-    }
-
 
 }
 

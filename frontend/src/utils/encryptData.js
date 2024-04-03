@@ -21,15 +21,8 @@ const encryptData = (dataToEncrypt) => {
     // Encrypt data using RSA/ECB/OAEPWithSHA-1AndMGF1Padding
     const encryptedData = forgePublicKey.encrypt(
       forge.util.encodeUtf8(dataToEncrypt),
-      "RSA-OAEP",
-      {
-        md: forge.md.sha1.create(),
-        mgf1: {
-          md: forge.md.sha1.create(),
-        },
-      }
+      'RSAES-PKCS1-V1_5'
     );
-
     // Convert encrypted data to base64 string
     const encryptedDataString = forge.util.encode64(encryptedData);
 

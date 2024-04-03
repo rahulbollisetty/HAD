@@ -42,13 +42,13 @@ public class SSEService {
         String requestId = data.get("resp").get("requestId").asText();
         SseEmitter emitter = emitters.get(requestId);
         if (emitter != null) {
-            if(data.hasNonNull("auth")){
+            if(data.hasNonNull("error")){
                 sendErrorMessage(data.get("error").get("message").asText(),HttpStatus.BAD_REQUEST.value(),emitter);
                 System.err.println(data.get("error").get("message").asText());
             }
             else{
                 try {
-                    emitter.send(ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(data.asText()));
+                    emitter.send(ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(data));
                     emitter.complete();
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -63,13 +63,13 @@ public class SSEService {
         String requestId = data.get("resp").get("requestId").asText();
         SseEmitter emitter = emitters.get(requestId);
         if (emitter != null) {
-            if(data.hasNonNull("auth")){
+            if(data.hasNonNull("error")){
                 sendErrorMessage(data.get("error").get("message").asText(),HttpStatus.BAD_REQUEST.value(),emitter);
                 System.err.println(data.get("error").get("message").asText());
             }
             else{
                 try {
-                    emitter.send(ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(data.asText()));
+                    emitter.send(ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(data));
                     emitter.complete();
                 } catch (Exception e) {
                     e.printStackTrace();

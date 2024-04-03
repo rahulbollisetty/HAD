@@ -1,21 +1,11 @@
-package org.had.patientservice.entity;
+package org.had.patientservice.dto;
 
+import lombok.Data;
+import lombok.Getter;
 
-import jakarta.persistence.*;
-import lombok.*;
-
+@Data
 @Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@ToString
-@Entity
-public class PatientDetails {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer mrn;
-
+public class PatientDetailsDto {
     private String name;
 
     private String address;
@@ -45,7 +35,4 @@ public class PatientDetails {
     private String pincode;
 
     private String state;
-
-//    private String hospital_id;
-
 }

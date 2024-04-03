@@ -18,9 +18,14 @@ public class UserAuthService {
     private RabbitMqService rabbitMqService;
 
     public void userAuthOnInit(JsonNode jsonNode){
+        System.out.println(jsonNode);
         String requestId = jsonNode.get("resp").get("requestId").asText();
         AbdmIdVerify abdmIdVerify = abdmIdVerifyRepository.findByInitRequestId(requestId).get();
+<<<<<<< HEAD
         if(!jsonNode.hasNonNull("error")){
+=======
+        if(jsonNode.hasNonNull("error")){
+>>>>>>> dev
             System.err.println("errror has occurred");
             abdmIdVerifyRepository.delete(abdmIdVerify);
         } else if (jsonNode.hasNonNull("auth")) {
@@ -36,7 +41,11 @@ public class UserAuthService {
     public void userAuthOnConfirm(JsonNode jsonNode){
         String requestId = jsonNode.get("resp").get("requestId").asText();
         AbdmIdVerify abdmIdVerify = abdmIdVerifyRepository.findByVerifyRequestId(requestId).get();
+<<<<<<< HEAD
         if(!jsonNode.hasNonNull("error")){
+=======
+        if(jsonNode.hasNonNull("error")){
+>>>>>>> dev
             System.err.println("errror has occurred");
         }
         abdmIdVerifyRepository.delete(abdmIdVerify);
