@@ -19,7 +19,7 @@
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="API-Gateway" options="-parameters" />
       <module name="AccountService" options="-parameters" />
-      <module name="Backend" options="-parameters" />
+      <module name="Backend" options="" />
       <module name="DiscoveryServer" options="-parameters" />
       <module name="PatientService" options="-parameters" />
     </option>

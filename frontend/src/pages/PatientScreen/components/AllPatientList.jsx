@@ -1,10 +1,24 @@
 import { MdSearch, MdAdd } from "react-icons/md";
 import { FaCaretRight } from "react-icons/fa";
-import React from "react";
+import React, { useEffect, useState } from "react";
+import useAxiosPrivate from "../../../hooks/useAxiosPrivate";
 
 import AddPatientForm from "../forms/AddPatientForm";
 
 const AllPatientList = () => {
+  const axiosPrivate = useAxiosPrivate();
+  
+  const [AllPatientList, setAllPatientList] = useState([]);
+  
+  useEffect(() => {
+    const getAllPatientList = async () => {
+      const resp = await axiosPrivate.get("http://127.0.0.1:9005/patient/getPatientList")
+      console.log(resp)
+      setAllPatientList(resp.data);
+    }; 
+    getAllPatientList();
+  },[])
+
   
   return (
     <div className="flex flex-col h-full">
@@ -51,307 +65,29 @@ const AllPatientList = () => {
               </tr>
             </thead>
             <tbody className="text-sm text-[#444]">
-              <tr className="bg-white border ">
-                <th
-                  scope="row"
-                  className="px-6 py-4 font-medium text-[#444] whitespace-nowrap"
-                >
-                  Mukensh
-                </th>
-                <td className="px-6 py-4">123456789</td>
-                <td className="px-6 py-4">12345</td>
-                <td className="px-6 py-4">titan18rex@gmail.com</td>
-                <td className="px-6 py-4 text-right">
-                  <button
-                    className="inline-flex justify-center items-center gap-[10px] rounded-lg
-                                        border border-[#787887] bg-[#F5FEF2] text-[20px] text-[#02685A] font-semibold p-2.5"
+              {AllPatientList.map((item, index) => (
+                <tr  key={item.mrn} className="bg-white border ">
+                  <td 
+                    scope="row"
+                    className="px-6 py-4 font-medium text-[#444] whitespace-nowrap"
                   >
-                    <div>View</div>
-                    <FaCaretRight className="h-[25px] w-[25px]" />
-                  </button>
-                </td>
-              </tr>
-              <tr className="bg-white border ">
-                <th
-                  scope="row"
-                  className="px-6 py-4 font-medium text-[#444] whitespace-nowrap"
-                >
-                  Mukensh
-                </th>
-                <td className="px-6 py-4">123456789</td>
-                <td className="px-6 py-4">12345</td>
-                <td className="px-6 py-4">titan18rex@gmail.com</td>
-                <td className="px-6 py-4 text-right">
-                  <button
-                    className="inline-flex justify-center items-center gap-[10px] rounded-lg
-                                        border border-[#787887] bg-[#F5FEF2] text-[20px] text-[#02685A] font-semibold p-2.5"
-                  >
-                    <div>View</div>
-                    <FaCaretRight className="h-[25px] w-[25px]" />
-                  </button>
-                </td>
-              </tr>
-              <tr className="bg-white border ">
-                <th
-                  scope="row"
-                  className="px-6 py-4 font-medium text-[#444] whitespace-nowrap"
-                >
-                  Mukensh
-                </th>
-                <td className="px-6 py-4">123456789</td>
-                <td className="px-6 py-4">12345</td>
-                <td className="px-6 py-4">titan18rex@gmail.com</td>
-                <td className="px-6 py-4 text-right">
-                  <button
-                    className="inline-flex justify-center items-center gap-[10px] rounded-lg
-                                        border border-[#787887] bg-[#F5FEF2] text-[20px] text-[#02685A] font-semibold p-2.5"
-                  >
-                    <div>View</div>
-                    <FaCaretRight className="h-[25px] w-[25px]" />
-                  </button>
-                </td>
-              </tr>
-
-              <tr className="bg-white border ">
-                <th
-                  scope="row"
-                  className="px-6 py-4 font-medium text-[#444] whitespace-nowrap"
-                >
-                  Mukensh
-                </th>
-                <td className="px-6 py-4">123456789</td>
-                <td className="px-6 py-4">12345</td>
-                <td className="px-6 py-4">titan18rex@gmail.com</td>
-                <td className="px-6 py-4 text-right">
-                  <button
-                    className="inline-flex justify-center items-center gap-[10px] rounded-lg
-                                        border border-[#787887] bg-[#F5FEF2] text-[20px] text-[#02685A] font-semibold p-2.5"
-                  >
-                    <div>View</div>
-                    <FaCaretRight className="h-[25px] w-[25px]" />
-                  </button>
-                </td>
-              </tr>
-              <tr className="bg-white border ">
-                <th
-                  scope="row"
-                  className="px-6 py-4 font-medium text-[#444] whitespace-nowrap"
-                >
-                  Mukensh
-                </th>
-                <td className="px-6 py-4">123456789</td>
-                <td className="px-6 py-4">12345</td>
-                <td className="px-6 py-4">titan18rex@gmail.com</td>
-                <td className="px-6 py-4 text-right">
-                  <button
-                    className="inline-flex justify-center items-center gap-[10px] rounded-lg
-                                        border border-[#787887] bg-[#F5FEF2] text-[20px] text-[#02685A] font-semibold p-2.5"
-                  >
-                    <div>View</div>
-                    <FaCaretRight className="h-[25px] w-[25px]" />
-                  </button>
-                </td>
-              </tr>
-              <tr className="bg-white border ">
-                <th
-                  scope="row"
-                  className="px-6 py-4 font-medium text-[#444] whitespace-nowrap"
-                >
-                  Mukensh
-                </th>
-                <td className="px-6 py-4">123456789</td>
-                <td className="px-6 py-4">12345</td>
-                <td className="px-6 py-4">titan18rex@gmail.com</td>
-                <td className="px-6 py-4 text-right">
-                  <button
-                    className="inline-flex justify-center items-center gap-[10px] rounded-lg
-                                        border border-[#787887] bg-[#F5FEF2] text-[20px] text-[#02685A] font-semibold p-2.5"
-                  >
-                    <div>View</div>
-                    <FaCaretRight className="h-[25px] w-[25px]" />
-                  </button>
-                </td>
-              </tr>
-              <tr className="bg-white border ">
-                <th
-                  scope="row"
-                  className="px-6 py-4 font-medium text-[#444] whitespace-nowrap"
-                >
-                  Mukensh
-                </th>
-                <td className="px-6 py-4">123456789</td>
-                <td className="px-6 py-4">12345</td>
-                <td className="px-6 py-4">titan18rex@gmail.com</td>
-                <td className="px-6 py-4 text-right">
-                  <button
-                    className="inline-flex justify-center items-center gap-[10px] rounded-lg
-                                        border border-[#787887] bg-[#F5FEF2] text-[20px] text-[#02685A] font-semibold p-2.5"
-                  >
-                    <div>View</div>
-                    <FaCaretRight className="h-[25px] w-[25px]" />
-                  </button>
-                </td>
-              </tr>
-              <tr className="bg-white border ">
-                <th
-                  scope="row"
-                  className="px-6 py-4 font-medium text-[#444] whitespace-nowrap"
-                >
-                  Mukensh
-                </th>
-                <td className="px-6 py-4">123456789</td>
-                <td className="px-6 py-4">12345</td>
-                <td className="px-6 py-4">titan18rex@gmail.com</td>
-                <td className="px-6 py-4 text-right">
-                  <button
-                    className="inline-flex justify-center items-center gap-[10px] rounded-lg
-                                        border border-[#787887] bg-[#F5FEF2] text-[20px] text-[#02685A] font-semibold p-2.5"
-                  >
-                    <div>View</div>
-                    <FaCaretRight className="h-[25px] w-[25px]" />
-                  </button>
-                </td>
-              </tr>
-              <tr className="bg-white border ">
-                <th
-                  scope="row"
-                  className="px-6 py-4 font-medium text-[#444] whitespace-nowrap"
-                >
-                  Mukensh
-                </th>
-                <td className="px-6 py-4">123456789</td>
-                <td className="px-6 py-4">12345</td>
-                <td className="px-6 py-4">titan18rex@gmail.com</td>
-                <td className="px-6 py-4 text-right">
-                  <button
-                    className="inline-flex justify-center items-center gap-[10px] rounded-lg
-                                        border border-[#787887] bg-[#F5FEF2] text-[20px] text-[#02685A] font-semibold p-2.5"
-                  >
-                    <div>View</div>
-                    <FaCaretRight className="h-[25px] w-[25px]" />
-                  </button>
-                </td>
-              </tr>
-              <tr className="bg-white border ">
-                <th
-                  scope="row"
-                  className="px-6 py-4 font-medium text-[#444] whitespace-nowrap"
-                >
-                  Mukensh
-                </th>
-                <td className="px-6 py-4">123456789</td>
-                <td className="px-6 py-4">12345</td>
-                <td className="px-6 py-4">titan18rex@gmail.com</td>
-                <td className="px-6 py-4 text-right">
-                  <button
-                    className="inline-flex justify-center items-center gap-[10px] rounded-lg
-                                        border border-[#787887] bg-[#F5FEF2] text-[20px] text-[#02685A] font-semibold p-2.5"
-                  >
-                    <div>View</div>
-                    <FaCaretRight className="h-[25px] w-[25px]" />
-                  </button>
-                </td>
-              </tr>
-              <tr className="bg-white border ">
-                <th
-                  scope="row"
-                  className="px-6 py-4 font-medium text-[#444] whitespace-nowrap"
-                >
-                  Mukensh
-                </th>
-                <td className="px-6 py-4">123456789</td>
-                <td className="px-6 py-4">12345</td>
-                <td className="px-6 py-4">titan18rex@gmail.com</td>
-                <td className="px-6 py-4 text-right">
-                  <button
-                    className="inline-flex justify-center items-center gap-[10px] rounded-lg
-                                        border border-[#787887] bg-[#F5FEF2] text-[20px] text-[#02685A] font-semibold p-2.5"
-                  >
-                    <div>View</div>
-                    <FaCaretRight className="h-[25px] w-[25px]" />
-                  </button>
-                </td>
-              </tr>
-              <tr className="bg-white border ">
-                <th
-                  scope="row"
-                  className="px-6 py-4 font-medium text-[#444] whitespace-nowrap"
-                >
-                  Mukensh
-                </th>
-                <td className="px-6 py-4">123456789</td>
-                <td className="px-6 py-4">12345</td>
-                <td className="px-6 py-4">titan18rex@gmail.com</td>
-                <td className="px-6 py-4 text-right">
-                  <button
-                    className="inline-flex justify-center items-center gap-[10px] rounded-lg
-                                        border border-[#787887] bg-[#F5FEF2] text-[20px] text-[#02685A] font-semibold p-2.5"
-                  >
-                    <div>View</div>
-                    <FaCaretRight className="h-[25px] w-[25px]" />
-                  </button>
-                </td>
-              </tr>
-              <tr className="bg-white border ">
-                <th
-                  scope="row"
-                  className="px-6 py-4 font-medium text-[#444] whitespace-nowrap"
-                >
-                  Mukensh
-                </th>
-                <td className="px-6 py-4">123456789</td>
-                <td className="px-6 py-4">12345</td>
-                <td className="px-6 py-4">titan18rex@gmail.com</td>
-                <td className="px-6 py-4 text-right">
-                  <button
-                    className="inline-flex justify-center items-center gap-[10px] rounded-lg
-                                        border border-[#787887] bg-[#F5FEF2] text-[20px] text-[#02685A] font-semibold p-2.5"
-                  >
-                    <div>View</div>
-                    <FaCaretRight className="h-[25px] w-[25px]" />
-                  </button>
-                </td>
-              </tr>
-              <tr className="bg-white border ">
-                <th
-                  scope="row"
-                  className="px-6 py-4 font-medium text-[#444] whitespace-nowrap"
-                >
-                  Mukensh
-                </th>
-                <td className="px-6 py-4">123456789</td>
-                <td className="px-6 py-4">12345</td>
-                <td className="px-6 py-4">titan18rex@gmail.com</td>
-                <td className="px-6 py-4 text-right">
-                  <button
-                    className="inline-flex justify-center items-center gap-[10px] rounded-lg
-                                        border border-[#787887] bg-[#F5FEF2] text-[20px] text-[#02685A] font-semibold p-2.5"
-                  >
-                    <div>View</div>
-                    <FaCaretRight className="h-[25px] w-[25px]" />
-                  </button>
-                </td>
-              </tr>
-              <tr className="bg-white border ">
-                <th
-                  scope="row"
-                  className="px-6 py-4 font-medium text-[#444] whitespace-nowrap"
-                >
-                  Mukensh
-                </th>
-                <td className="px-6 py-4">123456789</td>
-                <td className="px-6 py-4">12345</td>
-                <td className="px-6 py-4">titan18rex@gmail.com</td>
-                <td className="px-6 py-4 text-right">
-                  <button
-                    className="inline-flex justify-center items-center gap-[10px] rounded-lg
-                                        border border-[#787887] bg-[#F5FEF2] text-[20px] text-[#02685A] font-semibold p-2.5"
-                  >
-                    <div>View</div>
-                    <FaCaretRight className="h-[25px] w-[25px]" />
-                  </button>
-                </td>
-              </tr>
+                    {item.name}
+                  </td>
+                  <td className="px-6 py-4">{item.abhaAddress}</td>
+                  <td className="px-6 py-4">{item.mobileNumber}</td>
+                  <td className="px-6 py-4">{item.email}</td>
+                  <td className="px-6 py-4 text-right">
+                    <button id=""
+                      className="inline-flex justify-center items-center gap-[10px] rounded-lg
+                                          border border-[#787887] bg-[#F5FEF2] text-[20px] text-[#02685A] font-semibold p-2.5"
+                    >
+                      <div>View</div>
+                      <FaCaretRight className="h-[25px] w-[25px]" />
+                    </button>
+                  </td>
+                </tr>
+              ))}
+              
             </tbody>
           </table>
         </div>

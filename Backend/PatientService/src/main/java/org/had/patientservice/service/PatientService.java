@@ -3,6 +3,7 @@ package org.had.patientservice.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.had.accountservice.entity.DoctorDetails;
 import org.had.accountservice.exception.MyWebClientException;
 import org.had.patientservice.dto.PatientDetailsDto;
 import org.had.patientservice.entity.PatientDetails;
@@ -22,6 +23,7 @@ import reactor.core.publisher.Mono;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -364,5 +366,8 @@ public class PatientService {
                 .bodyToMono(String.class).block();
     }
 
+    public List<PatientDetails> getPatientDetailsList(){
+        return patientDetailsRepository.findAll();
+    }
 }
 
