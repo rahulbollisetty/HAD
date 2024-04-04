@@ -31,6 +31,7 @@ public class AppointmentService {
         appointmentDetails.setPatient_id(appointmentDto.getPatient_id());
         appointmentDetails.setDate(appointmentDto.getDate());
         appointmentDetails.setTime(appointmentDto.getTime());
+        appointmentDetails.setNotes(appointmentDto.getNotes());
 
         AppointmentDetails appointmentId = appointmentRepository.save(appointmentDetails);
 

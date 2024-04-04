@@ -118,14 +118,14 @@ function AddAppointmentForm() {
                 </div>
                 <div>
                   <div className="flex flex-col">
-                    <p className="text-sm pb-2">Duration</p>
+                    {/* <p className="text-sm pb-2">Duration</p>
                     <input
                       className="rounded-md"
                       type="text"
                       name="duration"
                       id=""
                       {...register("duration", { required: "Required" })}
-                    />
+                    /> */}
                   </div>
                 </div>
               </div>

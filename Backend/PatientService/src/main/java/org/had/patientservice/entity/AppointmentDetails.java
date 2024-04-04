@@ -30,8 +30,12 @@ public class AppointmentDetails {
 
     private String time;
 
-    @Column(columnDefinition = "varchar(25) default 'Upcoming' ")
-    private String status;
+    private String notes;
 
+//    @Column(columnDefinition = "varchar(25) default 'Upcoming' ")
+//    private String status;
+
+    @Column(length = 25)
+    private String status = "Upcoming";
 
 }

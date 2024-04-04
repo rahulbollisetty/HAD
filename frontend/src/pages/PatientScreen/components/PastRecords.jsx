@@ -16,7 +16,7 @@ function PastRecords() {
     <div className="border mx-3 my-4 border-[#006666] rounded-md border-l-4">
       <div className="flex justify-between items-center">
         <p className="font-semibold relative text-2xl ml-4 mt-4 mb-4 text-[#444444]">
-          Consent Request Details
+          All Appointment Details
         </p>
         <AddAppointmentForm />
       </div>
@@ -26,20 +26,22 @@ function PastRecords() {
           <thead className="text-xs text-gray-700 uppercase h-[4.5rem] bg-gray-50 bg-[#F5F6F8] text-[#7B7878] sticky top-0">
             <tr className="text-sm">
               <th scope="col" className="px-6 py-3">
-                Patient Name
+                Doctor Name
               </th>
               <th scope="col" className="px-6 py-3">
-                ABHA ID
+                Appointment Date
               </th>
               <th scope="col" className="px-6 py-3">
-                Mobile Number
+                Appointment Time
               </th>
               <th scope="col" className="px-6 py-3">
-                Email ID
+                Status
               </th>
-              <th scope="col" className="px-6 py-3 text-right">
+              
+              <th scope="col" className="px-6 py-3">
                 Details
               </th>
+              
             </tr>
           </thead>
           <tbody className="text-sm text-[#444]">
@@ -48,11 +50,12 @@ function PastRecords() {
                 scope="row"
                 className="px-6 py-4 font-medium text-[#444] whitespace-nowrap"
               >
-                Mukensh
+                Dr. Dibyarup Pal
               </th>
-              <td className="px-6 py-4">123456789</td>
-              <td className="px-6 py-4">12345</td>
-              <td className="px-6 py-4">titan18rex@gmail.com</td>
+              <td className="px-6 py-4">12/04/2024</td>
+              <td className="px-6 py-4">01:04 PM</td>
+              <td className="px-6 py-4">Upcoming</td>
+              <td className="px-6 py-4">Patient is suffering from chronic allegic symptoms. Tremendous sneezing and breating problem.</td>
               <td className="px-6 py-4 text-right">
                 <button
                   className="inline-flex justify-center items-center gap-[10px] rounded-lg
@@ -68,11 +71,12 @@ function PastRecords() {
                 scope="row"
                 className="px-6 py-4 font-medium text-[#444] whitespace-nowrap"
               >
-                Mukensh
+                Dr. Dibyarup Pal
               </th>
-              <td className="px-6 py-4">123456789</td>
-              <td className="px-6 py-4">12345</td>
-              <td className="px-6 py-4">titan18rex@gmail.com</td>
+              <td className="px-6 py-4">12/04/2024</td>
+              <td className="px-6 py-4">01:04 PM</td>
+              <td className="px-6 py-4">Upcoming</td>
+              <td className="px-6 py-4">Patient is suffering from chronic allegic symptoms. Tremendous sneezing and breating problem.</td>
               <td className="px-6 py-4 text-right">
                 <button
                   className="inline-flex justify-center items-center gap-[10px] rounded-lg
@@ -88,11 +92,12 @@ function PastRecords() {
                 scope="row"
                 className="px-6 py-4 font-medium text-[#444] whitespace-nowrap"
               >
-                Mukensh
+                Dr. Dibyarup Pal
               </th>
-              <td className="px-6 py-4">123456789</td>
-              <td className="px-6 py-4">12345</td>
-              <td className="px-6 py-4">titan18rex@gmail.com</td>
+              <td className="px-6 py-4">12/04/2024</td>
+              <td className="px-6 py-4">01:04 PM</td>
+              <td className="px-6 py-4">Upcoming</td>
+              <td className="px-6 py-4">Patient is suffering from chronic allegic symptoms. Tremendous sneezing and breating problem.</td>
               <td className="px-6 py-4 text-right">
                 <button
                   className="inline-flex justify-center items-center gap-[10px] rounded-lg
@@ -109,11 +114,12 @@ function PastRecords() {
                 scope="row"
                 className="px-6 py-4 font-medium text-[#444] whitespace-nowrap"
               >
-                Mukensh
+                Dr. Dibyarup Pal
               </th>
-              <td className="px-6 py-4">123456789</td>
-              <td className="px-6 py-4">12345</td>
-              <td className="px-6 py-4">titan18rex@gmail.com</td>
+              <td className="px-6 py-4">12/04/2024</td>
+              <td className="px-6 py-4">01:04 PM</td>
+              <td className="px-6 py-4">Completed</td>
+              <td className="px-6 py-4">Patient is suffering from chronic allegic symptoms. Tremendous sneezing and breating problem.</td>
               <td className="px-6 py-4 text-right">
                 <button
                   className="inline-flex justify-center items-center gap-[10px] rounded-lg
@@ -129,11 +135,12 @@ function PastRecords() {
                 scope="row"
                 className="px-6 py-4 font-medium text-[#444] whitespace-nowrap"
               >
-                Mukensh
+                Dr. Dibyarup Pal
               </th>
-              <td className="px-6 py-4">123456789</td>
-              <td className="px-6 py-4">12345</td>
-              <td className="px-6 py-4">titan18rex@gmail.com</td>
+              <td className="px-6 py-4">12/04/2024</td>
+              <td className="px-6 py-4">01:04 PM</td>
+              <td className="px-6 py-4">Completed</td>
+              <td className="px-6 py-4">Patient is suffering from chronic allegic symptoms. Tremendous sneezing and breating problem.</td>
               <td className="px-6 py-4 text-right">
                 <button
                   className="inline-flex justify-center items-center gap-[10px] rounded-lg
@@ -149,11 +156,12 @@ function PastRecords() {
                 scope="row"
                 className="px-6 py-4 font-medium text-[#444] whitespace-nowrap"
               >
-                Mukensh
+                Dr. Dibyarup Pal
               </th>
-              <td className="px-6 py-4">123456789</td>
-              <td className="px-6 py-4">12345</td>
-              <td className="px-6 py-4">titan18rex@gmail.com</td>
+              <td className="px-6 py-4">12/04/2024</td>
+              <td className="px-6 py-4">01:04 PM</td>
+              <td className="px-6 py-4">Completed</td>
+              <td className="px-6 py-4">Patient is suffering from chronic allegic symptoms. Tremendous sneezing and breating problem.</td>
               <td className="px-6 py-4 text-right">
                 <button
                   className="inline-flex justify-center items-center gap-[10px] rounded-lg
@@ -169,11 +177,12 @@ function PastRecords() {
                 scope="row"
                 className="px-6 py-4 font-medium text-[#444] whitespace-nowrap"
               >
-                Mukensh
+                Dr. Dibyarup Pal
               </th>
-              <td className="px-6 py-4">123456789</td>
-              <td className="px-6 py-4">12345</td>
-              <td className="px-6 py-4">titan18rex@gmail.com</td>
+              <td className="px-6 py-4">12/04/2024</td>
+              <td className="px-6 py-4">01:04 PM</td>
+              <td className="px-6 py-4">Completed</td>
+              <td className="px-6 py-4">Patient is suffering from chronic allegic symptoms. Tremendous sneezing and breating problem.</td>
               <td className="px-6 py-4 text-right">
                 <button
                   className="inline-flex justify-center items-center gap-[10px] rounded-lg
@@ -189,11 +198,12 @@ function PastRecords() {
                 scope="row"
                 className="px-6 py-4 font-medium text-[#444] whitespace-nowrap"
               >
-                Mukensh
+                Dr. Dibyarup Pal
               </th>
-              <td className="px-6 py-4">123456789</td>
-              <td className="px-6 py-4">12345</td>
-              <td className="px-6 py-4">titan18rex@gmail.com</td>
+              <td className="px-6 py-4">12/04/2024</td>
+              <td className="px-6 py-4">01:04 PM</td>
+              <td className="px-6 py-4">Completed</td>
+              <td className="px-6 py-4">Patient is suffering from chronic allegic symptoms. Tremendous sneezing and breating problem.</td>
               <td className="px-6 py-4 text-right">
                 <button
                   className="inline-flex justify-center items-center gap-[10px] rounded-lg
@@ -209,11 +219,12 @@ function PastRecords() {
                 scope="row"
                 className="px-6 py-4 font-medium text-[#444] whitespace-nowrap"
               >
-                Mukensh
+                Dr. Dibyarup Pal
               </th>
-              <td className="px-6 py-4">123456789</td>
-              <td className="px-6 py-4">12345</td>
-              <td className="px-6 py-4">titan18rex@gmail.com</td>
+              <td className="px-6 py-4">12/04/2024</td>
+              <td className="px-6 py-4">01:04 PM</td>
+              <td className="px-6 py-4">Completed</td>
+              <td className="px-6 py-4">Patient is suffering from chronic allegic symptoms. Tremendous sneezing and breating problem.</td>
               <td className="px-6 py-4 text-right">
                 <button
                   className="inline-flex justify-center items-center gap-[10px] rounded-lg
@@ -229,11 +240,12 @@ function PastRecords() {
                 scope="row"
                 className="px-6 py-4 font-medium text-[#444] whitespace-nowrap"
               >
-                Mukensh
+                Dr. Dibyarup Pal
               </th>
-              <td className="px-6 py-4">123456789</td>
-              <td className="px-6 py-4">12345</td>
-              <td className="px-6 py-4">titan18rex@gmail.com</td>
+              <td className="px-6 py-4">12/04/2024</td>
+              <td className="px-6 py-4">01:04 PM</td>
+              <td className="px-6 py-4">Completed</td>
+              <td className="px-6 py-4">Patient is suffering from chronic allegic symptoms. Tremendous sneezing and breating problem.</td>
               <td className="px-6 py-4 text-right">
                 <button
                   className="inline-flex justify-center items-center gap-[10px] rounded-lg
@@ -249,11 +261,12 @@ function PastRecords() {
                 scope="row"
                 className="px-6 py-4 font-medium text-[#444] whitespace-nowrap"
               >
-                Mukensh
+                Dr. Dibyarup Pal
               </th>
-              <td className="px-6 py-4">123456789</td>
-              <td className="px-6 py-4">12345</td>
-              <td className="px-6 py-4">titan18rex@gmail.com</td>
+              <td className="px-6 py-4">12/04/2024</td>
+              <td className="px-6 py-4">01:04 PM</td>
+              <td className="px-6 py-4">Completed</td>
+              <td className="px-6 py-4">Patient is suffering from chronic allegic symptoms. Tremendous sneezing and breating problem.</td>
               <td className="px-6 py-4 text-right">
                 <button
                   className="inline-flex justify-center items-center gap-[10px] rounded-lg
@@ -269,11 +282,12 @@ function PastRecords() {
                 scope="row"
                 className="px-6 py-4 font-medium text-[#444] whitespace-nowrap"
               >
-                Mukensh
+                Dr. Dibyarup Pal
               </th>
-              <td className="px-6 py-4">123456789</td>
-              <td className="px-6 py-4">12345</td>
-              <td className="px-6 py-4">titan18rex@gmail.com</td>
+              <td className="px-6 py-4">12/04/2024</td>
+              <td className="px-6 py-4">01:04 PM</td>
+              <td className="px-6 py-4">Completed</td>
+              <td className="px-6 py-4">Patient is suffering from chronic allegic symptoms. Tremendous sneezing and breating problem.</td>
               <td className="px-6 py-4 text-right">
                 <button
                   className="inline-flex justify-center items-center gap-[10px] rounded-lg
@@ -289,11 +303,12 @@ function PastRecords() {
                 scope="row"
                 className="px-6 py-4 font-medium text-[#444] whitespace-nowrap"
               >
-                Mukensh
+                Dr. Dibyarup Pal
               </th>
-              <td className="px-6 py-4">123456789</td>
-              <td className="px-6 py-4">12345</td>
-              <td className="px-6 py-4">titan18rex@gmail.com</td>
+              <td className="px-6 py-4">12/04/2024</td>
+              <td className="px-6 py-4">01:04 PM</td>
+              <td className="px-6 py-4">Completed</td>
+              <td className="px-6 py-4">Patient is suffering from chronic allegic symptoms. Tremendous sneezing and breating problem.</td>
               <td className="px-6 py-4 text-right">
                 <button
                   className="inline-flex justify-center items-center gap-[10px] rounded-lg
@@ -309,11 +324,12 @@ function PastRecords() {
                 scope="row"
                 className="px-6 py-4 font-medium text-[#444] whitespace-nowrap"
               >
-                Mukensh
+                Dr. Dibyarup Pal
               </th>
-              <td className="px-6 py-4">123456789</td>
-              <td className="px-6 py-4">12345</td>
-              <td className="px-6 py-4">titan18rex@gmail.com</td>
+              <td className="px-6 py-4">12/04/2024</td>
+              <td className="px-6 py-4">01:04 PM</td>
+              <td className="px-6 py-4">Completed</td>
+              <td className="px-6 py-4">Patient is suffering from chronic allegic symptoms. Tremendous sneezing and breating problem.</td>
               <td className="px-6 py-4 text-right">
                 <button
                   className="inline-flex justify-center items-center gap-[10px] rounded-lg
@@ -329,11 +345,12 @@ function PastRecords() {
                 scope="row"
                 className="px-6 py-4 font-medium text-[#444] whitespace-nowrap"
               >
-                Mukensh
+                Dr. Dibyarup Pal
               </th>
-              <td className="px-6 py-4">123456789</td>
-              <td className="px-6 py-4">12345</td>
-              <td className="px-6 py-4">titan18rex@gmail.com</td>
+              <td className="px-6 py-4">12/04/2024</td>
+              <td className="px-6 py-4">01:04 PM</td>
+              <td className="px-6 py-4">Completed</td>
+              <td className="px-6 py-4">Patient is suffering from chronic allegic symptoms. Tremendous sneezing and breating problem.</td>
               <td className="px-6 py-4 text-right">
                 <button
                   className="inline-flex justify-center items-center gap-[10px] rounded-lg
@@ -349,11 +366,12 @@ function PastRecords() {
                 scope="row"
                 className="px-6 py-4 font-medium text-[#444] whitespace-nowrap"
               >
-                Mukensh
+                Dr. Dibyarup Pal
               </th>
-              <td className="px-6 py-4">123456789</td>
-              <td className="px-6 py-4">12345</td>
-              <td className="px-6 py-4">titan18rex@gmail.com</td>
+              <td className="px-6 py-4">12/04/2024</td>
+              <td className="px-6 py-4">01:04 PM</td>
+              <td className="px-6 py-4">Completed</td>
+              <td className="px-6 py-4">Patient is suffering from chronic allegic symptoms. Tremendous sneezing and breating problem.</td>
               <td className="px-6 py-4 text-right">
                 <button
                   className="inline-flex justify-center items-center gap-[10px] rounded-lg
@@ -369,11 +387,12 @@ function PastRecords() {
                 scope="row"
                 className="px-6 py-4 font-medium text-[#444] whitespace-nowrap"
               >
-                Mukensh
+                Dr. Dibyarup Pal
               </th>
-              <td className="px-6 py-4">123456789</td>
-              <td className="px-6 py-4">12345</td>
-              <td className="px-6 py-4">titan18rex@gmail.com</td>
+              <td className="px-6 py-4">12/04/2024</td>
+              <td className="px-6 py-4">01:04 PM</td>
+              <td className="px-6 py-4">Completed</td>
+              <td className="px-6 py-4">Patient is suffering from chronic allegic symptoms. Tremendous sneezing and breating problem.</td>
               <td className="px-6 py-4 text-right">
                 <button
                   className="inline-flex justify-center items-center gap-[10px] rounded-lg
@@ -389,11 +408,12 @@ function PastRecords() {
                 scope="row"
                 className="px-6 py-4 font-medium text-[#444] whitespace-nowrap"
               >
-                Mukensh
+                Dr. Dibyarup Pal
               </th>
-              <td className="px-6 py-4">123456789</td>
-              <td className="px-6 py-4">12345</td>
-              <td className="px-6 py-4">titan18rex@gmail.com</td>
+              <td className="px-6 py-4">12/04/2024</td>
+              <td className="px-6 py-4">01:04 PM</td>
+              <td className="px-6 py-4">Completed</td>
+              <td className="px-6 py-4">Patient is suffering from chronic allegic symptoms. Tremendous sneezing and breating problem.</td>
               <td className="px-6 py-4 text-right">
                 <button
                   className="inline-flex justify-center items-center gap-[10px] rounded-lg
@@ -409,11 +429,12 @@ function PastRecords() {
                 scope="row"
                 className="px-6 py-4 font-medium text-[#444] whitespace-nowrap"
               >
-                Mukensh
+                Dr. Dibyarup Pal
               </th>
-              <td className="px-6 py-4">123456789</td>
-              <td className="px-6 py-4">12345</td>
-              <td className="px-6 py-4">titan18rex@gmail.com</td>
+              <td className="px-6 py-4">12/04/2024</td>
+              <td className="px-6 py-4">01:04 PM</td>
+              <td className="px-6 py-4">Completed</td>
+              <td className="px-6 py-4">Patient is suffering from chronic allegic symptoms. Tremendous sneezing and breating problem.</td>
               <td className="px-6 py-4 text-right">
                 <button
                   className="inline-flex justify-center items-center gap-[10px] rounded-lg

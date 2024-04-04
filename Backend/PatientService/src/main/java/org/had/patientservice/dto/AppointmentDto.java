@@ -19,6 +19,8 @@ public class AppointmentDto {
 
     private String time;
 
+    private String notes;
+
     private Integer weight;
 
     private Integer height;
