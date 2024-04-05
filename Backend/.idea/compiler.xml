@@ -8,6 +8,10 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="API-Gateway" />
+<<<<<<< HEAD
+=======
+        <module name="ConsentService" />
+>>>>>>> 22f7a1c (added consent service)
         <module name="DiscoveryServer" />
         <module name="Backend" />
         <module name="AccountService" />
@@ -20,6 +24,10 @@
       <module name="API-Gateway" options="-parameters" />
       <module name="AccountService" options="-parameters" />
       <module name="Backend" options="" />
+<<<<<<< HEAD
+=======
+      <module name="ConsentService" options="-parameters" />
+>>>>>>> 22f7a1c (added consent service)
       <module name="DiscoveryServer" options="-parameters" />
       <module name="PatientService" options="-parameters" />
     </option>
