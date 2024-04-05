@@ -1,4 +1,4 @@
-package org.had.patientservice.exception;
+package org.had.consentservice.exception;
 
 public class MyWebClientException extends RuntimeException {
     private int status;

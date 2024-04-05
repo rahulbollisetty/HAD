@@ -8,7 +8,7 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="API-Gateway" />
-        <module name="Backend" />
+        <module name="ConsentService" />
         <module name="DiscoveryServer" />
         <module name="AccountService" />
         <module name="PatientService" />
@@ -19,7 +19,8 @@
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="API-Gateway" options="-parameters" />
       <module name="AccountService" options="-parameters" />
-      <module name="Backend" options="-parameters" />
+      <module name="Backend" options="" />
+      <module name="ConsentService" options="-parameters" />
       <module name="DiscoveryServer" options="-parameters" />
       <module name="PatientService" options="-parameters" />
     </option>
