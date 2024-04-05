@@ -9,9 +9,13 @@
         <outputRelativeToContentRoot value="true" />
         <module name="API-Gateway" />
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
         <module name="ConsentService" />
 >>>>>>> 22f7a1c (added consent service)
+=======
+        <module name="ConsentService" />
+>>>>>>> shubham
         <module name="DiscoveryServer" />
         <module name="Backend" />
         <module name="AccountService" />
@@ -25,9 +29,13 @@
       <module name="AccountService" options="-parameters" />
       <module name="Backend" options="" />
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
       <module name="ConsentService" options="-parameters" />
 >>>>>>> 22f7a1c (added consent service)
+=======
+      <module name="ConsentService" options="-parameters" />
+>>>>>>> shubham
       <module name="DiscoveryServer" options="-parameters" />
       <module name="PatientService" options="-parameters" />
     </option>
