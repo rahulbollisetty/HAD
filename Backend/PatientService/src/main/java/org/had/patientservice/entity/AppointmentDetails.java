@@ -24,8 +24,8 @@ public class AppointmentDetails {
     private String doctor_name;
 
     @ManyToOne(cascade = CascadeType.REMOVE)
-    @JoinColumn(name = "patient_id", referencedColumnName = "mrn")
-    private PatientDetails patient_id;
+    @JoinColumn(name = "patientId", referencedColumnName = "mrn")
+    private PatientDetails patientId;
 
     private String date;
 

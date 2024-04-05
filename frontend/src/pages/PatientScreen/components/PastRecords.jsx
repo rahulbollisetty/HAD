@@ -1,6 +1,7 @@
+import React, { useState, useEffect } from "react";
+import useAxiosPrivate from "../../../hooks/useAxiosPrivate";
 import { MdSearch, MdAdd } from "react-icons/md";
 import { FaCaretRight } from "react-icons/fa";
-import React from "react";
 import {
   Button,
   Dialog,
@@ -10,7 +11,25 @@ import {
 } from "@material-tailwind/react";
 import AddAppointmentForm from "../forms/AddAppointmentForm";
 
-function PastRecords({patientId}) {
+function PastRecords({ patientId }) {
+  console.log(patientId);
+
+  const [AppointmentDetailsList, setAppointmentDetailsList] = useState([]);
+  const axiosPrivate = useAxiosPrivate();
+
+  useEffect(() => {
+    const getAppointmentDetails = async () => {
+      try {
+        const path = `http://127.0.0.1:9005/patient/appointment/getAppointmentDetails?id=${patientId.patientId}`;
+        const resp = await axiosPrivate.get(path);
+        console.log(resp.data);
+        setAppointmentDetailsList(resp.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    getAppointmentDetails();
+  }, []);
 
   return (
     <div className="border mx-3 my-4 border-[#006666] rounded-md border-l-4">
@@ -18,7 +37,7 @@ function PastRecords({patientId}) {
         <p className="font-semibold relative text-2xl ml-4 mt-4 mb-4 text-[#444444]">
           All Appointment Details
         </p>
-        <AddAppointmentForm patientId={patientId}/>
+        <AddAppointmentForm patientId={patientId} />
       </div>
       <div className="h-[1px] bg-[#827F7F82]"></div>
       <div className="sm:rounded-lg 2xl:max-h-[500px] 4xl:max-h-[800px] lg:max-h-[50px] flex flex-col overflow-auto">
@@ -37,419 +56,41 @@ function PastRecords({patientId}) {
               <th scope="col" className="px-6 py-3">
                 Status
               </th>
-              
+
               <th scope="col" className="px-6 py-3">
                 Details
               </th>
-              
             </tr>
           </thead>
           <tbody className="text-sm text-[#444]">
-            <tr className="bg-white border ">
-              <th
-                scope="row"
-                className="px-6 py-4 font-medium text-[#444] whitespace-nowrap"
-              >
-                Dr. Dibyarup Pal
-              </th>
-              <td className="px-6 py-4">12/04/2024</td>
-              <td className="px-6 py-4">01:04 PM</td>
-              <td className="px-6 py-4">Upcoming</td>
-              <td className="px-6 py-4">Patient is suffering from chronic allegic symptoms. Tremendous sneezing and breating problem.</td>
-              <td className="px-6 py-4 text-right">
-                <button
-                  className="inline-flex justify-center items-center gap-[10px] rounded-lg
-                                        border border-[#787887] bg-[#F5FEF2] text-[20px] text-[#02685A] font-semibold p-2.5"
+            {AppointmentDetailsList.map((item, index) => (
+              <tr className="bg-white border " key={item.appointment_id}>
+                <th
+                  scope="row"
+                  className="px-6 py-4 font-medium text-[#444] whitespace-nowrap"
                 >
-                  <div>View</div>
-                  <FaCaretRight className="h-[25px] w-[25px]" />
-                </button>
-              </td>
-            </tr>
-            <tr className="bg-white border ">
-              <th
-                scope="row"
-                className="px-6 py-4 font-medium text-[#444] whitespace-nowrap"
-              >
-                Dr. Dibyarup Pal
-              </th>
-              <td className="px-6 py-4">12/04/2024</td>
-              <td className="px-6 py-4">01:04 PM</td>
-              <td className="px-6 py-4">Upcoming</td>
-              <td className="px-6 py-4">Patient is suffering from chronic allegic symptoms. Tremendous sneezing and breating problem.</td>
-              <td className="px-6 py-4 text-right">
-                <button
-                  className="inline-flex justify-center items-center gap-[10px] rounded-lg
+                  {item.doctor_name}
+                </th>
+                <td className="px-6 py-4">{item.date}</td>
+                <td className="px-6 py-4">{item.time}</td>
+                <td className="px-6 py-4">{item.status}</td>
+                <td className="px-6 py-4">{item.notes}</td>
+                <td className="px-6 py-4 text-right">
+                  <button
+                    className="inline-flex justify-center items-center gap-[10px] rounded-lg
                                         border border-[#787887] bg-[#F5FEF2] text-[20px] text-[#02685A] font-semibold p-2.5"
-                >
-                  <div>View</div>
-                  <FaCaretRight className="h-[25px] w-[25px]" />
-                </button>
-              </td>
-            </tr>
-            <tr className="bg-white border ">
-              <th
-                scope="row"
-                className="px-6 py-4 font-medium text-[#444] whitespace-nowrap"
-              >
-                Dr. Dibyarup Pal
-              </th>
-              <td className="px-6 py-4">12/04/2024</td>
-              <td className="px-6 py-4">01:04 PM</td>
-              <td className="px-6 py-4">Upcoming</td>
-              <td className="px-6 py-4">Patient is suffering from chronic allegic symptoms. Tremendous sneezing and breating problem.</td>
-              <td className="px-6 py-4 text-right">
-                <button
-                  className="inline-flex justify-center items-center gap-[10px] rounded-lg
-                                        border border-[#787887] bg-[#F5FEF2] text-[20px] text-[#02685A] font-semibold p-2.5"
-                >
-                  <div>View</div>
-                  <FaCaretRight className="h-[25px] w-[25px]" />
-                </button>
-              </td>
-            </tr>
-
-            <tr className="bg-white border ">
-              <th
-                scope="row"
-                className="px-6 py-4 font-medium text-[#444] whitespace-nowrap"
-              >
-                Dr. Dibyarup Pal
-              </th>
-              <td className="px-6 py-4">12/04/2024</td>
-              <td className="px-6 py-4">01:04 PM</td>
-              <td className="px-6 py-4">Completed</td>
-              <td className="px-6 py-4">Patient is suffering from chronic allegic symptoms. Tremendous sneezing and breating problem.</td>
-              <td className="px-6 py-4 text-right">
-                <button
-                  className="inline-flex justify-center items-center gap-[10px] rounded-lg
-                                        border border-[#787887] bg-[#F5FEF2] text-[20px] text-[#02685A] font-semibold p-2.5"
-                >
-                  <div>View</div>
-                  <FaCaretRight className="h-[25px] w-[25px]" />
-                </button>
-              </td>
-            </tr>
-            <tr className="bg-white border ">
-              <th
-                scope="row"
-                className="px-6 py-4 font-medium text-[#444] whitespace-nowrap"
-              >
-                Dr. Dibyarup Pal
-              </th>
-              <td className="px-6 py-4">12/04/2024</td>
-              <td className="px-6 py-4">01:04 PM</td>
-              <td className="px-6 py-4">Completed</td>
-              <td className="px-6 py-4">Patient is suffering from chronic allegic symptoms. Tremendous sneezing and breating problem.</td>
-              <td className="px-6 py-4 text-right">
-                <button
-                  className="inline-flex justify-center items-center gap-[10px] rounded-lg
-                                        border border-[#787887] bg-[#F5FEF2] text-[20px] text-[#02685A] font-semibold p-2.5"
-                >
-                  <div>View</div>
-                  <FaCaretRight className="h-[25px] w-[25px]" />
-                </button>
-              </td>
-            </tr>
-            <tr className="bg-white border ">
-              <th
-                scope="row"
-                className="px-6 py-4 font-medium text-[#444] whitespace-nowrap"
-              >
-                Dr. Dibyarup Pal
-              </th>
-              <td className="px-6 py-4">12/04/2024</td>
-              <td className="px-6 py-4">01:04 PM</td>
-              <td className="px-6 py-4">Completed</td>
-              <td className="px-6 py-4">Patient is suffering from chronic allegic symptoms. Tremendous sneezing and breating problem.</td>
-              <td className="px-6 py-4 text-right">
-                <button
-                  className="inline-flex justify-center items-center gap-[10px] rounded-lg
-                                        border border-[#787887] bg-[#F5FEF2] text-[20px] text-[#02685A] font-semibold p-2.5"
-                >
-                  <div>View</div>
-                  <FaCaretRight className="h-[25px] w-[25px]" />
-                </button>
-              </td>
-            </tr>
-            <tr className="bg-white border ">
-              <th
-                scope="row"
-                className="px-6 py-4 font-medium text-[#444] whitespace-nowrap"
-              >
-                Dr. Dibyarup Pal
-              </th>
-              <td className="px-6 py-4">12/04/2024</td>
-              <td className="px-6 py-4">01:04 PM</td>
-              <td className="px-6 py-4">Completed</td>
-              <td className="px-6 py-4">Patient is suffering from chronic allegic symptoms. Tremendous sneezing and breating problem.</td>
-              <td className="px-6 py-4 text-right">
-                <button
-                  className="inline-flex justify-center items-center gap-[10px] rounded-lg
-                                        border border-[#787887] bg-[#F5FEF2] text-[20px] text-[#02685A] font-semibold p-2.5"
-                >
-                  <div>View</div>
-                  <FaCaretRight className="h-[25px] w-[25px]" />
-                </button>
-              </td>
-            </tr>
-            <tr className="bg-white border ">
-              <th
-                scope="row"
-                className="px-6 py-4 font-medium text-[#444] whitespace-nowrap"
-              >
-                Dr. Dibyarup Pal
-              </th>
-              <td className="px-6 py-4">12/04/2024</td>
-              <td className="px-6 py-4">01:04 PM</td>
-              <td className="px-6 py-4">Completed</td>
-              <td className="px-6 py-4">Patient is suffering from chronic allegic symptoms. Tremendous sneezing and breating problem.</td>
-              <td className="px-6 py-4 text-right">
-                <button
-                  className="inline-flex justify-center items-center gap-[10px] rounded-lg
-                                        border border-[#787887] bg-[#F5FEF2] text-[20px] text-[#02685A] font-semibold p-2.5"
-                >
-                  <div>View</div>
-                  <FaCaretRight className="h-[25px] w-[25px]" />
-                </button>
-              </td>
-            </tr>
-            <tr className="bg-white border ">
-              <th
-                scope="row"
-                className="px-6 py-4 font-medium text-[#444] whitespace-nowrap"
-              >
-                Dr. Dibyarup Pal
-              </th>
-              <td className="px-6 py-4">12/04/2024</td>
-              <td className="px-6 py-4">01:04 PM</td>
-              <td className="px-6 py-4">Completed</td>
-              <td className="px-6 py-4">Patient is suffering from chronic allegic symptoms. Tremendous sneezing and breating problem.</td>
-              <td className="px-6 py-4 text-right">
-                <button
-                  className="inline-flex justify-center items-center gap-[10px] rounded-lg
-                                        border border-[#787887] bg-[#F5FEF2] text-[20px] text-[#02685A] font-semibold p-2.5"
-                >
-                  <div>View</div>
-                  <FaCaretRight className="h-[25px] w-[25px]" />
-                </button>
-              </td>
-            </tr>
-            <tr className="bg-white border ">
-              <th
-                scope="row"
-                className="px-6 py-4 font-medium text-[#444] whitespace-nowrap"
-              >
-                Dr. Dibyarup Pal
-              </th>
-              <td className="px-6 py-4">12/04/2024</td>
-              <td className="px-6 py-4">01:04 PM</td>
-              <td className="px-6 py-4">Completed</td>
-              <td className="px-6 py-4">Patient is suffering from chronic allegic symptoms. Tremendous sneezing and breating problem.</td>
-              <td className="px-6 py-4 text-right">
-                <button
-                  className="inline-flex justify-center items-center gap-[10px] rounded-lg
-                                        border border-[#787887] bg-[#F5FEF2] text-[20px] text-[#02685A] font-semibold p-2.5"
-                >
-                  <div>View</div>
-                  <FaCaretRight className="h-[25px] w-[25px]" />
-                </button>
-              </td>
-            </tr>
-            <tr className="bg-white border ">
-              <th
-                scope="row"
-                className="px-6 py-4 font-medium text-[#444] whitespace-nowrap"
-              >
-                Dr. Dibyarup Pal
-              </th>
-              <td className="px-6 py-4">12/04/2024</td>
-              <td className="px-6 py-4">01:04 PM</td>
-              <td className="px-6 py-4">Completed</td>
-              <td className="px-6 py-4">Patient is suffering from chronic allegic symptoms. Tremendous sneezing and breating problem.</td>
-              <td className="px-6 py-4 text-right">
-                <button
-                  className="inline-flex justify-center items-center gap-[10px] rounded-lg
-                                        border border-[#787887] bg-[#F5FEF2] text-[20px] text-[#02685A] font-semibold p-2.5"
-                >
-                  <div>View</div>
-                  <FaCaretRight className="h-[25px] w-[25px]" />
-                </button>
-              </td>
-            </tr>
-            <tr className="bg-white border ">
-              <th
-                scope="row"
-                className="px-6 py-4 font-medium text-[#444] whitespace-nowrap"
-              >
-                Dr. Dibyarup Pal
-              </th>
-              <td className="px-6 py-4">12/04/2024</td>
-              <td className="px-6 py-4">01:04 PM</td>
-              <td className="px-6 py-4">Completed</td>
-              <td className="px-6 py-4">Patient is suffering from chronic allegic symptoms. Tremendous sneezing and breating problem.</td>
-              <td className="px-6 py-4 text-right">
-                <button
-                  className="inline-flex justify-center items-center gap-[10px] rounded-lg
-                                        border border-[#787887] bg-[#F5FEF2] text-[20px] text-[#02685A] font-semibold p-2.5"
-                >
-                  <div>View</div>
-                  <FaCaretRight className="h-[25px] w-[25px]" />
-                </button>
-              </td>
-            </tr>
-            <tr className="bg-white border ">
-              <th
-                scope="row"
-                className="px-6 py-4 font-medium text-[#444] whitespace-nowrap"
-              >
-                Dr. Dibyarup Pal
-              </th>
-              <td className="px-6 py-4">12/04/2024</td>
-              <td className="px-6 py-4">01:04 PM</td>
-              <td className="px-6 py-4">Completed</td>
-              <td className="px-6 py-4">Patient is suffering from chronic allegic symptoms. Tremendous sneezing and breating problem.</td>
-              <td className="px-6 py-4 text-right">
-                <button
-                  className="inline-flex justify-center items-center gap-[10px] rounded-lg
-                                        border border-[#787887] bg-[#F5FEF2] text-[20px] text-[#02685A] font-semibold p-2.5"
-                >
-                  <div>View</div>
-                  <FaCaretRight className="h-[25px] w-[25px]" />
-                </button>
-              </td>
-            </tr>
-            <tr className="bg-white border ">
-              <th
-                scope="row"
-                className="px-6 py-4 font-medium text-[#444] whitespace-nowrap"
-              >
-                Dr. Dibyarup Pal
-              </th>
-              <td className="px-6 py-4">12/04/2024</td>
-              <td className="px-6 py-4">01:04 PM</td>
-              <td className="px-6 py-4">Completed</td>
-              <td className="px-6 py-4">Patient is suffering from chronic allegic symptoms. Tremendous sneezing and breating problem.</td>
-              <td className="px-6 py-4 text-right">
-                <button
-                  className="inline-flex justify-center items-center gap-[10px] rounded-lg
-                                        border border-[#787887] bg-[#F5FEF2] text-[20px] text-[#02685A] font-semibold p-2.5"
-                >
-                  <div>View</div>
-                  <FaCaretRight className="h-[25px] w-[25px]" />
-                </button>
-              </td>
-            </tr>
-            <tr className="bg-white border ">
-              <th
-                scope="row"
-                className="px-6 py-4 font-medium text-[#444] whitespace-nowrap"
-              >
-                Dr. Dibyarup Pal
-              </th>
-              <td className="px-6 py-4">12/04/2024</td>
-              <td className="px-6 py-4">01:04 PM</td>
-              <td className="px-6 py-4">Completed</td>
-              <td className="px-6 py-4">Patient is suffering from chronic allegic symptoms. Tremendous sneezing and breating problem.</td>
-              <td className="px-6 py-4 text-right">
-                <button
-                  className="inline-flex justify-center items-center gap-[10px] rounded-lg
-                                        border border-[#787887] bg-[#F5FEF2] text-[20px] text-[#02685A] font-semibold p-2.5"
-                >
-                  <div>View</div>
-                  <FaCaretRight className="h-[25px] w-[25px]" />
-                </button>
-              </td>
-            </tr>
-            <tr className="bg-white border ">
-              <th
-                scope="row"
-                className="px-6 py-4 font-medium text-[#444] whitespace-nowrap"
-              >
-                Dr. Dibyarup Pal
-              </th>
-              <td className="px-6 py-4">12/04/2024</td>
-              <td className="px-6 py-4">01:04 PM</td>
-              <td className="px-6 py-4">Completed</td>
-              <td className="px-6 py-4">Patient is suffering from chronic allegic symptoms. Tremendous sneezing and breating problem.</td>
-              <td className="px-6 py-4 text-right">
-                <button
-                  className="inline-flex justify-center items-center gap-[10px] rounded-lg
-                                        border border-[#787887] bg-[#F5FEF2] text-[20px] text-[#02685A] font-semibold p-2.5"
-                >
-                  <div>View</div>
-                  <FaCaretRight className="h-[25px] w-[25px]" />
-                </button>
-              </td>
-            </tr>
-            <tr className="bg-white border ">
-              <th
-                scope="row"
-                className="px-6 py-4 font-medium text-[#444] whitespace-nowrap"
-              >
-                Dr. Dibyarup Pal
-              </th>
-              <td className="px-6 py-4">12/04/2024</td>
-              <td className="px-6 py-4">01:04 PM</td>
-              <td className="px-6 py-4">Completed</td>
-              <td className="px-6 py-4">Patient is suffering from chronic allegic symptoms. Tremendous sneezing and breating problem.</td>
-              <td className="px-6 py-4 text-right">
-                <button
-                  className="inline-flex justify-center items-center gap-[10px] rounded-lg
-                                        border border-[#787887] bg-[#F5FEF2] text-[20px] text-[#02685A] font-semibold p-2.5"
-                >
-                  <div>View</div>
-                  <FaCaretRight className="h-[25px] w-[25px]" />
-                </button>
-              </td>
-            </tr>
-            <tr className="bg-white border ">
-              <th
-                scope="row"
-                className="px-6 py-4 font-medium text-[#444] whitespace-nowrap"
-              >
-                Dr. Dibyarup Pal
-              </th>
-              <td className="px-6 py-4">12/04/2024</td>
-              <td className="px-6 py-4">01:04 PM</td>
-              <td className="px-6 py-4">Completed</td>
-              <td className="px-6 py-4">Patient is suffering from chronic allegic symptoms. Tremendous sneezing and breating problem.</td>
-              <td className="px-6 py-4 text-right">
-                <button
-                  className="inline-flex justify-center items-center gap-[10px] rounded-lg
-                                        border border-[#787887] bg-[#F5FEF2] text-[20px] text-[#02685A] font-semibold p-2.5"
-                >
-                  <div>View</div>
-                  <FaCaretRight className="h-[25px] w-[25px]" />
-                </button>
-              </td>
-            </tr>
-            <tr className="bg-white border ">
-              <th
-                scope="row"
-                className="px-6 py-4 font-medium text-[#444] whitespace-nowrap"
-              >
-                Dr. Dibyarup Pal
-              </th>
-              <td className="px-6 py-4">12/04/2024</td>
-              <td className="px-6 py-4">01:04 PM</td>
-              <td className="px-6 py-4">Completed</td>
-              <td className="px-6 py-4">Patient is suffering from chronic allegic symptoms. Tremendous sneezing and breating problem.</td>
-              <td className="px-6 py-4 text-right">
-                <button
-                  className="inline-flex justify-center items-center gap-[10px] rounded-lg
-                                        border border-[#787887] bg-[#F5FEF2] text-[20px] text-[#02685A] font-semibold p-2.5"
-                >
-                  <div>View</div>
-                  <FaCaretRight className="h-[25px] w-[25px]" />
-                </button>
-              </td>
-            </tr>
+                  >
+                    <div>View</div>
+                    <FaCaretRight className="h-[25px] w-[25px]" />
+                  </button>
+                </td>
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>
     </div>
-  )
+  );
 }
 
-export default PastRecords
+export default PastRecords;

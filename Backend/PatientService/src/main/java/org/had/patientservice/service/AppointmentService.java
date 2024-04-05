@@ -10,10 +10,13 @@ import org.had.patientservice.repository.OpConsultationRepository;
 import org.had.patientservice.repository.PatientDetailsRepository;
 import org.had.patientservice.repository.PatientVitalsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.sql.Time;
 import java.util.Date;
+import java.util.List;
 
 @Service
 public class AppointmentService {
@@ -37,7 +40,7 @@ public class AppointmentService {
 
         PatientDetails patientDetails = patientDetailsRepository.findById(appointmentDto.getPatient_id())
                 .orElseThrow(() -> new RuntimeException("Parent not found"));
-        appointmentDetails.setPatient_id(patientDetails);
+        appointmentDetails.setPatientId(patientDetails);
 
         appointmentDetails.setDate(appointmentDto.getDate());
         appointmentDetails.setTime(appointmentDto.getTime());
@@ -74,5 +77,17 @@ public class AppointmentService {
         patientVitalsRepository.save(patientVitals);
 
         return "successfully added vitals";
+    }
+
+    public ResponseEntity<?> getAppointmentDetails(Integer id){
+        if(!patientDetailsRepository.findById(id).isEmpty()){
+            PatientDetails patientDetails = patientDetailsRepository.findById(id).get();
+            if(appointmentRepository.findAllByPatientId(patientDetails).isEmpty()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No Appointment found for this patient");
+            }
+            List<AppointmentDetails> appointmentDetails = appointmentRepository.findAllByPatientId(patientDetails);
+            return ResponseEntity.ok(appointmentDetails);
+        }
+        return ResponseEntity.badRequest().body("Patient Not found");
     }
 }

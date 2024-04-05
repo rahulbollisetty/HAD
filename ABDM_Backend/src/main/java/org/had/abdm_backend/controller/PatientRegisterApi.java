@@ -115,5 +115,4 @@ public class PatientRegisterApi {
         String details = abdmService.userAuthOTPVerify(transactionId, name, gender, dob, requestId);
         return ResponseEntity.status(HttpStatus.ACCEPTED).body("Details Sent for Verification");
     }
-
 }
