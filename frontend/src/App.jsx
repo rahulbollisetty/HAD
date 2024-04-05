@@ -35,7 +35,7 @@ function App() {
         <Route path="/" element={<Layout />}>
           {/* public routes */}
           <Route path="login" element={<Login />} />
-          <Route path="register" element={<Register />} />
+          <Route path="register/head-doctor" element={<Register />} />
           {/* <Route path="linkpage" element={<LinkPage />} /> */}
           <Route path="unauthorized" element={<Unauthorized />} />
 

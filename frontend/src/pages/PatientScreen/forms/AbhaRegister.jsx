@@ -49,7 +49,9 @@ function AbhaRegister({ sendDataToParent }) {
         "http://127.0.0.1:9005/patient/createHealthId",
         body
       );
-      toast.success("ABHA Account Created")
+      const abhanumber = resp.data.healthIdNumber;
+      setAbhaNumber(abhanumber.replace(/-/g, ""));
+      toast.success("ABHA Account Created");
       try {
         const body = {
           authToken: resp.data.token,
@@ -226,9 +228,10 @@ function AbhaRegister({ sendDataToParent }) {
                     toast.success(resp.data.message);
                     createHealthId();
                   } else {
-                    const abhanumber = resp.data.healthIdNumber;
-                    console.log(abhanumber);
-                    setAbhaNumber(abhanumber.replace(/-/g, ""));
+                    if (resp.data?.healthIdNumber) {
+                      const abhanumber = resp.data.healthIdNumber;
+                      setAbhaNumber(abhanumber.replace(/-/g, ""));
+                    }
                     if (resp.data?.txnId) {
                       setTxn(resp.data.txnId);
                       try {
@@ -323,14 +326,14 @@ function AbhaRegister({ sendDataToParent }) {
                 transactionId: txn,
               };
               try {
-                // const resp = await axiosPrivate.post("http://127.0.0.1:9005/patient/createPHRAddress", data);
-                // console.log(resp);
+                const resp = await axiosPrivate.post("http://127.0.0.1:9005/patient/createPHRAddress", data);
+                console.log(resp);
                 setProfileData({
                   ...profileData,
                   abhaNumber: abhaNumber,
                   abhaAddress: getValues1("phrAddress"),
                 });
-                // toast.success("ABHA Address created: " + resp.data.phrAdress);
+                toast.success("ABHA Address created: " + resp.data.phrAdress);
                 sendDataToParent(profileData);
               } catch (err) {
                 console.log(err);
