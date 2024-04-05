@@ -43,7 +43,7 @@ function App() {
           <Route element={<PersistLogin />}>
             <Route element={<RequireAuth allowedRoles={["DOCTOR"]} />}>
               <Route path="/" element={<AllPatientList />} />
-              <Route path="/patientScreen" element={<PatientScreen />} />
+              <Route path="/patientScreen/:id" element={<PatientScreen />} />
             </Route>
 
             {/* <Route element={<RequireAuth allowedRoles={[ROLES.Editor]} />}>

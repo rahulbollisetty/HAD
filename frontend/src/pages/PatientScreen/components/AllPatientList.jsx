@@ -1,25 +1,30 @@
 import { MdSearch, MdAdd } from "react-icons/md";
 import { FaCaretRight } from "react-icons/fa";
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import useAxiosPrivate from "../../../hooks/useAxiosPrivate";
+import { Link } from "react-router-dom";
 
 import AddPatientForm from "../forms/AddPatientForm";
 
 const AllPatientList = () => {
   const axiosPrivate = useAxiosPrivate();
-  
+
   const [AllPatientList, setAllPatientList] = useState([]);
-  
+
   useEffect(() => {
     const getAllPatientList = async () => {
-      const resp = await axiosPrivate.get("http://127.0.0.1:9005/patient/getPatientList")
-      console.log(resp)
+      const resp = await axiosPrivate.get(
+        "http://127.0.0.1:9005/patient/getPatientList"
+      );
+      console.log(resp);
       setAllPatientList(resp.data);
-    }; 
+    };
     getAllPatientList();
-  },[])
+  }, []);
 
-  
+  const navigate = useNavigate();
+
   return (
     <div className="flex flex-col h-full">
       <div className="basis-[15%]">
@@ -66,8 +71,8 @@ const AllPatientList = () => {
             </thead>
             <tbody className="text-sm text-[#444]">
               {AllPatientList.map((item, index) => (
-                <tr  key={item.mrn} className="bg-white border ">
-                  <td 
+                <tr key={item.mrn} className="bg-white border ">
+                  <td
                     scope="row"
                     className="px-6 py-4 font-medium text-[#444] whitespace-nowrap"
                   >
@@ -77,17 +82,19 @@ const AllPatientList = () => {
                   <td className="px-6 py-4">{item.mobileNumber}</td>
                   <td className="px-6 py-4">{item.email}</td>
                   <td className="px-6 py-4 text-right">
-                    <button id=""
-                      className="inline-flex justify-center items-center gap-[10px] rounded-lg
+                    <Link to={`/patientScreen/${item.mrn}`}>
+                      <button
+                        id=""
+                        className="inline-flex justify-center items-center gap-[10px] rounded-lg
                                           border border-[#787887] bg-[#F5FEF2] text-[20px] text-[#02685A] font-semibold p-2.5"
-                    >
-                      <div>View</div>
-                      <FaCaretRight className="h-[25px] w-[25px]" />
-                    </button>
+                      >
+                        <div>View</div>
+                        <FaCaretRight className="h-[25px] w-[25px]" />
+                      </button>
+                    </Link>
                   </td>
                 </tr>
               ))}
-              
             </tbody>
           </table>
         </div>

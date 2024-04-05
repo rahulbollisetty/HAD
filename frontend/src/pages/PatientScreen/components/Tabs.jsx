@@ -9,23 +9,25 @@ import { useState } from "react";
 import AddRecords from "./AddRecords";  
 import ConsentTable from "./ConsentTable";
 import PastRecords from "./PastRecords";
-  export default function DoctorTab() {
+
+
+  export default function DoctorTab(id) {
     const [activeTab, setActiveTab] = useState("Past Records");
     const data = [
       {
         label: "Past Records",
         value: "Past Records",
-        desc: <PastRecords />,
+        desc: <PastRecords patientId={id}/>,
       },
       {
         label: "Import Records",
         value: "Import Records",
-        desc: <ConsentTable />,
+        desc: <ConsentTable patientId={id}/>,
       },
       {
         label: "Add Records",
         value: "Add Records",
-        desc: <AddRecords />,
+        desc: <AddRecords patientId={id}/>,
       },
       
     ];

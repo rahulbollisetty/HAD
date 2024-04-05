@@ -1,4 +1,30 @@
-function Profile() {
+import React, { useState, useEffect } from "react";
+import useAxiosPrivate from "../../../hooks/useAxiosPrivate";
+
+function Profile({patientId}) {
+
+  console.log(patientId);
+
+  const [PatientDetails, setPatientDetails] = useState({});
+  const axiosPrivate = useAxiosPrivate();
+
+  useEffect(() => {
+    const getPatientDetails = async () => { 
+      try{
+
+        const path = `http://127.0.0.1:9005/patient/getPatientDetails?id=${patientId}`;
+        const resp = await axiosPrivate.get(path);
+        console.log(resp.data);
+        setPatientDetails(resp.data);
+      }
+      catch(error){
+        console.log(error);
+      }
+    };
+    getPatientDetails();
+  }, []);
+
+
   return (
     <div>
       <div className='w-full'>
@@ -12,31 +38,31 @@ function Profile() {
           </div>
           <div className='w-full'>
             <div className='mt-4 ml-8'>
-              <p className='text-xl font-semibold'>Mukesh Kumar</p>
+              <p className='text-xl font-semibold'>{PatientDetails.name}</p>
             </div>
             <div className='flex mt-2 ml-8 text-sm'>
               <div className='flex-1'>
                 <span className='font-semibold flex mr-20 text-[#7B7878]'>
                   Gender:
-                  <p className='ml-6 text-black'>Male</p>
+                  <p className='ml-6 text-black'>{PatientDetails.gender}</p>
                 </span>
               </div>
               <div className='flex-1'>
                 <span className='font-semibold flex ml-auto mr-20 text-[#7B7878]'>
-                  Age:
-                  <p className='ml-6 text-black'>32</p>
+                  Date of Birth:
+                  <p className='ml-6 text-black'>{PatientDetails.dob}</p>
                 </span>
               </div>
               <div className='flex-1'>
                 <span className='font-semibold flex ml-auto mr-20 text-[#7B7878]'>
                   ABHA Id:
-                  <p className='ml-6 text-black'>123456789</p>
+                  <p className='ml-6 text-black'>{PatientDetails.abhaNumber}</p>
                 </span>
               </div>
               <div className='flex-1'>
                 <span className='font-semibold flex ml-auto mr-20 text-[#7B7878]'>
                   Email id:
-                  <p className='ml-6 text-black'>mukesh@gmail.com</p>
+                  <p className='ml-6 text-black'>{PatientDetails.email}</p>
                 </span>
               </div>
             </div>
@@ -44,13 +70,13 @@ function Profile() {
               <div className='w-1/4'>
                 <span className='font-semibold flex mr-52 text-[#7B7878]'>
                   Blood Group:
-                  <p className='ml-6 text-black'>B+</p>
+                  <p className='ml-6 text-black'>{PatientDetails.bloodGroup}</p>
                 </span>
               </div>
               <div className='w-1/4'>
                 <span className='font-semibold flex mr-20 text-[#7B7878]'>
                   Mobile Number:
-                  <p className='ml-6 text-black '>987654321</p>
+                  <p className='ml-6 text-black '>{PatientDetails.mobileNumber}</p>
                 </span>
               </div>
             </div>

@@ -10,7 +10,7 @@ import {
 } from "@material-tailwind/react";
 import AddAppointmentForm from "../forms/AddAppointmentForm";
 
-function PastRecords() {
+function PastRecords({patientId}) {
 
   return (
     <div className="border mx-3 my-4 border-[#006666] rounded-md border-l-4">
@@ -18,7 +18,7 @@ function PastRecords() {
         <p className="font-semibold relative text-2xl ml-4 mt-4 mb-4 text-[#444444]">
           All Appointment Details
         </p>
-        <AddAppointmentForm />
+        <AddAppointmentForm patientId={patientId}/>
       </div>
       <div className="h-[1px] bg-[#827F7F82]"></div>
       <div className="sm:rounded-lg 2xl:max-h-[500px] 4xl:max-h-[800px] lg:max-h-[50px] flex flex-col overflow-auto">

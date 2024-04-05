@@ -1,12 +1,17 @@
 import React from "react";
 import Sidebar from "../Sidebar";
-import ConsentForm from "./components/ConsentForm";
-import AllPatientList from "./components/AllPatientList";
-import AddRecords from "./components/AddRecords";
 import Profile from "./components/Profile";
 import DoctorTab from "./components/Tabs";
+import { useParams} from 'react-router-dom';
+
+
+  
+
 
 export const PatientScreen = () => {
+
+  const { id } = useParams();
+ 
   return (
     <div className="flex flex-row w-full">
       <div className="w-fit">
@@ -17,10 +22,10 @@ export const PatientScreen = () => {
           <div className="h-[64px] w-full pb-16 bg-white"></div>
           <div className="bg-white grow m-3">
             <div className="flex flex-col">
-              <Profile />
+              <Profile patientId={id}/>
               <div className="">
                 <div className="flex mt-6 mb-8  justify-center">
-                  <DoctorTab />
+                  <DoctorTab patientId={id}/>
                 </div>
               </div>
             </div>

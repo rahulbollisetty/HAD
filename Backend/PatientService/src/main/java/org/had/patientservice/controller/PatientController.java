@@ -146,4 +146,11 @@ public class PatientController {
         return ResponseEntity.ok(patientDetailsList);
     }
 
+    @PreAuthorize("hasAnyAuthority('DOCTOR','STAFF')")
+    @GetMapping(value = "/getPatientDetails", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getPatientDetails(@RequestParam String id){
+        PatientDetails patientDetails = patientService.getPatientDetails(Integer.parseInt(id));
+        return ResponseEntity.ok(patientDetails);
+    }
+
 }

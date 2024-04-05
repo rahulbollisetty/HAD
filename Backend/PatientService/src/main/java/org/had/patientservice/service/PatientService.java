@@ -369,5 +369,9 @@ public class PatientService {
     public List<PatientDetails> getPatientDetailsList(){
         return patientDetailsRepository.findAll();
     }
+
+    public PatientDetails getPatientDetails(Integer id){
+        return patientDetailsRepository.findById(id).get();
+    }
 }
 

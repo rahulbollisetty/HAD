@@ -19,21 +19,19 @@ public class AppointmentDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer appointment_id;
 
-//    @NotNull
-//    private Integer hospital_id;
-
     private String doctor_id;
 
-    private Integer patient_id;
+    private String doctor_name;
+
+    @ManyToOne(cascade = CascadeType.REMOVE)
+    @JoinColumn(name = "patient_id", referencedColumnName = "mrn")
+    private PatientDetails patient_id;
 
     private String date;
 
     private String time;
 
     private String notes;
-
-//    @Column(columnDefinition = "varchar(25) default 'Upcoming' ")
-//    private String status;
 
     @Column(length = 25)
     private String status = "Upcoming";

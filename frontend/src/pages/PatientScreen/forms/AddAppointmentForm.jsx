@@ -11,12 +11,13 @@ import {
 } from "@material-tailwind/react";
 import { toast } from "react-toastify";
 
-function AddAppointmentForm() {
+function AddAppointmentForm({patientId}) {
   const {
     register,
     handleSubmit,
     reset,
     getValues,
+    setValue,
     formState: { errors },
   } = useForm();
 
@@ -37,6 +38,14 @@ function AddAppointmentForm() {
   }, []);
 
   const onSubmit = async () => {
+    setValue("patient_id", patientId.patientId);
+    
+    let doctor_id = getValues("doctor").split(";")[0];
+    let doctor_name = getValues("doctor").split(";")[1];
+
+    setValue("doctor_id",doctor_id);
+    setValue("doctor_name",doctor_name);
+
     let data = getValues();
     console.log(data);
     try {
@@ -79,11 +88,11 @@ function AddAppointmentForm() {
                       className="w-full rounded-md"
                       name="doctor_id"
                       id=""
-                      {...register("doctor_id", { required: "Required" })}
+                      {...register("doctor", { required: "Required" })}
                     >
                       <option>Select Doctor</option>
                       {AllDoctorList.map((item, index) => (
-                        <option value={item.doctor_Id} key={item.doctor_Id}>
+                        <option value={`${item.doctor_Id};${item.first_Name} ${item.last_Name}`} key={item.doctor_Id}>
                           {item.first_Name} {item.last_Name}
                         </option>
                       ))}

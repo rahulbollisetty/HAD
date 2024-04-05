@@ -3,9 +3,11 @@ package org.had.patientservice.service;
 import org.had.patientservice.dto.AppointmentDto;
 import org.had.patientservice.entity.AppointmentDetails;
 import org.had.patientservice.entity.OpConsultation;
+import org.had.patientservice.entity.PatientDetails;
 import org.had.patientservice.entity.PatientVitals;
 import org.had.patientservice.repository.AppointmentRepository;
 import org.had.patientservice.repository.OpConsultationRepository;
+import org.had.patientservice.repository.PatientDetailsRepository;
 import org.had.patientservice.repository.PatientVitalsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,11 +26,19 @@ public class AppointmentService {
 
     @Autowired
     private PatientVitalsRepository patientVitalsRepository;
+    
+    @Autowired
+    private PatientDetailsRepository patientDetailsRepository;
 
     public String createNewAppointment(AppointmentDto appointmentDto){
         AppointmentDetails appointmentDetails = new AppointmentDetails();
         appointmentDetails.setDoctor_id(appointmentDto.getDoctor_id());
-        appointmentDetails.setPatient_id(appointmentDto.getPatient_id());
+        appointmentDetails.setDoctor_name(appointmentDto.getDoctor_name());
+
+        PatientDetails patientDetails = patientDetailsRepository.findById(appointmentDto.getPatient_id())
+                .orElseThrow(() -> new RuntimeException("Parent not found"));
+        appointmentDetails.setPatient_id(patientDetails);
+
         appointmentDetails.setDate(appointmentDto.getDate());
         appointmentDetails.setTime(appointmentDto.getTime());
         appointmentDetails.setNotes(appointmentDto.getNotes());

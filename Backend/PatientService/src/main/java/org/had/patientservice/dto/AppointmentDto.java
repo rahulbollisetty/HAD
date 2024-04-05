@@ -13,6 +13,8 @@ public class AppointmentDto {
 
     private String doctor_id;
 
+    private String doctor_name;
+
     private Integer patient_id;
 
     private String date;
