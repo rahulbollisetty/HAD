@@ -1,6 +1,7 @@
 package org.had.abdm_backend.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
 import org.had.abdm_backend.entity.AbdmIdVerify;
@@ -19,6 +20,7 @@ import reactor.core.publisher.Mono;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -444,7 +446,93 @@ public class ABDMService {
     }
 
 
+    public String consentInit(JsonNode jsonNode) throws JsonProcessingException{
+        Map<String, String> purpose_map = new HashMap<>();
+        purpose_map.put("CAREMGT","Care Management");
+        purpose_map.put("BTG","Break the Glass");
+        purpose_map.put("PUBHLTH","Public Health");
+        purpose_map.put("HPAYMT","Healthcare Payment");
+        purpose_map.put("DSRCH","Disease Specific Healthcare Research");
+        purpose_map.put("PatRQT","Self Requested");
 
+        String purpose_code = jsonNode.get("purpose_code").asText();
+        String patient_id = jsonNode.get("patient_id").asText();
+        String hiu_id = jsonNode.get("hiu_id").asText();
+        String hiu_name = jsonNode.get("hiu_name").asText();
+        String requester_name = jsonNode.get("requester_name").asText();
+        String identifier_value = jsonNode.get("identifier_value").asText();
+        String permission_from = jsonNode.get("permission_from").asText();
+        String permission_to = jsonNode.get("permission_to").asText();
+        String data_erase_at = jsonNode.get("data_erase_at").asText();
+
+        Map<String, Object> data = new HashMap<>();
+        data.put("requestId",UUID.randomUUID().toString());
+        data.put("timestamp", getISOTimestamp());
+
+        Map<String, Object> consent = new HashMap<>();
+        Map<String, Object> purpose = new HashMap<>();
+        purpose.put("text", purpose_map.get(purpose_code));
+        purpose.put("code", purpose_code);
+        purpose.put("refUri", "medisync.com");
+
+        Map<String, String> patient = new HashMap<>();
+        patient.put("id", patient_id);
+
+        Map<String, Object> hiu = new HashMap<>();
+        hiu.put("id", hiu_id);
+        hiu.put("name", hiu_name);
+
+        Map<String, Object> requester = new HashMap<>();
+        requester.put("name", requester_name);
+
+        Map<String, String> identifier = new HashMap<>();
+        identifier.put("type", "REGNO");
+        identifier.put("value", identifier_value);
+        identifier.put("system", "https://www.nmc.org.in");
+        requester.put("identifier", identifier);
+
+        consent.put("purpose", purpose);
+        consent.put("patient", patient);
+        consent.put("hiu", hiu);
+        consent.put("requester", requester);
+        consent.put("hiTypes", jsonNode.get("hi_type"));
+
+        Map<String, Object> permission = new HashMap<>();
+        permission.put("accessMode", "VIEW");
+
+        Map<String, String> dateRange = new HashMap<>();
+        dateRange.put("from", permission_from);
+        dateRange.put("to", permission_to);
+        permission.put("dateRange", dateRange);
+        permission.put("dataEraseAt", data_erase_at);
+
+        Map<String, Object> frequency = new HashMap<>();
+        frequency.put("unit", "MONTH");
+        frequency.put("value", 12);
+        frequency.put("repeats", 12);
+        permission.put("frequency", frequency);
+
+        consent.put("permission", permission);
+        data.put("consent", consent);
+
+        var objectMapper = new ObjectMapper();
+        String requestBody = objectMapper.writeValueAsString(data);
+
+        return webClient.post().uri("https://dev.abdm.gov.in/gateway/v0.5/consent-requests/init")
+                .header("Authorization","Bearer "+token)
+                .header("accept", "*/*")
+                .header("X-CM-ID", "sbx")
+                .header("Content-Type", MediaType.APPLICATION_JSON_VALUE)
+                .body(BodyInserters.fromValue(requestBody.toString()))
+                .retrieve()
+                .onStatus(HttpStatusCode::isError,clientResponse -> {
+                    return clientResponse.bodyToMono(String.class)
+                            .flatMap(errorBody -> Mono.error(new MyWebClientException(errorBody, clientResponse.statusCode().value())));
+                })
+                .bodyToMono(String.class).block();
+    }
+
+    
 //    private String handleErrorResponse(ClientResponse response) {
 //        // Handle the error response
 //        HttpStatus status = (HttpStatus) response.statusCode();
