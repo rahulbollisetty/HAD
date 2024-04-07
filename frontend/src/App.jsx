@@ -9,10 +9,7 @@ import Layout from "./pages/Layout";
 import Unauthorized from "./pages/exceptions/Unauthorized";
 import RequireAuth from "./routes/RequireAuth";
 import PersistLogin from "./PersistLogin";
-import {
-  ToastContainer,
-  Bounce,
-} from "react-toastify";
+import { ToastContainer, Bounce } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import AllPatientList from "./pages/PatientScreen/components/AllPatientList";
 function App() {
@@ -39,12 +36,11 @@ function App() {
           {/* <Route path="linkpage" element={<LinkPage />} /> */}
           <Route path="unauthorized" element={<Unauthorized />} />
 
+          <Route path="/" element={<AllPatientList />} />
+          <Route path="/patientScreen/:id" element={<PatientScreen />} />
           {/* we want to protect these routes */}
           <Route element={<PersistLogin />}>
-            <Route element={<RequireAuth allowedRoles={["DOCTOR"]} />}>
-              <Route path="/" element={<AllPatientList />} />
-              <Route path="/patientScreen/:id" element={<PatientScreen />} />
-            </Route>
+            <Route element={<RequireAuth allowedRoles={["DOCTOR"]} />}></Route>
 
             {/* <Route element={<RequireAuth allowedRoles={[ROLES.Editor]} />}>
             <Route path="editor" element={<Editor />} />
