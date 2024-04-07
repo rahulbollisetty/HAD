@@ -26,14 +26,21 @@ public class ConsentAPI {
     ResponseEntity<?> consentStatus(@RequestBody JsonNode jsonNode) throws JsonProcessingException{
         abdmService.setToken();
         abdmService.consentStatus(jsonNode);
-        return ResponseEntity.ok("got status");
+        return ResponseEntity.ok("status request initiated");
     }
 
     @PostMapping(value = "/consentFetch", produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<?> consentFetch(@RequestBody JsonNode jsonNode) throws JsonProcessingException{
         abdmService.setToken();
         abdmService.consentFetch(jsonNode);
-        return ResponseEntity.ok("consent fetched");
+        return ResponseEntity.ok("consent initiated");
+    }
+
+    @PostMapping(value = "/hipOnNotify", produces = MediaType.APPLICATION_JSON_VALUE)
+    ResponseEntity<?> hipOnNotify(@RequestBody JsonNode jsonNode) throws JsonProcessingException{
+        abdmService.setToken();
+        abdmService.hipOnNotify(jsonNode);
+        return ResponseEntity.ok("notified");
     }
 
 
