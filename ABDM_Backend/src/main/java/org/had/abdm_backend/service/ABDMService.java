@@ -532,8 +532,56 @@ public class ABDMService {
                 .bodyToMono(String.class).block();
     }
 
-    
-//    private String handleErrorResponse(ClientResponse response) {
+    public String consentStatus(JsonNode jsonNode) throws JsonProcessingException{
+        String consent_request_id = jsonNode.get("consent_request_id").asText();
+
+        Map<String, String> data = new HashMap<>();
+        data.put("requestId",UUID.randomUUID().toString());
+        data.put("timestamp",getISOTimestamp());
+        data.put("consentRequestId",consent_request_id);
+
+        var objectMapper = new ObjectMapper();
+        String requestBody = objectMapper.writeValueAsString(data);
+
+        return webClient.post().uri("https://dev.abdm.gov.in/gateway/v0.5/consent-requests/status")
+                .header("Authorization","Bearer "+token)
+                .header("accept", "*/*")
+                .header("X-CM-ID", "sbx")
+                .header("Content-Type", MediaType.APPLICATION_JSON_VALUE)
+                .body(BodyInserters.fromValue(requestBody.toString()))
+                .retrieve()
+                .onStatus(HttpStatusCode::isError,clientResponse -> {
+                    return clientResponse.bodyToMono(String.class)
+                            .flatMap(errorBody -> Mono.error(new MyWebClientException(errorBody, clientResponse.statusCode().value())));
+                })
+                .bodyToMono(String.class).block();
+    }
+
+    public String consentFetch(JsonNode jsonNode) throws JsonProcessingException {
+        String consent_id = jsonNode.get("consent_id").asText();
+        Map<String, String> data = new HashMap<>();
+        data.put("requestId",UUID.randomUUID().toString());
+        data.put("timestamp",getISOTimestamp());
+        data.put("consentId",consent_id);
+
+        var objectMapper = new ObjectMapper();
+        String requestBody = objectMapper.writeValueAsString(data);
+
+        return webClient.post().uri("https://dev.abdm.gov.in/gateway/v0.5/consents/fetch")
+                .header("Authorization","Bearer "+token)
+                .header("accept", "*/*")
+                .header("X-CM-ID", "sbx")
+                .header("Content-Type", MediaType.APPLICATION_JSON_VALUE)
+                .body(BodyInserters.fromValue(requestBody.toString()))
+                .retrieve()
+                .onStatus(HttpStatusCode::isError,clientResponse -> {
+                    return clientResponse.bodyToMono(String.class)
+                            .flatMap(errorBody -> Mono.error(new MyWebClientException(errorBody, clientResponse.statusCode().value())));
+                })
+                .bodyToMono(String.class).block();
+
+    }
+        //    private String handleErrorResponse(ClientResponse response) {
 //        // Handle the error response
 //        HttpStatus status = (HttpStatus) response.statusCode();
 //        String responseBody = response.bodyToMono(String.class).block();

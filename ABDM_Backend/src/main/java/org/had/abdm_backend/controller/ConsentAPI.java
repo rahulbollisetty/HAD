@@ -22,6 +22,19 @@ public class ConsentAPI {
         return ResponseEntity.ok("consent initiated");
     }
 
+    @PostMapping(value = "/consentStatus", produces = MediaType.APPLICATION_JSON_VALUE)
+    ResponseEntity<?> consentStatus(@RequestBody JsonNode jsonNode) throws JsonProcessingException{
+        abdmService.setToken();
+        abdmService.consentStatus(jsonNode);
+        return ResponseEntity.ok("got status");
+    }
+
+    @PostMapping(value = "/consentFetch", produces = MediaType.APPLICATION_JSON_VALUE)
+    ResponseEntity<?> consentFetch(@RequestBody JsonNode jsonNode) throws JsonProcessingException{
+        abdmService.setToken();
+        abdmService.consentFetch(jsonNode);
+        return ResponseEntity.ok("consent fetched");
+    }
 
 
 }
