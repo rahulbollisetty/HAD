@@ -21,32 +21,21 @@ function AddConsentForm() {
     { value: "Prescription", label: "Prescription" },
     { value: "Health Document Record", label: "Health Document Record" },
   ];
+
   const customStyles = {
-    control: (provided) => ({
-      ...provided,
-      minWidth: 240,
-      margin: 8,
-    }),
-    multiValue: (styles) => {
-      return {
-        ...styles,
-        maxWidth: "100%",
-      };
-    },
-    multiValueLabel: (styles) => ({
-      ...styles,
-      whiteSpace: "nowrap",
+    multiValue: (base) => ({
+      ...base,
       overflow: "hidden",
+      whiteSpace: "nowrap",
       textOverflow: "ellipsis",
-      maxWidth: "90%", // Adjust based on your needs
     }),
-    multiValueRemove: (styles) => ({
-      ...styles,
-      ":hover": {
-        backgroundColor: "transparent",
-        color: "red",
-      },
+    valueContainer: (base) => ({
+      ...base,
+      display: "flex",
+      flexWrap: "nowrap",
+      overflowX: "auto", // Allows horizontal scrolling
     }),
+    // Apply similar styles to options if needed
   };
 
   const handleChange = (selectedOptions) => {
@@ -136,10 +125,11 @@ function AddConsentForm() {
                 </select> */}
                 <Select
                   className="rounded-md text-ellipsis"
+                  classNamePrefix="react-select"
                   options={options}
                   isMulti
                   closeMenuOnSelect={false}
-                  hideSelectedOptions={false}
+                  hideSelectedOptions={true}
                   onChange={handleChange}
                   styles={customStyles}
                 />
