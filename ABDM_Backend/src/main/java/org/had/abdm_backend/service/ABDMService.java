@@ -581,7 +581,43 @@ public class ABDMService {
                 .bodyToMono(String.class).block();
 
     }
-        //    private String handleErrorResponse(ClientResponse response) {
+
+    public String hipOnNotify(JsonNode jsonNode) throws JsonProcessingException {
+        String consent_id = jsonNode.get("consent_id").asText();
+        String request_id = jsonNode.get("request_id").asText();
+
+        Map<String, Object> data = new HashMap<>();
+
+        data.put("requestId", UUID.randomUUID().toString());
+        data.put("timestamp", getCurrentSimpleTimestamp());
+
+        Map<String, Object> acknowledgementMap = new HashMap<>();
+        acknowledgementMap.put("status", "OK");
+        acknowledgementMap.put("consentId", consent_id);
+
+        Map<String, String> respMap = new HashMap<>();
+        respMap.put("requestId", request_id);
+
+        data.put("acknowledgement", acknowledgementMap);
+        data.put("resp", respMap);
+
+        var objectMapper = new ObjectMapper();
+        String requestBody = objectMapper.writeValueAsString(data);
+
+        return webClient.post().uri("https://dev.abdm.gov.in/gateway/v0.5/consents/hip/on-notify")
+                .header("Authorization","Bearer "+token)
+//                .header("accept", "*/*")
+                .header("X-CM-ID", "sbx")
+                .header("Content-Type", MediaType.APPLICATION_JSON_VALUE)
+                .body(BodyInserters.fromValue(requestBody.toString()))
+                .retrieve()
+                .onStatus(HttpStatusCode::isError,clientResponse -> {
+                    return clientResponse.bodyToMono(String.class)
+                            .flatMap(errorBody -> Mono.error(new MyWebClientException(errorBody, clientResponse.statusCode().value())));
+                })
+                .bodyToMono(String.class).block();
+    }
+    //    private String handleErrorResponse(ClientResponse response) {
 //        // Handle the error response
 //        HttpStatus status = (HttpStatus) response.statusCode();
 //        String responseBody = response.bodyToMono(String.class).block();
