@@ -101,6 +101,7 @@ public class DoctorService {
         doctorDetails.setRegistration_number(doctorDetailsDTO.getRegistration_number());
         doctorDetails.setFirst_Name(doctorDetailsDTO.getFirst_Name());
         doctorDetails.setLast_Name(doctorDetailsDTO.getLast_Name());
+        doctorDetails.setMobile(doctorDetailsDTO.getMobile());
         doctorDetails.setDob(doctorDetailsDTO.getDob());
         doctorDetails.setGender(doctorDetailsDTO.getGender());
         doctorDetails.setState_Code(doctorDetailsDTO.getState_Code());

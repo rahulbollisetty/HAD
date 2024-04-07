@@ -47,6 +47,9 @@ public class DoctorDetails {
     private String state;
 
     @NotNull
+    private String mobile;
+
+    @NotNull
     private Integer district_Code;
 
     @NotNull

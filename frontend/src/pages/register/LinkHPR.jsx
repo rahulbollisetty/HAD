@@ -38,7 +38,7 @@ function LinkHPR() {
         setLoading(false);
         toast.success("Details Fetched Successfully");
         setSuccess(true);
-        setDoctorDetails(doctorDetails);
+        setDoctorDetails(resp.data);
       }
     } catch (error) {
       setLoading(false);
@@ -67,33 +67,33 @@ function LinkHPR() {
                   <div className="h-40 flex items-center justify-center">
                     <div>
                       <div className="h-full flex items-center justify-between">
-                        <div className="w-24 h-1 bg-[#02685A] my-2 rounded-l-lg"></div>
-                        <div className="w-23 h-23 bg-[#5AAC74] rounded-full">
+                        <div className="w-24 h-1 bg-[#02685A] my-2 rounded-l-lg flex-1"></div>
+                        <div className="w-23 h-23 bg-[#5AAC74] rounded-full flex-0">
                           <div className="w-20 h-20 bg-[#02685A] mx-1.5 my-1.5 rounded-full flex justify-center items-center">
                             <FaRegListAlt className="h-[30px] w-[30px]" />
                           </div>
                         </div>
-                        <div className="w-36 h-1 bg-[#DDDDDD] my-2"></div>
+                        <div className="w-36 h-1 bg-[#DDDDDD] my-2 flex-1"></div>
                         <div className="w-20 h-20 bg-[#DDDDDD] rounded-full flex justify-center items-center">
                           <FaUser className="h-[25px] w-[25px]" />
                         </div>
-                        <div className="w-36 h-1 bg-[#DDDDDD] my-2"></div>
-                        <div className="w-20 h-20 bg-[#DDDDDD] rounded-full flex justify-center items-center">
+                        <div className="w-36 h-1 bg-[#DDDDDD] my-2 flex-1"></div>
+                        {/* <div className="w-20 h-20 bg-[#DDDDDD] rounded-full flex justify-center items-center">
                           <RiHospitalFill className="h-[25px] w-[25px]" />
-                        </div>
-                        <div className="w-24 h-1 bg-[#DDDDDD] my-2 rounded-r-lg"></div>
+                        </div> */}
+                        {/* <div className="w-24 h-1 bg-[#DDDDDD] my-2 rounded-r-lg"></div> */}
                       </div>
 
                       <div className="flex mt-2">
-                        <p className="ml-24 text-[#02685A] font-semibold text-xl">
+                        <p className="ml-32 text-[#02685A] font-semibold text-xl">
                           Link HPR
                         </p>
-                        <p className="ml-32 text-[#7F8C8D] font-semibold text-xl">
+                        <p className="ml-24 text-[#7F8C8D] font-semibold text-xl">
                           Account Details
                         </p>
-                        <p className="ml-20 text-[#7F8C8D] font-semibold text-xl">
+                        {/* <p className="ml-20 text-[#7F8C8D] font-semibold text-xl">
                           Practice Details
-                        </p>
+                        </p> */}
                       </div>
                     </div>
                   </div>

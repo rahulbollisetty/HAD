@@ -49,6 +49,9 @@ public class DoctorDetailsDTO {
     private Integer pincode;
 
     @NotNull
+    private String mobile;
+
+    @NotNull
     private String address;
 
     @NotNull
@@ -59,7 +62,6 @@ public class DoctorDetailsDTO {
 
     @NotNull
     private Boolean isHeadDoctor;
-
 
 }
 
