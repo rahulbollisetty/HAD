@@ -12,6 +12,7 @@ import PersistLogin from "./PersistLogin";
 import { ToastContainer, Bounce } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import AllPatientList from "./pages/PatientScreen/components/AllPatientList";
+import { DoctorStaffScreen } from "./pages/DoctorStaffScreen/DoctorStaffScreen";
 function App() {
   return (
     <div>
@@ -38,6 +39,8 @@ function App() {
 
           <Route path="/" element={<AllPatientList />} />
           <Route path="/patientScreen/:id" element={<PatientScreen />} />
+          <Route path="/staffList" element={<DoctorStaffScreen />} />
+
           {/* we want to protect these routes */}
           <Route element={<PersistLogin />}>
             <Route element={<RequireAuth allowedRoles={["DOCTOR"]} />}></Route>
