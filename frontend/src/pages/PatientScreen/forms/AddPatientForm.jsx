@@ -32,6 +32,7 @@ function AddPatientForm() {
     setValue("town", data.auth.patient.address.district || "");
     setValue("state",data.auth.patient.address.state || "");
     setValue("abhaAddress",data.auth.patient.id || "");
+    setValue("linkToken",data.auth.accessToken || "")
     setValue("abhaNumber","");
   };
 
@@ -45,6 +46,7 @@ function AddPatientForm() {
     setValue("state", data.stateName || "");
     setValue("abhaAddress",data.abhaAddress || "");
     setValue("abhaNumber",data.abhaNumber||"");
+    setValue("linkToken", "")
   };
 
   const axiosPrivate = useAxiosPrivate();

@@ -349,6 +349,7 @@ public class PatientService {
         patient.setTown(patientDetailsDto.getTown());
         patient.setPincode(patientDetailsDto.getPincode());
         patient.setState(patientDetailsDto.getState());
+        patient.setLinkToken(patientDetailsDto.getLinkToken());
         patientDetailsRepository.save(patient);
         return ResponseEntity.ok().body("Patient Saved");
 

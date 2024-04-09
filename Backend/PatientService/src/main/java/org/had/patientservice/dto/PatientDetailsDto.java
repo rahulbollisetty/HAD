@@ -35,4 +35,6 @@ public class PatientDetailsDto {
     private String pincode;
 
     private String state;
+
+    private String linkToken;
 }
