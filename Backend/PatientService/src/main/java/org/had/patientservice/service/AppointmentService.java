@@ -1,22 +1,25 @@
 package org.had.patientservice.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.had.accountservice.exception.MyWebClientException;
 import org.had.patientservice.dto.AppointmentDto;
-import org.had.patientservice.entity.AppointmentDetails;
-import org.had.patientservice.entity.OpConsultation;
-import org.had.patientservice.entity.PatientDetails;
-import org.had.patientservice.entity.PatientVitals;
-import org.had.patientservice.repository.AppointmentRepository;
-import org.had.patientservice.repository.OpConsultationRepository;
-import org.had.patientservice.repository.PatientDetailsRepository;
-import org.had.patientservice.repository.PatientVitalsRepository;
+import org.had.patientservice.entity.*;
+import org.had.patientservice.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.BodyInserters;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
-import java.sql.Time;
-import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class AppointmentService {
@@ -32,6 +35,11 @@ public class AppointmentService {
     
     @Autowired
     private PatientDetailsRepository patientDetailsRepository;
+
+    @Autowired
+    private PrescriptionDetailsRepository prescriptionDetailsRepository;
+    @Autowired
+    private WebClient webClient;
 
     public String createNewAppointment(AppointmentDto appointmentDto){
         AppointmentDetails appointmentDetails = new AppointmentDetails();
@@ -89,5 +97,82 @@ public class AppointmentService {
             return ResponseEntity.ok(appointmentDetails);
         }
         return ResponseEntity.badRequest().body("Patient Not found");
+    }
+
+
+    public ResponseEntity<?> getPatientVitals(Integer opId) {
+        List<PatientVitals> patientVitalsList = patientVitalsRepository.findByOpId(opId);
+        if (!patientVitalsList.isEmpty()) {
+            PatientVitals patientVitals = patientVitalsList.get(0); // Assuming you only want the first item in the list
+            return ResponseEntity.ok(patientVitals);
+        }
+        return ResponseEntity.badRequest().body("Patient Vitals Not found");
+    }
+
+
+    public ResponseEntity<?> completeAppointment(JsonNode jsonNode) {
+        try {
+            JsonNode prescriptionArray = jsonNode.get("prescription");
+            Integer opId = jsonNode.get("opId").asInt();
+            String accessToken = jsonNode.get("accessToken").asText();
+            Optional<OpConsultation> opConsultationOptional = opConsultationRepository.findById(opId);
+
+            if (opConsultationOptional.isPresent()) {
+                OpConsultation opConsultation = opConsultationOptional.get();
+
+                if (prescriptionArray != null && prescriptionArray.isArray()) {
+                    for (JsonNode prescriptionObject : prescriptionArray) {
+                        String drug = prescriptionObject.get("drug").asText();
+                        String instructions = prescriptionObject.get("instructions").asText();
+                        Integer dosage = prescriptionObject.get("dosage").asInt();
+                        Integer duration = prescriptionObject.get("duration").asInt();
+                        Integer frequency = prescriptionObject.get("frequency").asInt();
+
+                        PrescriptionDetails prescriptionDetails = new PrescriptionDetails();
+                        prescriptionDetails.setDrug(drug);
+                        prescriptionDetails.setInstructions(instructions);
+                        prescriptionDetails.setDosage(dosage);
+                        prescriptionDetails.setFrequency(frequency);
+                        prescriptionDetails.setDuration(duration);
+                        prescriptionDetails.setOpConsultation(opConsultation);
+
+                        prescriptionDetailsRepository.save(prescriptionDetails);
+                    }
+
+                    linkCareContext(opId+"", accessToken);
+                    return ResponseEntity.ok("Prescription Record saved");
+                } else {
+                    return ResponseEntity.badRequest().body("Invalid Prescription Array");
+                }
+            } else {
+                return ResponseEntity.badRequest().body("OpConsultation with id " + opId + " not found");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred");
+        }
+    }
+
+    private String linkCareContext(String opId, String accessToken) {
+        var values = new HashMap<String, String>() {{
+            put("opId",opId);
+            put("accessToken", accessToken);
+        }};
+        String requestBody = null;
+        var objectMapper = new ObjectMapper();
+        try {
+            requestBody = objectMapper.writeValueAsString(values);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+        return webClient.post().uri("http://127.0.0.1:9008/abdm/patient/linkCareContext")
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(BodyInserters.fromValue(requestBody))
+                .retrieve()
+                .onStatus(HttpStatusCode::isError, clientResponse -> {
+                    return clientResponse.bodyToMono(String.class)
+                            .flatMap(errorBody -> Mono.error(new MyWebClientException(errorBody, clientResponse.statusCode().value())));
+                })
+                .bodyToMono(String.class).block();
     }
 }
