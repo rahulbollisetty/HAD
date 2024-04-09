@@ -20,7 +20,7 @@ function PastRecords({ patientId, sendDataToParent }) {
   useEffect(() => {
     const getAppointmentDetails = async () => {
       try {
-        const path = `http://127.0.0.1:9005/patient/appointment/getAppointmentDetails?id=${patientId.patientId}`;
+        const path = `http://127.0.0.1:9005/patient/appointment/getAppointmentDetails?id=${props.patientId}`;
         const resp = await axiosPrivate.get(path);
         console.log(resp.data);
         setAppointmentDetailsList(resp.data);
@@ -37,7 +37,7 @@ function PastRecords({ patientId, sendDataToParent }) {
         <p className="font-semibold relative text-2xl ml-4 mt-4 mb-4 text-[#444444]">
           All Appointment Details
         </p>
-        <AddAppointmentForm patientId={patientId} />
+        <AddAppointmentForm patientId={props} />
       </div>
       <div className="h-[1px] bg-[#827F7F82]"></div>
       <div className="sm:rounded-lg 2xl:max-h-[500px] 4xl:max-h-[800px] lg:max-h-[50px] flex flex-col overflow-auto">
