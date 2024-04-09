@@ -139,7 +139,7 @@ public class AppointmentService {
                     }
                     opConsultation.setObservations(Observations);
                     opConsultationRepository.save(opConsultation);
-//                    linkCareContext(opId+"", patientId);
+                   linkCareContext(opId+"", patientId);
                     return ResponseEntity.ok("Prescription Record saved");
                 } else {
                     return ResponseEntity.badRequest().body("Invalid Prescription Array");

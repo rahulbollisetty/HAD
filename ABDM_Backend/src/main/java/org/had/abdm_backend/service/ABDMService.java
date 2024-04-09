@@ -517,6 +517,7 @@ public String consentInit(JsonNode jsonNode) throws JsonProcessingException{
         purpose_map.put("DSRCH","Disease Specific Healthcare Research");
         purpose_map.put("PatRQT","Self Requested");
 
+
         String purpose_code = jsonNode.get("purpose_code").asText();
         String patient_id = jsonNode.get("patient_id").asText();
         String hiu_id = jsonNode.get("hiu_id").asText();

@@ -43,5 +43,13 @@ public class ConsentAPI {
         return ResponseEntity.ok("notified");
     }
 
+    @PostMapping(value = "/linkCareContext", produces = MediaType.APPLICATION_JSON_VALUE)
+    public String linkCareContext(@RequestBody JsonNode jsonNode) throws JsonProcessingException {
+        abdmService.setToken();
+        String opId = jsonNode.get("opId").asText();
+        String accessToken = jsonNode.get("accessToken").asText();
+        return abdmService.linkCareContext(opId, accessToken);
+    }
+
 
 }
