@@ -46,6 +46,9 @@ public class PatientDetails {
 
     private String state;
 
+    @Column(length = 3000)
+    private String linkToken;
+
 //    private String hospital_id;
 
 }

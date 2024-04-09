@@ -1,7 +1,11 @@
 import Sidebar from "../../Sidebar";
 import Profile from "./Profile";
 import DoctorTab from "./Tabs";
-function AddRecords() {
+import { useEffect } from "react";
+function AddRecords({appointment_id, sendDataToParent}) {
+  useEffect(() => {
+    if(!appointment_id)sendDataToParent("Select an appointment to view records")
+  }, []);
   return (
     <div className="flex flex-col">
       <div className="">

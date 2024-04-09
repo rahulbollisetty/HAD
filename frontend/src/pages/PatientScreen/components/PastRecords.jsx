@@ -11,9 +11,9 @@ import {
 } from "@material-tailwind/react";
 import AddAppointmentForm from "../forms/AddAppointmentForm";
 
-function PastRecords({ patientId }) {
-  console.log(patientId);
+function PastRecords({ patientId, sendDataToParent }) {
 
+  
   const [AppointmentDetailsList, setAppointmentDetailsList] = useState([]);
   const axiosPrivate = useAxiosPrivate();
 
@@ -79,6 +79,7 @@ function PastRecords({ patientId }) {
                   <button
                     className="inline-flex justify-center items-center gap-[10px] rounded-lg
                                         border border-[#787887] bg-[#F5FEF2] text-[20px] text-[#02685A] font-semibold p-2.5"
+                                        onClick={()=>{sendDataToParent(item.appointment_id)}}
                   >
                     <div>View</div>
                     <FaCaretRight className="h-[25px] w-[25px]" />
