@@ -44,4 +44,6 @@ public class PatientVitals {
     @JsonIgnore
     @JoinColumn(name = "op_id")
     private OpConsultation opConsultation;
+
+
 }

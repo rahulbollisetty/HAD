@@ -65,7 +65,7 @@ function AbhaVerify({sendDataToParent}) {
                         var status = JSON.parse(response.data).statusCodeValue;
                         if (status >= 400)
                           toast.error(JSON.parse(response.data).body);
-                        else if ((status = 200)) {
+                        else if ((status == 200)) {
                           setTxnId(
                             JSON.parse(response.data).body.auth.transactionId
                           );

@@ -1,8 +1,10 @@
 package org.had.patientservice.controller;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import jakarta.validation.Valid;
 import org.had.patientservice.dto.AppointmentDto;
 import org.had.patientservice.entity.AppointmentDetails;
+import org.had.patientservice.entity.OpConsultation;
 import org.had.patientservice.service.AppointmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -32,4 +34,17 @@ public class AppointmentController {
         return appointmentService.getAppointmentDetails(Integer.parseInt(id));
     }
 
+    @PreAuthorize("hasAnyAuthority('DOCTOR','STAFF')")
+    @PostMapping(value = "/getPatientVitals", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getPatientVitals(@RequestBody JsonNode jsonNode) {
+        Integer opId = jsonNode.get("op_id").asInt();
+        return appointmentService.getPatientVitals(opId);
+    }
+
+    @PreAuthorize("hasAnyAuthority('DOCTOR','STAFF')")
+    @PostMapping(value = "/completeAppointment", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> completeAppointment(@RequestBody JsonNode jsonNode) {
+
+        return appointmentService.completeAppointment(jsonNode);
+    }
 }

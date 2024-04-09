@@ -1,49 +1,70 @@
 import {
-    Tabs,
-    TabsHeader,
-    TabsBody,
-    Tab,
-    TabPanel,
-  } from "@material-tailwind/react";
-import { useState } from "react";
-import AddRecords from "./AddRecords";  
+  Tabs,
+  TabsHeader,
+  TabsBody,
+  Tab,
+  TabPanel,
+} from "@material-tailwind/react";
+import { useCallback, useEffect, useState } from "react";
+import AddRecords from "./AddRecords";
 import ConsentTable from "./ConsentTable";
 import PastRecords from "./PastRecords";
 
+export default function DoctorTab(props) {
 
-  export default function DoctorTab(id) {
-    const [activeTab, setActiveTab] = useState("Past Records");
-    const data = [
-      {
-        label: "Past Records",
-        value: "Past Records",
-        desc: <PastRecords patientId={id}/>,
-      },
-      {
-        label: "Import Records",
-        value: "Import Records",
-        desc: <ConsentTable patientId={id}/>,
-      },
-      {
-        label: "Add Records",
-        value: "Add Records",
-        desc: <AddRecords patientId={id}/>,
-      },
-      
-    ];
-   
-    return (
-      <Tabs value={activeTab} className= "w-full mx-2">
-        <TabsHeader className="text-sm justify-center flex items-center border border-[#7B7878] rounded-l-sm 
+  const [activeTab, setActiveTab] = useState("Past Records");
+
+  useEffect(() => {
+    setActiveTab(activeTab);
+  });
+
+  const [AppointmentId, setAppointmentId] = useState("");
+
+  const handleDataFromPastRecords = (newData) => {
+    setActiveTab("Add Records");
+  };
+
+  const data = [
+    {
+      label: "Past Records",
+      value: "Past Records",
+      desc: (
+        <PastRecords
+          sendDataToParent={handleDataFromPastRecords}
+          patientId={props.patientId}
+        />
+      ),
+    },
+    {
+      label: "Import Records",
+      value: "Import Records",
+      desc: <ConsentTable patientId={props.patientId} />,
+    },
+    {
+      label: "Add Records",
+      value: "Add Records",
+      desc: <AddRecords patientId={props.patientId} appointmentId={props.appointmentId} />,
+    },
+  ];
+
+  return (
+    <>
+      <Tabs value={activeTab} className="w-full mx-2">
+        <TabsHeader
+          className="text-sm justify-center flex items-center border border-[#7B7878] rounded-l-sm 
                 bg-white cursor-pointer"
-        indicatorProps={{
-          className:
-            "text-sm justify-center flex items-center bg-[#006666] cursor-pointer",
-        }}>
+          indicatorProps={{
+            className:
+              "text-sm justify-center flex items-center bg-[#006666] cursor-pointer",
+          }}
+        >
           {data.map(({ label, value }) => (
-            <Tab key={value} value={value} 
-            onClick={() => setActiveTab(value)}
-              className={activeTab === value ? "text-white" : ""}>
+            <Tab
+              key={value}
+              value={value}
+              onClick={() => setActiveTab(value)}
+              className={activeTab === value ? "text-white" : ""}
+            >
               {label}
             </Tab>
           ))}
@@ -51,10 +72,11 @@ import PastRecords from "./PastRecords";
         <TabsBody>
           {data.map(({ value, desc }) => (
             <TabPanel key={value} value={value} className="p-0">
-             {desc}
+              {desc}
             </TabPanel>
           ))}
         </TabsBody>
       </Tabs>
-    );
-  }
+    </>
+  );
+}

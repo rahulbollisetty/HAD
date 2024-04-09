@@ -9,12 +9,11 @@ import Layout from "./pages/Layout";
 import Unauthorized from "./pages/exceptions/Unauthorized";
 import RequireAuth from "./routes/RequireAuth";
 import PersistLogin from "./PersistLogin";
-import {
-  ToastContainer,
-  Bounce,
-} from "react-toastify";
+import { ToastContainer, Bounce } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import AllPatientList from "./pages/PatientScreen/components/AllPatientList";
+import AddRecords from "./pages/PatientScreen/components/AddRecords";
+import AddAppointmentForm from "./pages/PatientScreen/forms/AddAppointmentForm";
 function App() {
   return (
     <div>
@@ -43,7 +42,8 @@ function App() {
           <Route element={<PersistLogin />}>
             <Route element={<RequireAuth allowedRoles={["DOCTOR"]} />}>
               <Route path="/" element={<AllPatientList />} />
-              <Route path="/patientScreen/:id" element={<PatientScreen />} />
+              <Route path="/patientScreen/:id" element={<PatientScreen tab={"Past Records"}/>} />
+              <Route path="/patientScreen/:id/appointment/:appid" element={<PatientScreen   />} />
             </Route>
 
             {/* <Route element={<RequireAuth allowedRoles={[ROLES.Editor]} />}>
