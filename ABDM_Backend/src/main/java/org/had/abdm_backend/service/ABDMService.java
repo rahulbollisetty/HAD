@@ -473,7 +473,7 @@ public class ABDMService {
         Map<String, Object> patient = new HashMap<>();
         patient.put("referenceNumber" , opId);
         patient.put("display" , display);
-        patient.put("careContexts" , careContexts);
+        patient.put("careContexts" , List.of(careContexts));
 
         Map<String, Object> link = new HashMap<>();
         link.put("accessToken", accessToken);

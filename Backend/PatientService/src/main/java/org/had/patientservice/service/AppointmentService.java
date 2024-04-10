@@ -38,8 +38,10 @@ public class AppointmentService {
 
     @Autowired
     private PrescriptionDetailsRepository prescriptionDetailsRepository;
+
     @Autowired
     private WebClient webClient;
+
 
     public String createNewAppointment(AppointmentDto appointmentDto){
         AppointmentDetails appointmentDetails = new AppointmentDetails();
@@ -104,7 +106,7 @@ public class AppointmentService {
         int opId = Integer.parseInt(id);
         List<PatientVitals> patientVitalsList = patientVitalsRepository.findByOpId(opId);
         if (!patientVitalsList.isEmpty()) {
-            PatientVitals patientVitals = patientVitalsList.get(0); // Assuming you only want the first item in the list
+            PatientVitals patientVitals = patientVitalsList.get(0);
             return ResponseEntity.ok(patientVitals);
         }
         return ResponseEntity.badRequest().body("Patient Vitals Not found");
@@ -137,10 +139,23 @@ public class AppointmentService {
                         prescriptionDetails.setOpConsultation(opConsultation);
                         prescriptionDetailsRepository.save(prescriptionDetails);
                     }
-                    opConsultation.setObservations(Observations);
-                    opConsultationRepository.save(opConsultation);
+                   opConsultation.setObservations(Observations);
+                   opConsultationRepository.save(opConsultation);
+
                    linkCareContext(opId+"", patientId);
-                    return ResponseEntity.ok("Prescription Record saved");
+
+                    Optional<AppointmentDetails> appointmentDetailsOptional = appointmentRepository.findById(opId);
+                    if (appointmentDetailsOptional.isPresent()) {
+                        AppointmentDetails appointmentDetails = appointmentDetailsOptional.get();
+                        appointmentDetails.setStatus("Completed");
+                        System.out.println("Updated Status");
+                        appointmentRepository.save(appointmentDetails);
+                    }
+                    else {
+                        System.out.println("Appointment Not found");
+                    }
+
+                   return ResponseEntity.ok("Prescription Record saved");
                 } else {
                     return ResponseEntity.badRequest().body("Invalid Prescription Array");
                 }
@@ -180,4 +195,11 @@ public class AppointmentService {
                 })
                 .bodyToMono(String.class).block();
     }
+
+    public ResponseEntity<?> getPrescription(JsonNode jsonNode) {
+        Integer appointmentId = jsonNode.get("appointment_id").asInt();
+        List<PrescriptionDetails> prescriptionDetailsList = prescriptionDetailsRepository.findByOpConsultation(appointmentId);
+        return ResponseEntity.ok(prescriptionDetailsList);
+    }
+
 }

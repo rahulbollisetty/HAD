@@ -45,4 +45,10 @@ public class AppointmentController {
     public ResponseEntity<?> completeAppointment(@RequestBody JsonNode jsonNode) {
         return appointmentService.completeAppointment(jsonNode);
     }
+
+    @PreAuthorize("hasAnyAuthority('DOCTOR','STAFF')")
+    @PostMapping(value = "/getPrescription", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getPrescription(@RequestBody JsonNode jsonNode) {
+        return appointmentService.getPrescription(jsonNode);
+    }
 }

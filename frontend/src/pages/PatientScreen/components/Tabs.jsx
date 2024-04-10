@@ -46,10 +46,12 @@ export default function DoctorTab(id) {
 
   const [activeTab, setActiveTab] = useState(0);
   const [appointmentId, setappointmentId] = useState('');
-  const handleDataFromPastRecords = (data) =>{
-    console.log(data)
+  const [appointmentStatus, setappointmentStatus] = useState(false);
+  const handleDataFromPastRecords = (data, status) =>{
+    console.log(data, status)
     setActiveTab(2);
     setappointmentId(data);
+    setappointmentStatus(status)
   }
   const handleDataFromAddRecords = (data) =>{
     console.log(data)
@@ -108,7 +110,7 @@ export default function DoctorTab(id) {
         <ConsentTable patientId={id} /> 
       </CustomTabPanel>
       <CustomTabPanel value={activeTab} index={2}>
-        <AddRecords sendDataToParent={handleDataFromAddRecords} appointment_id={appointmentId} patientId={id} />
+        <AddRecords sendDataToParent={handleDataFromAddRecords} status={appointmentStatus} appointment_id={appointmentId} patientId={id} />
       </CustomTabPanel>
       
     </Box>
