@@ -12,22 +12,12 @@ import PersistLogin from "./PersistLogin";
 import { ToastContainer, Bounce } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import AllPatientList from "./pages/PatientScreen/components/AllPatientList";
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
+
 import { DoctorStaffScreen } from "./pages/DoctorStaffScreen/DoctorStaffScreen";
-=======
+
 import AddRecords from "./pages/PatientScreen/components/AddRecords";
 import AddAppointmentForm from "./pages/PatientScreen/forms/AddAppointmentForm";
->>>>>>> bb2c7f0 (Completed appointment)
-=======
-import AddRecords from "./pages/PatientScreen/components/AddRecords";
-import AddAppointmentForm from "./pages/PatientScreen/forms/AddAppointmentForm";
->>>>>>> 7955ad5 (Completed appointment)
-=======
-import AddRecords from "./pages/PatientScreen/components/AddRecords";
-import AddAppointmentForm from "./pages/PatientScreen/forms/AddAppointmentForm";
->>>>>>> 3b19162 (Completed appointment)
+
 function App() {
   return (
     <div>
@@ -56,7 +46,6 @@ function App() {
 
           {/* we want to protect these routes */}
           <Route element={<PersistLogin />}>
-
             <Route element={<RequireAuth allowedRoles={["DOCTOR"]} />}>
               <Route path="/" element={<AllPatientList />} />
               <Route path="/patientScreen/:id" element={<PatientScreen tab={"Past Records"}/>} />
