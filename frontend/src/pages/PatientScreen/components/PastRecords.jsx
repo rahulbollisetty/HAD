@@ -37,7 +37,7 @@ function PastRecords({ patientId, sendDataToParent }) {
         <p className="font-semibold relative text-2xl ml-4 mt-4 mb-4 text-[#444444]">
           All Appointment Details
         </p>
-        <AddAppointmentForm patientId={props} />
+        <AddAppointmentForm patientId={patientId} />
       </div>
       <div className="h-[1px] bg-[#827F7F82]"></div>
       <div className="sm:rounded-lg 2xl:max-h-[500px] 4xl:max-h-[800px] lg:max-h-[50px] flex flex-col overflow-auto">
@@ -79,7 +79,7 @@ function PastRecords({ patientId, sendDataToParent }) {
                   <button
                     className="inline-flex justify-center items-center gap-[10px] rounded-lg
                                         border border-[#787887] bg-[#F5FEF2] text-[20px] text-[#02685A] font-semibold p-2.5"
-                                        onClick={()=>{sendDataToParent(item.appointment_id)}}
+                                        onClick={()=>{sendDataToParent(item.appointment_id, patientId.patientId)}}
                   >
                     <div>View</div>
                     <FaCaretRight className="h-[25px] w-[25px]" />

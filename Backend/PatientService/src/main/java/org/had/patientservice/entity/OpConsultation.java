@@ -1,6 +1,7 @@
 package org.had.patientservice.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 @Getter
@@ -14,6 +15,8 @@ public class OpConsultation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer op_id;
+
+    private String observations;
 
     @OneToOne
     @JoinColumn(name = "appointment_id")
