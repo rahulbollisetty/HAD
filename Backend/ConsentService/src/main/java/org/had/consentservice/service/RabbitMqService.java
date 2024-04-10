@@ -3,6 +3,7 @@ package org.had.consentservice.service;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +15,9 @@ public class RabbitMqService {
     @Autowired
     private SSEService sseService;
 
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
+
     @RabbitListener(queues = "${queue.name}")
     public void receiveJsonData(String jsonData) {
         if (!jsonData.isEmpty()){
@@ -23,11 +27,11 @@ public class RabbitMqService {
                 String type = jsonNode.get("type").asText();
 
                 switch (type) {
-                    case "userAuthInit":
-                        sseService.sendUserAuthData(jsonData);
+                    case "consentInit":
+//                        sseService.sendUserAuthData(jsonData);
                         System.out.println("Received userAuthInit: " + jsonData);
                         break;
-                    case "userAuthOtpVerify":
+                    case "consent":
                         System.out.println("Received userAuthOtpVerify: " + jsonData);
                         break;
                     default:

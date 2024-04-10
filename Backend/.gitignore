@@ -33,6 +33,6 @@ build/
 .vscode/
 
 ### Applog
-appLog.log.*.*.tmp
-appLog.log
-appLog.log.*.*.gz
+#appLog.log.*.*.tmp
+#appLog.log.*.*.gz
+appLog.*
