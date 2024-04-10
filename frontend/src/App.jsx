@@ -38,6 +38,8 @@ function App() {
           {/* <Route path="linkpage" element={<LinkPage />} /> */}
           <Route path="unauthorized" element={<Unauthorized />} />
 
+          <Route path="/staffList" element={<DoctorStaffScreen />} />
+
           {/* we want to protect these routes */}
           <Route element={<PersistLogin />}>
             <Route element={<RequireAuth allowedRoles={["DOCTOR"]} />}>

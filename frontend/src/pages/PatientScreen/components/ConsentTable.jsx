@@ -1,5 +1,6 @@
 import { MdSearch, MdAdd } from "react-icons/md";
 import { FaCaretRight } from "react-icons/fa";
+import AddConsentForm from "../forms/AddConsentForm";
 function ConsentTable() {
   return (
     <div className="border mx-3 my-4 border-[#006666] rounded-md border-l-4">
@@ -7,12 +8,13 @@ function ConsentTable() {
         <p className="font-semibold relative text-2xl ml-4 mt-4 mb-4 text-[#444444]">
           Consent Request Details
         </p>
-        <div className="inline-flex gap-[15px] px-[1.05rem] m-2 py-[0.25rem] h-[2.8rem] justify-center items-center text-white w-fit hover:bg-[#276059] bg-[#006666] rounded-[10px]">
+        <AddConsentForm />
+        {/* <button className="inline-flex gap-[15px] px-[1.05rem] m-2 py-[0.25rem] h-[2.8rem] justify-center items-center text-white w-fit hover:bg-[#276059] bg-[#006666] rounded-[10px]">
           <MdAdd className="h-[35px] w-[35px] m-auto" />
           <div className="relative w-fit font-semibold m-auto text-[20px]">
             Add Consent
           </div>
-        </div>
+        </button> */}
       </div>
       <div className="h-[1px] bg-[#827F7F82]"></div>
       <div className="sm:rounded-lg 2xl:max-h-[500px] 4xl:max-h-[800px] lg:max-h-[50px] flex flex-col overflow-auto">
