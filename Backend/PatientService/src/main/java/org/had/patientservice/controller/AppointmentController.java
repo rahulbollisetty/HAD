@@ -35,16 +35,14 @@ public class AppointmentController {
     }
 
     @PreAuthorize("hasAnyAuthority('DOCTOR','STAFF')")
-    @PostMapping(value = "/getPatientVitals", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getPatientVitals(@RequestBody JsonNode jsonNode) {
-        Integer opId = jsonNode.get("op_id").asInt();
-        return appointmentService.getPatientVitals(opId);
+    @GetMapping(value = "/getPatientVitals", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getPatientVitals(@RequestParam String id) {
+        return appointmentService.getPatientVitals(id);
     }
 
     @PreAuthorize("hasAnyAuthority('DOCTOR','STAFF')")
     @PostMapping(value = "/completeAppointment", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> completeAppointment(@RequestBody JsonNode jsonNode) {
-
         return appointmentService.completeAppointment(jsonNode);
     }
 }

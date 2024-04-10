@@ -2,6 +2,7 @@ package org.had.abdm_backend.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import lombok.Getter;
 import org.had.abdm_backend.entity.AbdmIdVerify;
 import org.had.abdm_backend.exception.MyWebClientException;
@@ -19,9 +20,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class ABDMService {
@@ -457,7 +456,7 @@ public class ABDMService {
 //    M2 API's from here
 
     public String linkCareContext(String opId, String accessToken) {
-        String timeStamp = getCurrentSimpleTimestamp();
+        String timeStamp = getISOTimestamp();
         String requestId = generateUUID();
         LocalDate date = todayDate();
         String display = "OP Consultation on " + date;
@@ -469,7 +468,7 @@ public class ABDMService {
         Map<String, Object> patient = new HashMap<>();
         patient.put("referenceNumber" , opId);
         patient.put("display" , display);
-        patient.put("careContexts" , careContexts);
+        patient.put("careContexts" , List.of(careContexts));
 
         Map<String, Object> link = new HashMap<>();
         link.put("accessToken", accessToken);
@@ -481,18 +480,21 @@ public class ABDMService {
         content.put("link",link);
 
         var objectMapper = new ObjectMapper();
+        objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
         String requestBody = null;
         try {
             requestBody = objectMapper.writeValueAsString(content);
         } catch (JsonProcessingException e) {
+
             throw new RuntimeException(e);
         }
-
+        System.out.println(requestBody);
         return webClient.post().uri("https://dev.abdm.gov.in/gateway/v0.5/links/link/add-contexts")
-                .header("Authorization", "Bearer " + token)
-                .header("Content-Type", "application/json")
-                .header("X-CM-ID", "sbx")
                 .header("accept", "*/*")
+                .header("X-CM-ID", "sbx")
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Bearer " + token)
+                .header("X-Auth-Token", "Bearer eyJhbGciOiJSUzUxMiJ9.eyJzdWIiOiI5MTY4NjUzMjczMTMyNkBzYngiLCJyZXF1ZXN0ZXJUeXBlIjoiSElQIiwicmVxdWVzdGVySWQiOiJISVBfMTEiLCJwYXRpZW50SWQiOiI5MTY4NjUzMjczMTMyNkBzYngiLCJzZXNzaW9uSWQiOiJlY2Y4OTVhMi03NWFhLTQzZGItOTllNS04N2MyM2Y0ZDI3ZmUiLCJleHAiOjE2ODE4NDg5NTAsImlhdCI6MTY4MTc2MjU1MH0.HhL5_bSgBu0delnycUHYN3iGn22j9i0hFekAGC6bhspSaGZ2uNj12ZBn4FtKD6qZqGXxuLuxEBrgTNaFGP-hTPqyVkMsU0xS36YTP7BRa1K7159JcFCysB9fHvW9tJZj0id9os_cB02XX_ZniXustDwKrrX16sUjhLHWVrwz2MY5kepYLojrurLGbS1Ju030gV_86-5rcQk5m2-t7pcZqQBEz-FLQFj2JO-PJ6D0ypz-Wlqcw91GIeg0j3U1d8X_-1c2FiBzoE3Cbag7K4nlE_xO5TiIgnLDrekFtBHSPqvwyz2kSVqcDO4lKTSJ7rIScalS_VS5bLX2fGGCoVbvqw"  )
                 .body(BodyInserters.fromValue(requestBody))
                 .retrieve()
                 .onStatus(HttpStatusCode::isError,clientResponse -> {

@@ -1,13 +1,44 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { RiDeleteBinLine } from "react-icons/ri";
-function AddRecords(props) {
-  console.log(props);
+import useAxiosPrivate from "../../../hooks/useAxiosPrivate";
+
+function AddRecords({ patientId, appointment_id, sendDataToParent }) {
+  const axiosPrivate = useAxiosPrivate();
+  useEffect(() => {
+    if (!appointment_id)
+      sendDataToParent("Select an appointment to view records");
+
+    console.log("patient", patientId.patientId, "app", appointment_id);
+    try {
+      const fetchData = async () => {
+        const path = `http://127.0.0.1:9005/patient/appointment/getPatientVitals?id=${appointment_id}`;
+        const resp = await axiosPrivate.get(path);
+        console.log(resp.data, "hello");
+        setVitals(resp.data);
+      };
+      fetchData();
+    } catch (error) {
+      console.log(error);
+    }
+  }, []);
   const [prescription, setPrescription] = useState([]);
   const [drug, setDrug] = useState("");
   const [dosage, setDosage] = useState(0);
   const [frequency, setFrequency] = useState(0);
   const [duration, setDuration] = useState(0);
   const [instructions, setInstructions] = useState("");
+  const [Weight, setWeight] = useState(0);
+  const [Age, setAge] = useState(0);
+  const [Systolic, setSystolic] = useState(0);
+  const [Diastolic, setDiastolic] = useState(0);
+  const [Pulse, setPulse] = useState(0);
+  const [Cholestrol, setCholestrol] = useState(0);
+  const [Sugar, setSugar] = useState(0);
+  const [Height, setHeight] = useState(0);
+  const [Temperature, setTemperature] = useState(0);
+  const [RespirationRate, setRespirationRate] = useState(0);
+  const [Triglycerides, setTriglycerides] = useState(0);
+  const [observations, setobservations] = useState("");
 
   function handleAddPrescription() {
     if (
@@ -33,6 +64,28 @@ function AddRecords(props) {
     setFrequency(0);
     setInstructions("");
   }
+
+  const linkCareContext = () => {
+    try {
+      const completeAppointment = async () => {
+        const path = `http://127.0.0.1:9005/patient/appointment/completeAppointment`;
+        const requestBody = {
+          opId: appointment_id,
+          prescription: prescription,
+          patientId: parseInt(patientId.patientId),
+          observations: observations,
+        };
+        console.log(requestBody);
+        const resp = await axiosPrivate.post(path, requestBody);
+
+        console.log(resp.data, "hello");
+        setVitals(resp.data);
+      };
+      completeAppointment();
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const handleRemovePrescription = (index) => {
     const updatedPrescriptions = prescription.filter((_, i) => i !== index);
@@ -88,6 +141,25 @@ function AddRecords(props) {
     updatedPrescription[index].instructions = e.target.value;
     setPrescription(updatedPrescription);
   };
+
+  const changeObservations = (e) => {
+    setobservations(e.target.value);
+  };
+
+  const setVitals = (data) => {
+    setWeight(data.weight);
+    setCholestrol(data.cholesterol);
+    setDiastolic(data.blood_pressure_distolic);
+    setAge(data.age);
+    setHeight(data.height);
+    setPulse(data.pulse_rate);
+    setSystolic(data.blood_pressure_systolic);
+    setSugar(data.blood_sugar);
+    setTemperature(data.temperature);
+    setTriglycerides(data.triglyceride);
+    setRespirationRate(data.respiration_rate);
+  };
+
   return (
     <div className="flex flex-col">
       <div className="">
@@ -106,7 +178,7 @@ function AddRecords(props) {
                     className="rounded-md"
                     type="number"
                     name="weight"
-                    id=""
+                    value={Weight}
                   />
                 </div>
                 <div className="flex flex-col px-6">
@@ -117,7 +189,7 @@ function AddRecords(props) {
                     className="rounded-md mr-8"
                     type="number"
                     name="height"
-                    id=""
+                    value={Height}
                   />
                 </div>
 
@@ -129,7 +201,7 @@ function AddRecords(props) {
                     className="rounded-md"
                     type="number"
                     name="age"
-                    id=""
+                    value={Age}
                   />
                 </div>
                 <div className="flex flex-col px-6">
@@ -140,7 +212,7 @@ function AddRecords(props) {
                     className="rounded-md mr-8"
                     type="number"
                     name="temperature"
-                    id=""
+                    value={Temperature}
                   />
                 </div>
 
@@ -153,7 +225,7 @@ function AddRecords(props) {
                       className="rounded-md"
                       type="number"
                       name="blood_pressure_systolic"
-                      id=""
+                      value={Diastolic}
                       placeholder="Systolic"
                     />
                     <p className="text-3xl pt-1 pl-4 pr-5"> / </p>
@@ -161,7 +233,7 @@ function AddRecords(props) {
                       className="rounded-md"
                       type="number"
                       name="blood_pressure_distolic"
-                      id=""
+                      value={Systolic}
                       placeholder="Diastolic"
                     />
                   </div>
@@ -177,7 +249,7 @@ function AddRecords(props) {
                     className="rounded-md"
                     type="number"
                     name="pulse_rate"
-                    id=""
+                    value={Pulse}
                   />
                 </div>
                 <div className="flex flex-col px-6">
@@ -188,7 +260,7 @@ function AddRecords(props) {
                     className="rounded-md mr-8"
                     type="number"
                     name="respiration_rate"
-                    id=""
+                    value={RespirationRate}
                   />
                 </div>
 
@@ -200,7 +272,7 @@ function AddRecords(props) {
                     className="rounded-md"
                     type="number"
                     name="cholesterol"
-                    id=""
+                    value={Cholestrol}
                   />
                 </div>
                 <div className="flex flex-col px-6">
@@ -211,7 +283,7 @@ function AddRecords(props) {
                     className="rounded-md mr-8"
                     type="number"
                     name="triglyceride"
-                    id=""
+                    value={Triglycerides}
                   />
                 </div>
 
@@ -223,23 +295,14 @@ function AddRecords(props) {
                     className="rounded-md"
                     type="number"
                     name="blood_sugar"
-                    id=""
+                    value={Sugar}
                   />
                 </div>
                 <div className="flex flex-col"></div>
                 <div className="flex flex-col"></div>
               </div>
               <hr className="h-0 bg-[#7B7878] mx-6 mt-6" />
-              <div className="flex ">
-                <div className="ml-auto my-6">
-                  <button className="w-32 h-10  border border-black rounded-md">
-                    Cancel
-                  </button>
-                  <button className="bg-[#FFA000] text-white ml-4 w-32 h-10 mr-6 border border-[#a18042] rounded-md">
-                    Edit
-                  </button>
-                </div>
-              </div>
+
               <hr className="bg-[#7B7878]" />
               <p className="font-semibold text-lg ml-4 my-4">Prescription</p>
               <hr className="mx-4 bg-[#7B7878]"></hr>
@@ -364,16 +427,16 @@ function AddRecords(props) {
               />
 
               <hr className="bg-[#7B7878] mx-4" />
-              <div className="flex">
-                <div className="ml-auto my-4">
-                  <button className="w-32 h-10  border border-black rounded-md">
-                    Cancel
-                  </button>
-                  <button className="bg-[#FFA000] text-white ml-4 w-32 h-10 mr-6 border border-[#a18042] rounded-md">
-                    Save
-                  </button>
-                </div>
-              </div>
+              <p className="font-semibold text-lg ml-4 my-4">
+                Add Observations
+              </p>
+              <input
+                type="text"
+                className="pl-4 my-6 ml-8 rounded-md w-2/3"
+                placeholder="Add Observations"
+                value={observations}
+                onChange={(e) => changeObservations(e)}
+              />
               <hr className="bg-[#7B7878] mx-4" />
               <p className="font-semibold text-lg ml-4 my-4">Add Files</p>
 
@@ -410,7 +473,10 @@ function AddRecords(props) {
                   <button className="w-32 h-10  border border-black rounded-md">
                     Cancel
                   </button>
-                  <button className="bg-[#FFA000] text-white ml-4 w-32 h-10 mr-6 border border-[#a18042] rounded-md">
+                  <button
+                    className="bg-[#FFA000] text-white ml-4 w-32 h-10 mr-6 border border-[#a18042] rounded-md"
+                    onClick={() => linkCareContext()}
+                  >
                     Save
                   </button>
                 </div>

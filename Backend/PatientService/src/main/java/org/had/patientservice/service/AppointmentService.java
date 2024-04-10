@@ -100,7 +100,8 @@ public class AppointmentService {
     }
 
 
-    public ResponseEntity<?> getPatientVitals(Integer opId) {
+    public ResponseEntity<?> getPatientVitals(String id) {
+        int opId = Integer.parseInt(id);
         List<PatientVitals> patientVitalsList = patientVitalsRepository.findByOpId(opId);
         if (!patientVitalsList.isEmpty()) {
             PatientVitals patientVitals = patientVitalsList.get(0); // Assuming you only want the first item in the list
@@ -114,12 +115,11 @@ public class AppointmentService {
         try {
             JsonNode prescriptionArray = jsonNode.get("prescription");
             Integer opId = jsonNode.get("opId").asInt();
-            String accessToken = jsonNode.get("accessToken").asText();
+            Integer patientId = jsonNode.get("patientId").asInt();
+            String Observations = jsonNode.get("observations").asText();
             Optional<OpConsultation> opConsultationOptional = opConsultationRepository.findById(opId);
-
             if (opConsultationOptional.isPresent()) {
                 OpConsultation opConsultation = opConsultationOptional.get();
-
                 if (prescriptionArray != null && prescriptionArray.isArray()) {
                     for (JsonNode prescriptionObject : prescriptionArray) {
                         String drug = prescriptionObject.get("drug").asText();
@@ -135,11 +135,11 @@ public class AppointmentService {
                         prescriptionDetails.setFrequency(frequency);
                         prescriptionDetails.setDuration(duration);
                         prescriptionDetails.setOpConsultation(opConsultation);
-
                         prescriptionDetailsRepository.save(prescriptionDetails);
                     }
-
-                    linkCareContext(opId+"", accessToken);
+                    opConsultation.setObservations(Observations);
+                    opConsultationRepository.save(opConsultation);
+//                    linkCareContext(opId+"", patientId);
                     return ResponseEntity.ok("Prescription Record saved");
                 } else {
                     return ResponseEntity.badRequest().body("Invalid Prescription Array");
@@ -153,7 +153,12 @@ public class AppointmentService {
         }
     }
 
-    private String linkCareContext(String opId, String accessToken) {
+    private String linkCareContext(String opId, Integer patientId) {
+        PatientDetails patientDetails =  patientDetailsRepository.findById(patientId)
+                .orElseThrow(() -> new RuntimeException("Patient not found"));
+
+        String accessToken = patientDetails.getLinkToken();
+        System.out.println(accessToken);
         var values = new HashMap<String, String>() {{
             put("opId",opId);
             put("accessToken", accessToken);
@@ -165,7 +170,7 @@ public class AppointmentService {
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
-        return webClient.post().uri("http://127.0.0.1:9008/abdm/patient/linkCareContext")
+        return webClient.post().uri("http://127.0.0.1:9008/abdm/consent/linkCareContext")
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(BodyInserters.fromValue(requestBody))
                 .retrieve()
