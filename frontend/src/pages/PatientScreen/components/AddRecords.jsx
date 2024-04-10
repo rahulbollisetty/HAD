@@ -1,11 +1,93 @@
-import Sidebar from "../../Sidebar";
-import Profile from "./Profile";
-import DoctorTab from "./Tabs";
-import { useEffect } from "react";
-function AddRecords({appointment_id, sendDataToParent}) {
-  useEffect(() => {
-    if(!appointment_id)sendDataToParent("Select an appointment to view records")
-  }, []);
+import { useState } from "react";
+import { RiDeleteBinLine } from "react-icons/ri";
+function AddRecords(props) {
+  console.log(props);
+  const [prescription, setPrescription] = useState([]);
+  const [drug, setDrug] = useState("");
+  const [dosage, setDosage] = useState(0);
+  const [frequency, setFrequency] = useState(0);
+  const [duration, setDuration] = useState(0);
+  const [instructions, setInstructions] = useState("");
+
+  function handleAddPrescription() {
+    if (
+      drug !== "" &&
+      dosage !== 0 &&
+      duration !== 0 &&
+      frequency !== 0 &&
+      instructions !== ""
+    ) {
+      const newPrescription = {
+        drug: drug,
+        dosage: dosage,
+        duration: duration,
+        frequency: frequency,
+        instructions: instructions,
+      };
+
+      setPrescription((prescription) => [...prescription, newPrescription]);
+    }
+    setDosage(0);
+    setDrug("");
+    setDuration(0);
+    setFrequency(0);
+    setInstructions("");
+  }
+
+  const handleRemovePrescription = (index) => {
+    const updatedPrescriptions = prescription.filter((_, i) => i !== index);
+    setPrescription(updatedPrescriptions);
+  };
+
+  function handleChangeDrug(event) {
+    setDrug(event.target.value);
+  }
+
+  function handleChangeDosage(event) {
+    setDosage(event.target.value);
+  }
+
+  function handleChangeFrequency(event) {
+    setFrequency(event.target.value);
+  }
+
+  function handleChangeDuration(event) {
+    setDuration(event.target.value);
+  }
+
+  function handleChangeInstructions(event) {
+    setInstructions(event.target.value);
+  }
+
+  const updateDrug = (index, e) => {
+    const updatedPrescription = [...prescription];
+    updatedPrescription[index].drug = e.target.value;
+    setPrescription(updatedPrescription);
+  };
+
+  const updateDosage = (index, e) => {
+    const updatedPrescription = [...prescription];
+    updatedPrescription[index].dosage = e.target.value;
+    setPrescription(updatedPrescription);
+  };
+
+  const updateDuration = (index, e) => {
+    const updatedPrescription = [...prescription];
+    updatedPrescription[index].duration = e.target.value;
+    setPrescription(updatedPrescription);
+  };
+
+  const updateFrequency = (index, e) => {
+    const updatedPrescription = [...prescription];
+    updatedPrescription[index].frequency = e.target.value;
+    setPrescription(updatedPrescription);
+  };
+
+  const updateInstructions = (index, e) => {
+    const updatedPrescription = [...prescription];
+    updatedPrescription[index].instructions = e.target.value;
+    setPrescription(updatedPrescription);
+  };
   return (
     <div className="flex flex-col">
       <div className="">

@@ -457,6 +457,7 @@ public class ABDMService {
 
 
 <<<<<<< HEAD
+<<<<<<< HEAD
     public String consentInit(JsonNode jsonNode) throws JsonProcessingException{
         Map<String, String> purpose_map = new HashMap<>();
         purpose_map.put("CAREMGT","Care Management");
@@ -467,6 +468,59 @@ public class ABDMService {
         purpose_map.put("PatRQT","Self Requested");
 =======
 //    M2 API's from here
+=======
+//    M2 API's from here
+
+    public String linkCareContext(String opId, String accessToken) {
+        String timeStamp = getCurrentSimpleTimestamp();
+        String requestId = generateUUID();
+        LocalDate date = todayDate();
+        String display = "OP Consultation on " + date;
+
+        Map<String, String> careContexts = new HashMap<>();
+        careContexts.put("referenceNumber", opId);
+        careContexts.put("display", display);
+
+        Map<String, Object> patient = new HashMap<>();
+        patient.put("referenceNumber" , opId);
+        patient.put("display" , display);
+        patient.put("careContexts" , careContexts);
+
+        Map<String, Object> link = new HashMap<>();
+        link.put("accessToken", accessToken);
+        link.put("patient", patient);
+
+        Map<String, Object> content = new HashMap<>();
+        content.put("requestId", requestId);
+        content.put("timestamp", timeStamp);
+        content.put("link",link);
+
+        var objectMapper = new ObjectMapper();
+        String requestBody = null;
+        try {
+            requestBody = objectMapper.writeValueAsString(content);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+
+        return webClient.post().uri("https://dev.abdm.gov.in/gateway/v0.5/links/link/add-contexts")
+                .header("Authorization", "Bearer " + token)
+                .header("Content-Type", "application/json")
+                .header("X-CM-ID", "sbx")
+                .header("accept", "*/*")
+                .body(BodyInserters.fromValue(requestBody))
+                .retrieve()
+                .onStatus(HttpStatusCode::isError,clientResponse -> {
+                    return clientResponse.bodyToMono(String.class)
+                            .flatMap(errorBody -> Mono.error(new MyWebClientException(errorBody, clientResponse.statusCode().value())));
+                })
+                .bodyToMono(String.class)
+                .block();
+
+
+    }
+
+>>>>>>> 7955ad5 (Completed appointment)
 
     public String linkCareContext(String opId, String accessToken) {
         String timeStamp = getCurrentSimpleTimestamp();
