@@ -605,4 +605,5 @@ Caused by: org.hibernate.query.SemanticException: Cannot compare left expression
 -[2m2024-04-13 02:08:38.945[0;39m [32m- INFO[0;39m [35m71531[0;39m [2m---[0;39m [2m[o-auto-1-exec-1][0;39m [36mo.a.c.c.C.[Tomcat].[localhost].[/]      [0;39m [2m:[0;39m Initializing Spring DispatcherServlet 'dispatcherServlet'
 -[2m2024-04-13 02:08:38.945[0;39m [32m- INFO[0;39m [35m71531[0;39m [2m---[0;39m [2m[o-auto-1-exec-1][0;39m [36mo.s.web.servlet.DispatcherServlet       [0;39m [2m:[0;39m Initializing Servlet 'dispatcherServlet'
 -[2m2024-04-13 02:08:38.948[0;39m [32m- INFO[0;39m [35m71531[0;39m [2m---[0;39m [2m[o-auto-1-exec-1][0;39m [36mo.s.web.servlet.DispatcherServlet       [0;39m [2m:[0;39m Completed initialization in 2 ms
+-[2m2024-04-13 02:09:37.912[0;39m [32m- INFO[0;39m [35m19328[0;39m [2m---[0;39m [2m[trap-executor-0][0;39m [36mc.n.d.s.r.aws.ConfigClusterResolver     [0;39m [2m:[0;39m Resolving eureka endpoints via configuration
 -
