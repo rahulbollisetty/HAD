@@ -8,6 +8,12 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+import org.had.accountservice.entity.DoctorDetails;
+import org.had.accountservice.entity.StaffDetails;
+import org.had.accountservice.repository.DoctorDetailsRepository;
+import org.had.accountservice.repository.StaffDetailsRepository;
+import org.had.accountservice.repository.UserCredentialRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -16,6 +22,7 @@ import org.springframework.web.util.WebUtils;
 import javax.crypto.SecretKey;
 import java.security.Key;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -25,6 +32,15 @@ import java.util.function.Function;
 public class JwtService {
 
     public static final String SECRET = "71430565e99c3c6e3b37526f3c8bf1004582589a3fe7fd35eb2305e03677ea8c";
+
+    @Autowired
+    private DoctorDetailsRepository doctorDetailsRepository;
+
+    @Autowired
+    private UserCredentialRepository userCredentialRepository;
+
+    @Autowired
+    private StaffDetailsRepository staffDetailsRepository;
 
 //    public ResponseCookie generateJwtCookie(UserDetailsImpl userPrincipal) {
 //        String jwt = generateTokenFromUsername(userPrincipal.getUsername());
@@ -85,13 +101,31 @@ public class JwtService {
 
 
     private String createToken(Map<String, Object> claims, String username,String role) {
-        return Jwts.builder()
-                .claims(claims)
-                .subject(username)
-                .claim("role",role)
-                .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis()+1000*5*60))
-                .signWith(getSignKey()).compact();
+        if(Arrays.asList("HEAD_DOCTOR","DOCTOR").contains(role)){
+            DoctorDetails doctorDetails= doctorDetailsRepository.findByLoginCredential(userCredentialRepository.findByUsername(username).get()).get();
+            String name = doctorDetails.getFirst_Name()+" "+doctorDetails.getLast_Name();
+            return Jwts.builder()
+                    .claims(claims)
+                    .subject(username)
+                    .claim("role",role)
+                    .claim("name",name)
+                    .claim("registrationNumber",doctorDetails.getRegistration_number())
+                    .claim("hprId",doctorDetails.getHpr_Id())
+                    .issuedAt(new Date(System.currentTimeMillis()))
+                    .expiration(new Date(System.currentTimeMillis()+1000*5*60))
+                    .signWith(getSignKey()).compact();
+        } else{
+            StaffDetails staffDetails = staffDetailsRepository.findByLoginCredential(userCredentialRepository.findByUsername(username).get()).get();
+            String name = staffDetails.getFirst_Name()+" "+staffDetails.getLast_Name();
+            return Jwts.builder()
+                    .claims(claims)
+                    .subject(username)
+                    .claim("role",role)
+                    .claim("name",name)
+                    .issuedAt(new Date(System.currentTimeMillis()))
+                    .expiration(new Date(System.currentTimeMillis()+1000*5*60))
+                    .signWith(getSignKey()).compact();
+        }
     }
 
 
