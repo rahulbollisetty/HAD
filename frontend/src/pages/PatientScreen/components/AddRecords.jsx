@@ -1,9 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { RiDeleteBinLine } from "react-icons/ri";
 import useAxiosPrivate from "../../../hooks/useAxiosPrivate";
 
 function AddRecords({ patientId, appointment_id, sendDataToParent, status }) {
   const axiosPrivate = useAxiosPrivate();
+  const fileInputRef = useRef(null);
+
   useEffect(() => {
     if (!appointment_id)
       sendDataToParent("Select an appointment to view records");
@@ -20,23 +22,38 @@ function AddRecords({ patientId, appointment_id, sendDataToParent, status }) {
       console.log(error);
     }
 
-    // try {
-    //   const getAppointmentDetails = async () => {
-    //     const path = `http://127.0.0.1:9005/patient/appointment/getAppointmentDetails?id=${appointment_id}`;
+    // const getImageReports = async () => {
+    //   const folderName = `Appointment-${appointment_id}`;
+    //   const path = `http://127.0.0.1:9005/patient/appointment/getImageData?folderName=${encodeURIComponent(
+    //     folderName
+    //   )}`;
+    //   try {
     //     const resp = await axiosPrivate.get(path);
-    //     console.log(resp.data, "appointment details");
-    //     console.log(resp.data[0].status, "Fetching Status");
-    //     if (resp.data[0].status === "Completed") {
-    //       getPrescription();
-    //       setStatus(true);
-    //     } else {
-    //       console.error("Status data is undefined in response.");
-    //     }
-    //   };
-    //   getAppointmentDetails();
-    // } catch (error) {
-    //   console.log(error);
-    // }
+    //     console.log(resp.data);
+    //     const formattedImages = resp.data.map((item) => item.url);
+    //     setImages(formattedImages);
+    //   } catch (error) {
+    //     console.error("Error fetching image data:", error);
+    //   }
+    // };
+
+    // getImageReports();
+
+    // const fetchFile = async () => {
+    //   try {
+    //     const response = await axios.get("/files/example.jpg", {
+    //       responseType: "arraybuffer",
+    //     });
+
+    //     const blob = new Blob([response.data]);
+    //     const url = URL.createObjectURL(blob);
+    //     setFileData(url);
+    //   } catch (error) {
+    //     setError("File not found");
+    //   }
+    // };
+
+    // fetchFile();
 
     const getPrescription = async () => {
       const path = `http://127.0.0.1:9005/patient/appointment/getPrescription`;
@@ -50,7 +67,11 @@ function AddRecords({ patientId, appointment_id, sendDataToParent, status }) {
     getPrescription();
   }, []);
 
-  const [Status, setStatus] = useState(false);
+  const [fileData, setFileData] = useState(null);
+  const [error, setError] = useState("");
+  const [file, setFile] = useState(null);
+  const [message, setMessage] = useState("");
+
   const [prescription, setPrescription] = useState([]);
   const [drug, setDrug] = useState("");
   const [dosage, setDosage] = useState(0);
@@ -115,6 +136,27 @@ function AddRecords({ patientId, appointment_id, sendDataToParent, status }) {
     }
   };
 
+  const handleFileChange = (event) => {
+    setFile(event.target.files[0]);
+  };
+
+  const handleUpload = async () => {
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const response = await axiosPrivate.post("/patient/appointment/uploadFile", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      setMessage(response.data);
+    } catch (error) {
+      setMessage("Failed to upload file");
+    }
+  };
+
   const handleRemovePrescription = (index) => {
     const updatedPrescriptions = prescription.filter((_, i) => i !== index);
     setPrescription(updatedPrescriptions);
@@ -140,36 +182,6 @@ function AddRecords({ patientId, appointment_id, sendDataToParent, status }) {
     setInstructions(event.target.value);
   }
 
-  const updateDrug = (index, e) => {
-    const updatedPrescription = [...prescription];
-    updatedPrescription[index].drug = e.target.value;
-    setPrescription(updatedPrescription);
-  };
-
-  const updateDosage = (index, e) => {
-    const updatedPrescription = [...prescription];
-    updatedPrescription[index].dosage = e.target.value;
-    setPrescription(updatedPrescription);
-  };
-
-  const updateDuration = (index, e) => {
-    const updatedPrescription = [...prescription];
-    updatedPrescription[index].duration = e.target.value;
-    setPrescription(updatedPrescription);
-  };
-
-  const updateFrequency = (index, e) => {
-    const updatedPrescription = [...prescription];
-    updatedPrescription[index].frequency = e.target.value;
-    setPrescription(updatedPrescription);
-  };
-
-  const updateInstructions = (index, e) => {
-    const updatedPrescription = [...prescription];
-    updatedPrescription[index].instructions = e.target.value;
-    setPrescription(updatedPrescription);
-  };
-
   const changeObservations = (e) => {
     setobservations(e.target.value);
   };
@@ -187,7 +199,6 @@ function AddRecords({ patientId, appointment_id, sendDataToParent, status }) {
     setTriglycerides(data.triglyceride);
     setRespirationRate(data.respiration_rate);
   };
-
   return (
     <div className="flex flex-col">
       <div className="">
@@ -357,7 +368,6 @@ function AddRecords({ patientId, appointment_id, sendDataToParent, status }) {
                           disabled={true}
                           type="text"
                           value={p.drug}
-                          onChange={(e) => updateDrug(index, e)}
                         />
                       </div>
                       <div className=" w-1/4 px-4">
@@ -367,7 +377,6 @@ function AddRecords({ patientId, appointment_id, sendDataToParent, status }) {
                           disabled={true}
                           type="number"
                           value={p.dosage}
-                          onChange={(e) => updateDosage(index, e)}
                         />
                       </div>
                       <div className=" w-1/4 px-4">
@@ -377,7 +386,6 @@ function AddRecords({ patientId, appointment_id, sendDataToParent, status }) {
                           disabled={true}
                           type="number"
                           value={p.frequency}
-                          onChange={(e) => updateFrequency(index, e)}
                         />
                       </div>
                       <div className=" w-1/4 px-4">
@@ -387,7 +395,6 @@ function AddRecords({ patientId, appointment_id, sendDataToParent, status }) {
                           disabled={true}
                           type="number"
                           value={p.duration}
-                          onChange={(e) => updateDuration(index, e)}
                         />
                       </div>
                     </div>
@@ -400,7 +407,6 @@ function AddRecords({ patientId, appointment_id, sendDataToParent, status }) {
                           type="text"
                           placeholder="Add Instructions"
                           value={p.instructions}
-                          onChange={(e) => updateInstructions(index, e)}
                         />
                       </div>
                       <div>
@@ -423,7 +429,6 @@ function AddRecords({ patientId, appointment_id, sendDataToParent, status }) {
                   </div>
                 ))}
               </div>
-
               <div>
                 {!status ? (
                   <>
@@ -493,26 +498,23 @@ function AddRecords({ patientId, appointment_id, sendDataToParent, status }) {
                     <hr className="bg-[#7B7878] mx-4" />
                     <p className="font-semibold text-lg ml-4 my-4">Add Files</p>
 
-                    <div className="flex mx-4 my-6">
-                      <label
-                        htmlFor="imageInput"
-                        className="block bg-blue-500 border border-white text-white px-4 py-2 rounded-md cursor-pointer"
+                    <div className="flex mx-4 my-6 ">
+                      <input type="file" onChange={handleFileChange} />
+                      <button
+                        className="block bg-blue-500 border border-white text-white px-4 py-2
+                      rounded-md cursor-pointer"
+                        onClick={handleUpload}
                       >
-                        Upload image
-                      </label>
-                      <input
-                        id="imageInput"
-                        className="hidden"
-                        type="file"
-                        accept="image/*"
-                      />
-                      <label
+                        Upload File
+                      </button>
+                      <p>{message}</p>
+                      {/* <label
                         htmlFor="fileInput"
                         className="bg-white border border-black mx-12 px-4 py-2 w-40 items-center justify-center flex rounded-md cursor-pointer"
                       >
                         Upload File
                       </label>
-                      <input id="fileInput" className="hidden" type="file" />
+                      <input id="fileInput" className="hidden" type="file" /> */}
                     </div>
 
                     <input
