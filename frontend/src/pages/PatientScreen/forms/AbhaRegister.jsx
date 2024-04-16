@@ -58,13 +58,13 @@ function AbhaRegister({ sendDataToParent }) {
         onmessage(response) {
           var status = JSON.parse(response.data).statusCodeValue;
           if (status >= 400) console.error(JSON.parse(response.data).body);
-          else if ((status = 200)) {
+          else if (status === 200) {
             console.log(JSON.parse(response.data).body.auth.accessToken);
             const linkToken = JSON.parse(response.data).body.auth.accessToken;
             setProfileData({ ...profileData, accessToken: linkToken });
             const modifiedData = {
               ...profileData,
-              accessToken: linkToken
+              accessToken: linkToken,
             };
             sendDataToParent(modifiedData);
             // toast.success("Details Fetched!!");
@@ -397,7 +397,7 @@ function AbhaRegister({ sendDataToParent }) {
               setProfileData({
                 ...profileData,
                 abhaNumber: abhaNumber,
-                abhaAddress: getValues1("phrAddress")+"@sbx",
+                abhaAddress: getValues1("phrAddress") + "@sbx",
               });
 
               try {
@@ -413,8 +413,8 @@ function AbhaRegister({ sendDataToParent }) {
                   onmessage(response) {
                     var status = JSON.parse(response.data).statusCodeValue;
                     if (status >= 400)
-                      console.error(JSON.parse(response.data).body)
-                      // toast.error(JSON.parse(response.data).body);
+                      console.error(JSON.parse(response.data).body);
+                    // toast.error(JSON.parse(response.data).body);
                     else if (status == 200) {
                       // toast.success("Verification Initiated");
                       const txnId = JSON.parse(response.data).body.auth

@@ -4,6 +4,7 @@ package org.had.patientservice.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +16,7 @@ import java.util.Map;
 
 @RestController
 public class SSEService {
+
     private final Map<String, SseEmitter> emitters = new HashMap<>();
     public SseEmitter createSseEmitter(String requestId) {
         SseEmitter sseEmitter = new SseEmitter(5000L);
@@ -79,6 +81,5 @@ public class SSEService {
             System.out.println("No SSE emitter found for requestId: " + requestId);
         }
     }
-
 
 }

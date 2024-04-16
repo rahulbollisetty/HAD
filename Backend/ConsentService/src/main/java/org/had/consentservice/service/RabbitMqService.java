@@ -18,8 +18,12 @@ public class RabbitMqService {
     @Autowired
     private RabbitTemplate rabbitTemplate;
 
+    @Autowired
+    private ConsentService consentService;
+
     @RabbitListener(queues = "${queue.name}")
     public void receiveJsonData(String jsonData) {
+        System.out.println("RabbitMQ Service received!");
         if (!jsonData.isEmpty()){
             ObjectMapper objectMapper = new ObjectMapper();
             try {
@@ -27,12 +31,20 @@ public class RabbitMqService {
                 String type = jsonNode.get("type").asText();
 
                 switch (type) {
-                    case "consentInit":
-//                        sseService.sendUserAuthData(jsonData);
-                        System.out.println("Received userAuthInit: " + jsonData);
+                    case "consentOnInit":
+                        sseService.consentOnInit(jsonNode);
+                        System.out.println("Received consentOnInit: " + jsonData);
                         break;
-                    case "consent":
-                        System.out.println("Received userAuthOtpVerify: " + jsonData);
+//                    case "consent":
+//                        System.out.println("Received userAuthOtpVerify: " + jsonData);
+//                        break;
+                    case "consentOnStatus" :
+                        System.out.println("Received consentOnStatus: " + jsonData);
+                        consentService.consentOnStatus(jsonNode);
+                        break;
+                    case "consentOnNotify":
+                        System.out.println("Received consentOnNotify: " + jsonData);
+                        consentService.consentOnNotify(jsonNode);
                         break;
                     default:
                         System.out.println("Unknown data type");

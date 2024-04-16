@@ -17,6 +17,7 @@ public class ConsentAPI {
 
     @PostMapping(value = "/consentInit",produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<?> consentInit(@RequestBody JsonNode jsonNode) throws JsonProcessingException {
+        System.out.println("Consent Init Controller");
         abdmService.setToken();
         abdmService.consentInit(jsonNode);
         return ResponseEntity.ok("consent initiated");
@@ -25,13 +26,25 @@ public class ConsentAPI {
     @PostMapping(value = "/consentStatus", produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<?> consentStatus(@RequestBody JsonNode jsonNode) throws JsonProcessingException{
         abdmService.setToken();
+        System.out.println("Consent Status Controller");
         abdmService.consentStatus(jsonNode);
         return ResponseEntity.ok("status request initiated");
+    }
+
+    @PostMapping(value = "/HIUOnNotify", produces = MediaType.APPLICATION_JSON_VALUE)
+    ResponseEntity<?> HIUOnNotify(@RequestBody JsonNode jsonNode) throws JsonProcessingException{
+        abdmService.setToken();
+        System.out.println("Consent HIUNotify Controller");
+        String requestId = jsonNode.get("requestId").asText();
+        String consentRequestId = jsonNode.get("consentRequestId").asText();
+        abdmService.HIUOnNotify(requestId, consentRequestId);
+        return ResponseEntity.ok("consent initiated");
     }
 
     @PostMapping(value = "/consentFetch", produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<?> consentFetch(@RequestBody JsonNode jsonNode) throws JsonProcessingException{
         abdmService.setToken();
+        System.out.println("Consent fetch Controller");
         abdmService.consentFetch(jsonNode);
         return ResponseEntity.ok("consent initiated");
     }
@@ -39,6 +52,7 @@ public class ConsentAPI {
     @PostMapping(value = "/hipOnNotify", produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<?> hipOnNotify(@RequestBody JsonNode jsonNode) throws JsonProcessingException{
         abdmService.setToken();
+        System.out.println("Consent HIP notify Controller");
         abdmService.hipOnNotify(jsonNode);
         return ResponseEntity.ok("notified");
     }
@@ -50,6 +64,8 @@ public class ConsentAPI {
         String accessToken = jsonNode.get("accessToken").asText();
         return abdmService.linkCareContext(opId, accessToken);
     }
+
+
 
 
 }

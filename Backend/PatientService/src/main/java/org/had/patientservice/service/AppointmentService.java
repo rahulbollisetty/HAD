@@ -8,10 +8,7 @@ import org.had.patientservice.dto.AppointmentDto;
 import org.had.patientservice.entity.*;
 import org.had.patientservice.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
-import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -50,8 +47,6 @@ public class AppointmentService {
 
     @Autowired
     private WebClient webClient;
-
-
 
     @Autowired
     private ResourceLoader resourceLoader;
