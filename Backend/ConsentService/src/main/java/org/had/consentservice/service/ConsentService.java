@@ -88,14 +88,14 @@ public class ConsentService {
         consentRequest.setHi_type(hiTypeString);
         consentRequestRepository.save(consentRequest);
 
-        String requestBody = null;
+        String requestBody;
         var objectMapper = new ObjectMapper();
         try {
             requestBody = objectMapper.writeValueAsString(values);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
-        System.out.println("requestBody: " + requestBody);
+//        System.out.println("requestBody: " + requestBody);
         SseEmitter sseEmitter = sseService.createSseEmitter(requestId);
         try {
             webClient.post().uri("http://127.0.0.1:9008/abdm/consent/consentInit")
@@ -123,7 +123,7 @@ public class ConsentService {
             values.put("consent_request_id", consent_request_id);
             values.put("request_id", requestId);
 
-            String requestBody = null;
+            String requestBody;
             var objectMapper = new ObjectMapper();
             try {
                 requestBody = objectMapper.writeValueAsString(values);
@@ -189,8 +189,13 @@ public class ConsentService {
     public void consentOnNotify(JsonNode jsonNode) {
         System.out.println("Inside Consent On Notify HIU Service");
         String consentRequestId = jsonNode.get("notification").get("consentRequestId").asText();
-        String requestId = jsonNode.get("requestId").asText();
-        ConsentRequest consentRequest = consentRequestRepository.findByConsent_id(consentRequestId).get();
+        ConsentRequest consentRequest = null;
+        try {
+            consentRequest = consentRequestRepository.findByConsent_id(consentRequestId).get();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
         if(jsonNode.hasNonNull("error")){
             return;
         }
@@ -200,18 +205,16 @@ public class ConsentService {
                 if(status.equals("GRANTED")) {
                     consentRequest.setStatus("GRANTED");
                     consentRequestRepository.save(consentRequest);
-                    JsonNode consentArtefactsArray = jsonNode.get("consentArtefacts");
-                    if (consentArtefactsArray != null && consentArtefactsArray.isArray()) {
-                        notify(requestId, consentRequestId);
-                        for (JsonNode artefact : consentArtefactsArray) {
-                            ConsentArtefact consentArtefact = new ConsentArtefact();
-                            consentArtefact.setConsentRequest(consentRequest);
-                            String artefactId = artefact.get("id").asText();
-                            consentArtefact.setConsent_artefact(artefactId);
-                            consentArtefactRepository.save(consentArtefact);
-                            consentFetch(artefactId);
-                        }
-
+                    JsonNode consentArtefactsArray = jsonNode.get("notification").get("consentArtefacts");
+//                  notify(requestId, consentRequestId);
+                    for (JsonNode artefact : consentArtefactsArray) {
+                        System.out.println("HEllo");
+                        ConsentArtefact consentArtefact = new ConsentArtefact();
+                        consentArtefact.setConsentRequest(consentRequest);
+                        String artefactId = artefact.get("id").asText();
+                        consentArtefact.setConsent_artefact(artefactId);
+                        consentArtefactRepository.save(consentArtefact);
+//                        consentFetch(artefactId);
                     }
                 }
                 else if(status.equals("REVOKED")) {

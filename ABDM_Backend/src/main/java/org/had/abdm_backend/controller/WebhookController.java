@@ -11,9 +11,9 @@ import org.had.abdm_backend.service.UserAuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-@CrossOrigin()
+@CrossOrigin
 @RestController
-//@RequestMapping("/abdm/webhook")
+@RequestMapping("/abdm/webhook")
 public class WebhookController {
 
     @Autowired
