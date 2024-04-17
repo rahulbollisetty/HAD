@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/abdm/webhook")
-@CrossOrigin("http://localhost:5173")
+@CrossOrigin("*")
 public class WebhookController {
 
     @Autowired

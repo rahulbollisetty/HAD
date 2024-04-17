@@ -18,6 +18,10 @@ public class OpConsultation {
 
     private String observations;
 
+    private String filePath;
+
+    private String fileDescription;
+
     @OneToOne
     @JoinColumn(name = "appointment_id")
     private AppointmentDetails appointmentDetails;

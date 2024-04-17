@@ -3,15 +3,22 @@ package org.had.patientservice.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import com.github.jhonnymertz.wkhtmltopdf.wrapper.Pdf;
+import com.github.jhonnymertz.wkhtmltopdf.wrapper.objects.Page;
+import com.github.jhonnymertz.wkhtmltopdf.wrapper.params.Param;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.pdf.PdfCopy;
+import com.itextpdf.text.pdf.PdfReader;
+import org.apache.commons.io.FilenameUtils;
 import org.had.accountservice.exception.MyWebClientException;
 import org.had.patientservice.dto.AppointmentDto;
 import org.had.patientservice.entity.*;
 import org.had.patientservice.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.core.io.ClassPathResource;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
-import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -21,10 +28,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.Context;
+import org.thymeleaf.templatemode.TemplateMode;
+import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 import reactor.core.publisher.Mono;
 
-import java.io.File;
-import java.io.IOException;
+
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -41,7 +54,7 @@ public class AppointmentService {
 
     @Autowired
     private PatientVitalsRepository patientVitalsRepository;
-    
+
     @Autowired
     private PatientDetailsRepository patientDetailsRepository;
 
@@ -51,13 +64,24 @@ public class AppointmentService {
     @Autowired
     private WebClient webClient;
 
-
+    @Autowired
+    private TemplateEngine templateEngine;
 
     @Autowired
     private ResourceLoader resourceLoader;
 
+    @Value("${pdf.directory}")
+    private String pdfDirectory;
 
-    public void createNewAppointment(AppointmentDto appointmentDto){
+    @Value("${hospital.name}")
+    private String hospitalName;
+
+    @Value("${hospital.id}")
+    private String hospitalId;
+
+
+
+    public void createNewAppointment(AppointmentDto appointmentDto) {
         AppointmentDetails appointmentDetails = new AppointmentDetails();
         appointmentDetails.setDoctor_id(appointmentDto.getDoctor_id());
         appointmentDetails.setDoctor_name(appointmentDto.getDoctor_name());
@@ -81,7 +105,7 @@ public class AppointmentService {
 
     }
 
-    public String addPatientVitals(OpConsultation opConsultation, AppointmentDto appointmentDto){
+    public String addPatientVitals(OpConsultation opConsultation, AppointmentDto appointmentDto) {
         PatientVitals patientVitals = new PatientVitals();
         patientVitals.setWeight(appointmentDto.getWeight());
         patientVitals.setHeight(appointmentDto.getHeight());
@@ -102,10 +126,10 @@ public class AppointmentService {
         return "successfully added vitals";
     }
 
-    public ResponseEntity<?> getAppointmentDetails(Integer id){
-        if(patientDetailsRepository.findById(id).isPresent()){
+    public ResponseEntity<?> getAppointmentDetails(Integer id) {
+        if (patientDetailsRepository.findById(id).isPresent()) {
             PatientDetails patientDetails = patientDetailsRepository.findById(id).get();
-            if(appointmentRepository.findAllByPatientId(patientDetails).isEmpty()) {
+            if (appointmentRepository.findAllByPatientId(patientDetails).isEmpty()) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No Appointment found for this patient");
             }
             List<AppointmentDetails> appointmentDetails = appointmentRepository.findAllByPatientId(patientDetails);
@@ -126,7 +150,7 @@ public class AppointmentService {
     }
 
 
-    public ResponseEntity<?> completeAppointment(JsonNode jsonNode) {
+    public ResponseEntity<?> completeAppointment(JsonNode jsonNode, MultipartFile file) {
         try {
             JsonNode prescriptionArray = jsonNode.get("prescription");
             Integer opId = jsonNode.get("opId").asInt();
@@ -153,12 +177,13 @@ public class AppointmentService {
                         prescriptionDetailsRepository.save(prescriptionDetails);
                     }
                     opConsultation.setObservations(Observations);
+                    String destPath = handleFileUpload(file, jsonNode.get("opId").asText());
+                    opConsultation.setFileDescription(jsonNode.get("fileDescription").asText());
+                    opConsultation.setFilePath(destPath);
                     opConsultationRepository.save(opConsultation);
 
-                    String res = linkCareContext(opId+"", patientId);
-                    System.out.println(res);
-
-
+//                    String res = linkCareContext(opId+"", patientId);
+//                    System.out.println(res);
 
                     Optional<AppointmentDetails> appointmentDetailsOptional = appointmentRepository.findById(opId);
                     if (appointmentDetailsOptional.isPresent()) {
@@ -166,13 +191,12 @@ public class AppointmentService {
                         appointmentDetails.setStatus("Completed");
                         System.out.println("Updated Status");
                         appointmentRepository.save(appointmentDetails);
-                    }
-                    else {
+                    } else {
                         System.out.println("Appointment Not found");
                     }
 
 
-                   return ResponseEntity.ok("Prescription Record saved");
+                    return ResponseEntity.ok("Prescription Record saved");
                 } else {
                     return ResponseEntity.badRequest().body("Invalid Prescription Array");
                 }
@@ -186,13 +210,13 @@ public class AppointmentService {
     }
 
     private String linkCareContext(String opId, Integer patientId) {
-        PatientDetails patientDetails =  patientDetailsRepository.findById(patientId)
+        PatientDetails patientDetails = patientDetailsRepository.findById(patientId)
                 .orElseThrow(() -> new RuntimeException("Patient not found"));
 
         String accessToken = patientDetails.getLinkToken();
         System.out.println(accessToken);
         var values = new HashMap<String, String>() {{
-            put("opId",opId);
+            put("opId", opId);
             put("accessToken", accessToken);
         }};
         String requestBody = null;
@@ -217,15 +241,13 @@ public class AppointmentService {
         return ResponseEntity.ok(prescriptionDetailsList);
     }
 
-    public String handleFileUpload(MultipartFile file, String folderName) {
+    public String handleFileUpload(MultipartFile file, String fileName) {
         if (file.isEmpty()) {
             return "No file uploaded";
         }
-
         try {
             // Specify the directory where you want to save the file on the server
             String currentDirectory = System.getProperty("user.dir");
-            System.out.println("Current directory: " + currentDirectory);
             String uploadDir = currentDirectory + "/files/";
 
             // Create the directory if it doesn't exist
@@ -233,19 +255,26 @@ public class AppointmentService {
             if (!directory.exists()) {
                 directory.mkdirs();
             }
-            File folder = new File(uploadDir + folderName);
-            if (!folder.exists()) {
-                folder.mkdirs();
-            }
 
-            File destFile = new File(folder, Objects.requireNonNull(file.getOriginalFilename()));
+            String originalFileName = file.getOriginalFilename();
+            String fileExtension = originalFileName.substring(originalFileName.lastIndexOf('.'));
+
+            // Replace whitespaces with hyphens in the original file name
+            String cleanedFileName = originalFileName.replaceAll("\\s+", "-");
+            String newFileName = cleanedFileName.replace(fileExtension, "") + "_" + fileName + fileExtension;
+
+            File destFile = new File(directory, newFileName);
             file.transferTo(destFile);
-            return "File uploaded successfully";
+
+            // Store the destination path in your entity
+
+            return destFile.getAbsolutePath(); // Return the destination path
         } catch (IOException e) {
             e.printStackTrace();
             return "Failed to upload file";
         }
     }
+
 
     public ResponseEntity<?> getImagesFromFolder(String folderName) {
 
@@ -286,20 +315,102 @@ public class AppointmentService {
         }
     }
 
+    public OpConsultation getOpConsultation(String Id) {
+        AppointmentDetails appointmentDetails = appointmentRepository.findById(Integer.valueOf(Id)).get();
+        return opConsultationRepository.findByAppointmentDetails(appointmentDetails).get();
+    }
+
     private boolean isImageFile(File file) {
         String fileName = file.getName().toLowerCase();
         return fileName.endsWith(".jpg") || fileName.endsWith(".jpeg") || fileName.endsWith(".png") || fileName.endsWith(".gif") || fileName.endsWith(".bmp");
     }
 
-    public void saveFile(String fileName, byte[] fileData) throws IOException {
-        Path filePath = Paths.get(getResourceFilePath() + fileName);
-        Files.write(filePath, fileData);
-    }
+
     public byte[] getFile(String fileName) throws IOException {
-        Path filePath = Paths.get(getResourceFilePath() + fileName);
+        Path filePath = Paths.get(fileName);
         return Files.readAllBytes(filePath);
     }
+
     private String getResourceFilePath() throws IOException {
         return resourceLoader.getResource("classpath:static/files/").getFile().getAbsolutePath() + "/";
+    }
+
+
+    public void generatePdf(String id) throws IOException, InterruptedException, DocumentException {
+
+        OpConsultation opConsultation = opConsultationRepository.findById(Integer.valueOf(id)).get();
+        PatientVitals patientVitals = patientVitalsRepository.findByOpId(Integer.valueOf(id)).getFirst();
+        List<PrescriptionDetails> prescriptionDetailsList = prescriptionDetailsRepository.findByOpConsultation(Integer.valueOf(id));
+        AppointmentDetails appointmentDetails = opConsultation.getAppointmentDetails();
+        PatientDetails patientDetails = appointmentDetails.getPatientId();
+        if(opConsultation.getFilePath() == null){
+            System.out.println("no file");
+        }
+
+        Context context = new Context();
+        context.setVariable("patientVitals", patientVitals);
+        context.setVariable("appointment",appointmentDetails);
+        context.setVariable("hospitalName",hospitalName);
+        context.setVariable("hospitalId",hospitalId);
+        context.setVariable("observation", opConsultation.getObservations());
+        context.setVariable("prescriptionList", prescriptionDetailsList);
+        // Process the Thymeleaf template to generate HTML content
+        String processedHtml = templateEngine.process("index", context);
+        Pdf pdf = new Pdf();
+        pdf.addPageFromString(processedHtml);
+        pdf.saveAs("temp/"+"temp"+patientDetails.getName()+":"+appointmentDetails.getAppointment_id().toString()+".pdf");
+
+        // Load the first PDF as a byte array
+        byte[] firstPdfBytes = Files.readAllBytes(Paths.get("temp/"+"temp"+patientDetails.getName()+":"+appointmentDetails.getAppointment_id().toString()+".pdf"));
+
+        // Load the second PDF or image based on the condition
+        byte[] secondFileBytes = null;
+        if (opConsultation.getFilePath() != null) {
+            String filePath = opConsultation.getFilePath();
+            if (FilenameUtils.isExtension(filePath.toLowerCase(), "pdf")) {
+                // Load the second PDF as a byte array
+                secondFileBytes = Files.readAllBytes(Paths.get(filePath));
+            } else if (FilenameUtils.isExtension(filePath.toLowerCase(), "png", "jpg", "jpeg", "gif")) {
+                // Load the image and convert it to PDF as a byte array
+                BufferedImage image = ImageIO.read(new File(filePath));
+                ByteArrayOutputStream imageOutputStream = new ByteArrayOutputStream();
+                ImageIO.write(image, "png", imageOutputStream); // Assuming PNG format for the image
+                secondFileBytes = imageOutputStream.toByteArray();
+            } else {
+                System.out.println("Unsupported file format.");
+            }
+        }
+
+            // Combine the first PDF byte array and the second PDF or image byte array
+            ByteArrayOutputStream mergedOutputStream = new ByteArrayOutputStream();
+            Document document = new Document();
+            PdfCopy copy = new PdfCopy(document, mergedOutputStream);
+            document.open();
+
+            // Add the first PDF
+            PdfReader firstPdfReader = new PdfReader(firstPdfBytes);
+            copy.addDocument(firstPdfReader);
+            firstPdfReader.close();
+
+            // Add the second PDF or image
+            if (secondFileBytes != null) {
+                PdfReader secondPdfReader = new PdfReader(secondFileBytes);
+                copy.addDocument(secondPdfReader);
+                secondPdfReader.close();
+            }
+
+            // Close the document
+            document.close();
+
+
+        // Save the merged PDF byte array as a file (optional)
+        byte[] mergedPdfBytes = mergedOutputStream.toByteArray();
+        FileOutputStream fileOutputStream = new FileOutputStream("merged/"+"mergeReport:"+patientDetails.getName()+":"+appointmentDetails.getAppointment_id().toString()+".pdf");
+        fileOutputStream.write(mergedPdfBytes);
+        fileOutputStream.close();
+
+        // Clean up the temporary file
+        Files.deleteIfExists(Paths.get("temp/"+"temp"+patientDetails.getName()+":"+appointmentDetails.getAppointment_id().toString()+".pdf"));
+
     }
 }
