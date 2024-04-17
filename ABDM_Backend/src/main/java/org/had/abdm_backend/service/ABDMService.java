@@ -5,11 +5,12 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
 import org.had.abdm_backend.entity.AbdmIdVerify;
+import org.had.abdm_backend.entity.ConsentRequest;
 import org.had.abdm_backend.exception.MyWebClientException;
 import org.had.abdm_backend.repository.AbdmIdVerifyRepository;
+import org.had.abdm_backend.repository.ConsentRequestRepository;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
@@ -18,10 +19,11 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -37,7 +39,19 @@ public class ABDMService {
     private AbdmIdVerifyRepository abdmIdVerifyRepository;
 
     @Autowired
+    private ConsentRequestRepository consentRequestRepository;
+
+    @Autowired
     private RabbitMqService rabbitMqService;
+
+    public String generateUUID() {
+        UUID uuid = UUID.randomUUID();
+        return uuid.toString();
+    }
+
+    public LocalDate todayDate() {
+        return LocalDate.now();
+    }
 
     public String getDoctorDetails(String hprid, String password) throws JsonProcessingException {
 
@@ -55,7 +69,7 @@ public class ABDMService {
         String responseBody = webClient.post().uri("https://hpridsbx.abdm.gov.in/api/v1/auth/authPassword")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization","Bearer "+token)
-                .body(BodyInserters.fromValue(requestBody.toString()))
+                .body(BodyInserters.fromValue(requestBody))
                 .retrieve()
                 .onStatus(HttpStatusCode::isError,clientResponse -> {
                     return clientResponse.bodyToMono(String.class)
@@ -325,7 +339,7 @@ public class ABDMService {
         }};
 
         var objectMapper = new ObjectMapper();
-        String requestBody = null;
+        String requestBody;
         try {
             requestBody = objectMapper
                     .writeValueAsString(values);
@@ -446,7 +460,59 @@ public class ABDMService {
     }
 
 
+//    M2 API's from here
+
+    public String linkCareContext(String opId, String accessToken) {
+        String timeStamp = getCurrentSimpleTimestamp();
+        String requestId = generateUUID();
+        LocalDate date = todayDate();
+        String display = "OP Consultation on " + date;
+
+        Map<String, String> careContexts = new HashMap<>();
+        careContexts.put("referenceNumber", opId);
+        careContexts.put("display", display);
+
+        Map<String, Object> patient = new HashMap<>();
+        patient.put("referenceNumber" , opId);
+        patient.put("display" , display);
+        patient.put("careContexts" , List.of(careContexts));
+
+        Map<String, Object> link = new HashMap<>();
+        link.put("accessToken", accessToken);
+        link.put("patient", patient);
+
+        Map<String, Object> content = new HashMap<>();
+        content.put("requestId", requestId);
+        content.put("timestamp", timeStamp);
+        content.put("link",link);
+
+        var objectMapper = new ObjectMapper();
+        String requestBody = null;
+        try {
+            requestBody = objectMapper.writeValueAsString(content);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+
+        return webClient.post().uri("https://dev.abdm.gov.in/gateway/v0.5/links/link/add-contexts")
+                .header("Authorization", "Bearer " + token)
+                .header("Content-Type", "application/json")
+                .header("X-CM-ID", "sbx")
+                .header("accept", "*/*")
+                .body(BodyInserters.fromValue(requestBody))
+                .retrieve()
+                .onStatus(HttpStatusCode::isError,clientResponse -> {
+                    return clientResponse.bodyToMono(String.class)
+                            .flatMap(errorBody -> Mono.error(new MyWebClientException(errorBody, clientResponse.statusCode().value())));
+                })
+                .bodyToMono(String.class)
+                .block();
+
+
+    }
+    
     public String consentInit(JsonNode jsonNode) throws JsonProcessingException{
+        System.out.println("Consent Init Service");
         Map<String, String> purpose_map = new HashMap<>();
         purpose_map.put("CAREMGT","Care Management");
         purpose_map.put("BTG","Break the Glass");
@@ -464,9 +530,10 @@ public class ABDMService {
         String permission_from = jsonNode.get("permission_from").asText();
         String permission_to = jsonNode.get("permission_to").asText();
         String data_erase_at = jsonNode.get("data_erase_at").asText();
+        String request_id = jsonNode.get("request_id").asText();
 
         Map<String, Object> data = new HashMap<>();
-        data.put("requestId",UUID.randomUUID().toString());
+        data.put("requestId",request_id);
         data.put("timestamp", getISOTimestamp());
 
         Map<String, Object> consent = new HashMap<>();
@@ -518,6 +585,13 @@ public class ABDMService {
         var objectMapper = new ObjectMapper();
         String requestBody = objectMapper.writeValueAsString(data);
 
+        String routing_key = jsonNode.get("routing_key").asText();
+        ConsentRequest consentRequest = new ConsentRequest();
+        consentRequest.setRouting_key(routing_key);
+        consentRequest.setRequest_id(request_id);
+        consentRequestRepository.save(consentRequest);
+
+
         return webClient.post().uri("https://dev.abdm.gov.in/gateway/v0.5/consent-requests/init")
                 .header("Authorization","Bearer "+token)
                 .header("accept", "*/*")
@@ -533,10 +607,12 @@ public class ABDMService {
     }
 
     public String consentStatus(JsonNode jsonNode) throws JsonProcessingException{
+        System.out.println("Consent Status Service");
         String consent_request_id = jsonNode.get("consent_request_id").asText();
+        String requestId = jsonNode.get("request_id").asText();
 
         Map<String, String> data = new HashMap<>();
-        data.put("requestId",UUID.randomUUID().toString());
+        data.put("requestId", requestId);
         data.put("timestamp",getISOTimestamp());
         data.put("consentRequestId",consent_request_id);
 
@@ -558,7 +634,8 @@ public class ABDMService {
     }
 
     public String consentFetch(JsonNode jsonNode) throws JsonProcessingException {
-        String consent_id = jsonNode.get("consent_id").asText();
+        System.out.println("Consent FEtch Service");
+        String consent_id = jsonNode.get("artefactId").asText();
         Map<String, String> data = new HashMap<>();
         data.put("requestId",UUID.randomUUID().toString());
         data.put("timestamp",getISOTimestamp());
@@ -583,6 +660,7 @@ public class ABDMService {
     }
 
     public String hipOnNotify(JsonNode jsonNode) throws JsonProcessingException {
+        System.out.println("Consent hip on-notify Service");
         String consent_id = jsonNode.get("consent_id").asText();
         String request_id = jsonNode.get("request_id").asText();
 
@@ -605,6 +683,45 @@ public class ABDMService {
         String requestBody = objectMapper.writeValueAsString(data);
 
         return webClient.post().uri("https://dev.abdm.gov.in/gateway/v0.5/consents/hip/on-notify")
+                .header("Authorization","Bearer "+token)
+//                .header("accept", "*/*")
+                .header("X-CM-ID", "sbx")
+                .header("Content-Type", MediaType.APPLICATION_JSON_VALUE)
+                .body(BodyInserters.fromValue(requestBody.toString()))
+                .retrieve()
+                .onStatus(HttpStatusCode::isError,clientResponse -> {
+                    return clientResponse.bodyToMono(String.class)
+                            .flatMap(errorBody -> Mono.error(new MyWebClientException(errorBody, clientResponse.statusCode().value())));
+                })
+                .bodyToMono(String.class).block();
+    }
+
+    public String HIUOnNotify(String requestId, String consentRequestId) {
+        System.out.println("Consent HIU on-notify Service");
+        Map<String, Object> data = new HashMap<>();
+
+        data.put("requestId", UUID.randomUUID().toString());
+        data.put("timestamp", getCurrentSimpleTimestamp());
+
+        Map<String, Object> acknowledgement = new HashMap<>();
+        acknowledgement.put("status", "OK");
+        acknowledgement.put("consentId", consentRequestId);
+
+        Map<String, String> resp = new HashMap<>();
+        resp.put("requestId", requestId);
+
+        data.put("acknowledgement", acknowledgement);
+        data.put("resp", resp);
+
+        var objectMapper = new ObjectMapper();
+        String requestBody;
+        try {
+            requestBody = objectMapper.writeValueAsString(data);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+
+        return webClient.post().uri("https://dev.abdm.gov.in/gateway/v0.5/consents/hiu/on-notify")
                 .header("Authorization","Bearer "+token)
 //                .header("accept", "*/*")
                 .header("X-CM-ID", "sbx")

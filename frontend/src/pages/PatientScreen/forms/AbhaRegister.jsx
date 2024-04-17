@@ -4,6 +4,8 @@ import { toast } from "react-toastify";
 import useAxiosPrivate from "../../../hooks/useAxiosPrivate";
 import encryptData from "../../../utils/encryptData";
 import createHid from "../../../utils/createHid";
+import useFetchEventSource from "../../../hooks/useFetchEventSource";
+
 function AbhaRegister({ sendDataToParent }) {
   const {
     register,
@@ -39,6 +41,52 @@ function AbhaRegister({ sendDataToParent }) {
   const [abhaAddressList, setAbhaAddressList] = useState([]);
   const [profileData, setProfileData] = useState({});
   const [showMobileInput, setShowMobileInput] = useState(false);
+  const eventSource = useFetchEventSource();
+
+  const getLinkToken = async (txnId) => {
+    const data = {
+      transactionId: txnId,
+      name: profileData.name,
+      gender: profileData.gender,
+      dob: profileData.dob,
+    };
+    try {
+      const abortController = new AbortController();
+      await eventSource("/patient/auth/userAuthVerify", {
+        method: "POST",
+        body: JSON.stringify(data),
+        onmessage(response) {
+          var status = JSON.parse(response.data).statusCodeValue;
+          if (status >= 400) console.error(JSON.parse(response.data).body);
+          else if (status === 200) {
+            console.log(JSON.parse(response.data).body.auth.accessToken);
+            const linkToken = JSON.parse(response.data).body.auth.accessToken;
+            setProfileData({ ...profileData, accessToken: linkToken });
+            const modifiedData = {
+              ...profileData,
+              accessToken: linkToken,
+            };
+            sendDataToParent(modifiedData);
+            // toast.success("Details Fetched!!");
+          }
+          abortController.abort();
+        },
+        onclose(resp) {
+          console.log(resp);
+          abortController.abort();
+        },
+        onerror(error) {
+          console.log(error);
+          abortController.abort();
+          throw new Error(error);
+        },
+        signal: abortController.signal,
+      });
+    } catch (err) {
+      console.log(err);
+      //   toast.error(err);
+    }
+  };
 
   const createHealthId = async () => {
     try {
@@ -62,7 +110,7 @@ function AbhaRegister({ sendDataToParent }) {
         );
         const month = profileDetails.data.monthOfBirth.padStart(2, "0");
         const day = profileDetails.data.dayOfBirth.padStart(2, "0");
-        const dob = `${month}/${day}/${profileDetails.data.yearOfBirth}`;
+        const dob = `${profileDetails.data.yearOfBirth}-${month}-${day}`;
         const modifiedData = {
           ...profileDetails.data,
           dob: dob,
@@ -151,6 +199,8 @@ function AbhaRegister({ sendDataToParent }) {
           <p className="mr-48 text-sm">Mobile</p>
           <div className="relative flex w-full">
             <input
+              maxLength={10}
+              minLength={10}
               className={`rounded-md pr-32 w-full ${
                 showMobileInput
                   ? ""
@@ -162,6 +212,14 @@ function AbhaRegister({ sendDataToParent }) {
               id=""
               {...register2("mobile", {
                 required: "Required",
+                minLength: {
+                  value: 10,
+                  message: "Mobile number should be of 10 digits",
+                },
+                maxLength: {
+                  value: 10,
+                  message: "Mobile number should be of 10 digits",
+                },
                 pattern: {
                   value: /^[0-9]+$/,
                   message: "Only Numbers are allowed",
@@ -321,20 +379,61 @@ function AbhaRegister({ sendDataToParent }) {
                 : "bg-gray-500 cursor-not-allowed"
             }`}
             onClick={handleSubmit1(async () => {
+              // getting link token before storing into DB
               const data = {
                 phrAddress: getValues1("phrAddress"),
                 transactionId: txn,
               };
               try {
-                const resp = await axiosPrivate.post("http://127.0.0.1:9005/patient/createPHRAddress", data);
+                const resp = await axiosPrivate.post(
+                  "http://127.0.0.1:9005/patient/createPHRAddress",
+                  data
+                );
                 console.log(resp);
-                setProfileData({
-                  ...profileData,
-                  abhaNumber: abhaNumber,
-                  abhaAddress: getValues1("phrAddress"),
-                });
                 toast.success("ABHA Address created: " + resp.data.phrAdress);
-                sendDataToParent(profileData);
+              } catch (err) {
+                console.log(err);
+              }
+              setProfileData({
+                ...profileData,
+                abhaNumber: abhaNumber,
+                abhaAddress: getValues1("phrAddress") + "@sbx",
+              });
+
+              try {
+                const data = {
+                  patientSBXId: getValues1("phrAddress") + "@sbx",
+                  requesterId: "IN2210000259",
+                  requesterType: "HIP",
+                };
+                const abortController = new AbortController();
+                await eventSource("/patient/auth/userAuthInit", {
+                  method: "POST",
+                  body: JSON.stringify(data),
+                  onmessage(response) {
+                    var status = JSON.parse(response.data).statusCodeValue;
+                    if (status >= 400)
+                      console.error(JSON.parse(response.data).body);
+                    // toast.error(JSON.parse(response.data).body);
+                    else if (status == 200) {
+                      // toast.success("Verification Initiated");
+                      const txnId = JSON.parse(response.data).body.auth
+                        .transactionId;
+                      getLinkToken(txnId);
+                    }
+                    abortController.abort();
+                  },
+                  onclose(resp) {
+                    console.log(resp);
+                    abortController.abort();
+                  },
+                  onerror(error) {
+                    console.log(error);
+                    abortController.abort();
+                    throw new Error(error);
+                  },
+                  signal: abortController.signal,
+                });
               } catch (err) {
                 console.log(err);
               }

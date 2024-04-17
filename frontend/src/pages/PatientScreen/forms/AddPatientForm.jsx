@@ -30,23 +30,29 @@ function AddPatientForm() {
     setValue("mobileNumber", data.auth.patient.identifiers[0].value || "");
     setValue("address", data.auth.patient.address.line || "");
     setValue("town", data.auth.patient.address.district || "");
-    setValue("state",data.auth.patient.address.state || "");
-    setValue("abhaAddress",data.auth.patient.id || "");
-    setValue("linkToken",data.auth.accessToken || "")
-    setValue("abhaNumber","");
+    setValue("state", data.auth.patient.address.state || "");
+    setValue("abhaAddress", data.auth.patient.id || "");
+    setValue("linkToken", data.auth.accessToken || "");
+    setValue("abhaNumber", "");
+    let month = String(data.auth.patient.monthOfBirth).padStart(2, "0");
+    let day = String(data.auth.patient.dayOfBirth).padStart(2, "0");
+    const dob = `${data.auth.patient.yearOfBirth}-${month}-${day}`;
+    console.log(dob);
+    setValue("dob", dob || "");
   };
 
   const handleDataFromAbhaRegister = (data) => {
     console.log(data);
     setValue("name", data.name || "");
     setValue("gender", data.gender);
+    setValue("dob", data.dob || "");
     setValue("mobileNumber", data.mobileNumber || "");
     setValue("address", data.address || "");
     setValue("town", data.districtName || "");
     setValue("state", data.stateName || "");
-    setValue("abhaAddress",data.abhaAddress || "");
-    setValue("abhaNumber",data.abhaNumber||"");
-    setValue("linkToken", "")
+    setValue("abhaAddress", data.abhaAddress || "");
+    setValue("abhaNumber", data.abhaNumber || "");
+    setValue("linkToken", data.accessToken || "");
   };
 
   const axiosPrivate = useAxiosPrivate();
@@ -115,12 +121,22 @@ function AddPatientForm() {
                 <div className="flex flex-col">
                   <p className="text-sm">Mobile Number</p>
                   <input
+                    maxLength={10}
+                    minLength={10}
                     className="rounded-md"
                     type="text"
                     name=""
                     id=""
                     {...register("mobileNumber", {
                       required: "Required",
+                      minLength: {
+                        value: 10,
+                        message: "Mobile number should be of 10 digits",
+                      },
+                      maxLength: {
+                        value: 10,
+                        message: "Mobile number should be of 10 digits",
+                      },
                       pattern: {
                         value: /^[0-9]+$/,
                         message: "Only Numbers are allowed",
@@ -261,7 +277,7 @@ function AddPatientForm() {
                     <option value="" hidden defaultValue={true}>
                       Select State
                     </option>
-                    {states.map((item,index) => (
+                    {states.map((item, index) => (
                       <option key={item.name} value={item.name}>
                         {item.name}
                       </option>
@@ -316,17 +332,19 @@ function AddPatientForm() {
           <Button
             variant="filled"
             className="bg-[#FFA000]"
-            onClick={async()=>{
-              try{
-                const resp = await axiosPrivate.post("http://127.0.0.1:9005/patient/savePatient",getValues());
-                console.log(resp)
+            onClick={async () => {
+              try {
+                const resp = await axiosPrivate.post(
+                  "http://127.0.0.1:9005/patient/savePatient",
+                  getValues()
+                );
+                console.log(resp);
                 toast.success(resp.data);
-              }
-              catch(error){
+              } catch (error) {
                 console.log(error);
                 toast.error(error.response.data);
               }
-              setOpen(!openDialog)
+              setOpen(!openDialog);
             }}
             size="lg"
           >

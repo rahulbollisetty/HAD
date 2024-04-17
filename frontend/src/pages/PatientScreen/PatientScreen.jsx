@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Sidebar from "../Sidebar";
 import Profile from "./components/Profile";
 import DoctorTab from "./components/Tabs";
@@ -8,9 +8,10 @@ import { useParams} from 'react-router-dom';
   
 
 
-export const PatientScreen = () => {
+export const PatientScreen = (tab) => {
 
   const { id } = useParams();
+  
  
   return (
     <div className="flex flex-row w-full">
@@ -25,7 +26,7 @@ export const PatientScreen = () => {
               <Profile patientId={id}/>
               <div className="">
                 <div className="flex mt-6 mb-8  justify-center">
-                  <DoctorTab patientId={id}/>
+                  <DoctorTab tab={tab} patientId={id}/>
                 </div>
               </div>
             </div>
