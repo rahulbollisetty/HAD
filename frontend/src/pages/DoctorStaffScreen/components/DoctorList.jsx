@@ -55,7 +55,7 @@ const DoctorList = () => {
             </thead>
             <tbody className="text-sm text-[#444]">
               {/* {AllPatientList.map((item, index) => ( */}
-              <tr className="bg-white border ">
+              {/* <tr className="bg-white border ">
                 <td
                   scope="row"
                   className="px-6 py-4 font-medium text-[#444] whitespace-nowrap"
@@ -68,7 +68,7 @@ const DoctorList = () => {
                 <td className="px-6 py-4 text-right">
                   <DoctorDetail />
                 </td>
-              </tr>
+              </tr> */}
             </tbody>
           </table>
         </div>
