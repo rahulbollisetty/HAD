@@ -133,6 +133,32 @@
     </div>
     <hr class="header-hr" />
     <div class="details">
+        <h2>Patient Details</h2>
+        <div class="vitals-container">
+
+            <table class="vitals-table" >
+                <tr>
+                    <td class="params">Name</td>
+                    <td class="value"></td>
+                    <td class="params">Gender</td>
+                    <td class="value"></td>
+                    <td class="params">Date of Birth</td>
+                    <td class="value"></td>
+                </tr>
+                <tr>
+                    <td class="params">Blood Group</td>
+                    <td class="value"></td>
+                    <td class="params">Mobile Number</td>
+                    <td class="value"></td>
+                    <td class="params">ABHA Address</td>
+                    <td class="value"></td>
+                </tr>
+                <!-- Add more vital details as needed -->
+            </table>
+        </div>
+    </div>
+    <hr class="section-hr" />
+    <div class="details">
         <h2>Vital Details</h2>
         <div class="vitals-container">
 
@@ -203,10 +229,10 @@
         <h2>Observations</h2>
         <p>viral infection</p>
     </div>
-    <div style="position: absolute; bottom: 10px; right: 25px;">
-        <h5 style="text-align: right; padding-bottom: 10px;" th:text="${'Dr. ' + appointment.doctor_name}">DR. Emil Lal</h5>
+    <!-- <div style="position: absolute; bottom: 10px; right: 25px;"> -->
+        <h5 style="text-align: right; padding-bottom: 10px; margin-right: 10px;" th:text="${'Dr. ' + appointment.doctor_name}">DR. Emil Lal</h5>
         <p style="font-size: 9px; text-align: center; padding-bottom: 10px;">This is a digitally generated Prescription</p>
-    </div>
+    <!-- </div> -->
 </div>
 
 

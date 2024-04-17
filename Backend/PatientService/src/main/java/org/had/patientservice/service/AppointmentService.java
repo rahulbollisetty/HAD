@@ -5,13 +5,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.github.jhonnymertz.wkhtmltopdf.wrapper.Pdf;
-import com.github.jhonnymertz.wkhtmltopdf.wrapper.objects.Page;
-import com.github.jhonnymertz.wkhtmltopdf.wrapper.params.Param;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.pdf.PdfCopy;
 import com.itextpdf.text.pdf.PdfReader;
-import org.apache.commons.io.FilenameUtils;
 import org.had.accountservice.exception.MyWebClientException;
 import org.had.patientservice.dto.AppointmentDto;
 import org.had.patientservice.entity.*;
@@ -30,13 +27,9 @@ import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
-import org.thymeleaf.templatemode.TemplateMode;
-import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 import reactor.core.publisher.Mono;
 
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -336,81 +329,40 @@ public class AppointmentService {
     }
 
 
-    public void generatePdf(String id) throws IOException, InterruptedException, DocumentException {
 
-        OpConsultation opConsultation = opConsultationRepository.findById(Integer.valueOf(id)).get();
-        PatientVitals patientVitals = patientVitalsRepository.findByOpId(Integer.valueOf(id)).getFirst();
-        List<PrescriptionDetails> prescriptionDetailsList = prescriptionDetailsRepository.findByOpConsultation(Integer.valueOf(id));
+    public String generatePdf(String Opid) throws IOException, InterruptedException, DocumentException {
+        // Load data from repositories
+        OpConsultation opConsultation = opConsultationRepository.findById(Integer.valueOf(Opid)).get();
+        PatientVitals patientVitals = patientVitalsRepository.findByOpId(Integer.valueOf(Opid)).getFirst();
+        List<PrescriptionDetails> prescriptionDetailsList = prescriptionDetailsRepository.findByOpConsultation(Integer.valueOf(Opid));
         AppointmentDetails appointmentDetails = opConsultation.getAppointmentDetails();
         PatientDetails patientDetails = appointmentDetails.getPatientId();
-        if(opConsultation.getFilePath() == null){
-            System.out.println("no file");
-        }
 
+        // Create Thymeleaf context
         Context context = new Context();
         context.setVariable("patientVitals", patientVitals);
-        context.setVariable("appointment",appointmentDetails);
-        context.setVariable("hospitalName",hospitalName);
-        context.setVariable("hospitalId",hospitalId);
+        context.setVariable("appointment", appointmentDetails);
+        context.setVariable("patient", patientDetails);
+        context.setVariable("hospitalName", hospitalName);
+        context.setVariable("hospitalId", hospitalId);
         context.setVariable("observation", opConsultation.getObservations());
         context.setVariable("prescriptionList", prescriptionDetailsList);
+
         // Process the Thymeleaf template to generate HTML content
         String processedHtml = templateEngine.process("index", context);
+
+        // Create PDF from HTML content
         Pdf pdf = new Pdf();
         pdf.addPageFromString(processedHtml);
-        pdf.saveAs("temp/"+"temp"+patientDetails.getName()+":"+appointmentDetails.getAppointment_id().toString()+".pdf");
+        pdf.saveAs("report/" + "Report" + patientDetails.getName() + ":" + appointmentDetails.getAppointment_id().toString() + ".pdf");
 
         // Load the first PDF as a byte array
-        byte[] firstPdfBytes = Files.readAllBytes(Paths.get("temp/"+"temp"+patientDetails.getName()+":"+appointmentDetails.getAppointment_id().toString()+".pdf"));
-
-        // Load the second PDF or image based on the condition
-        byte[] secondFileBytes = null;
-        if (opConsultation.getFilePath() != null) {
-            String filePath = opConsultation.getFilePath();
-            if (FilenameUtils.isExtension(filePath.toLowerCase(), "pdf")) {
-                // Load the second PDF as a byte array
-                secondFileBytes = Files.readAllBytes(Paths.get(filePath));
-            } else if (FilenameUtils.isExtension(filePath.toLowerCase(), "png", "jpg", "jpeg", "gif")) {
-                // Load the image and convert it to PDF as a byte array
-                BufferedImage image = ImageIO.read(new File(filePath));
-                ByteArrayOutputStream imageOutputStream = new ByteArrayOutputStream();
-                ImageIO.write(image, "png", imageOutputStream); // Assuming PNG format for the image
-                secondFileBytes = imageOutputStream.toByteArray();
-            } else {
-                System.out.println("Unsupported file format.");
-            }
-        }
-
-            // Combine the first PDF byte array and the second PDF or image byte array
-            ByteArrayOutputStream mergedOutputStream = new ByteArrayOutputStream();
-            Document document = new Document();
-            PdfCopy copy = new PdfCopy(document, mergedOutputStream);
-            document.open();
-
-            // Add the first PDF
-            PdfReader firstPdfReader = new PdfReader(firstPdfBytes);
-            copy.addDocument(firstPdfReader);
-            firstPdfReader.close();
-
-            // Add the second PDF or image
-            if (secondFileBytes != null) {
-                PdfReader secondPdfReader = new PdfReader(secondFileBytes);
-                copy.addDocument(secondPdfReader);
-                secondPdfReader.close();
-            }
-
-            // Close the document
-            document.close();
+        byte[] reportBytes = Files.readAllBytes(Paths.get("report/" + "Report" + patientDetails.getName() + ":" + appointmentDetails.getAppointment_id().toString() + ".pdf"));
 
 
-        // Save the merged PDF byte array as a file (optional)
-        byte[] mergedPdfBytes = mergedOutputStream.toByteArray();
-        FileOutputStream fileOutputStream = new FileOutputStream("merged/"+"mergeReport:"+patientDetails.getName()+":"+appointmentDetails.getAppointment_id().toString()+".pdf");
-        fileOutputStream.write(mergedPdfBytes);
-        fileOutputStream.close();
-
+        return Base64.getEncoder().encodeToString(reportBytes);
         // Clean up the temporary file
-        Files.deleteIfExists(Paths.get("temp/"+"temp"+patientDetails.getName()+":"+appointmentDetails.getAppointment_id().toString()+".pdf"));
-
+//        Files.deleteIfExists(Paths.get("report/" + "Report" + patientDetails.getName() + ":" + appointmentDetails.getAppointment_id().toString() + ".pdf"));
     }
+
 }

@@ -59,6 +59,9 @@
         /*    border: 2px solid black;*/
         /*}*/
 
+        .image-div{
+            text-align: center;
+        }
 
         .details {
             padding: 20px;
@@ -135,6 +138,37 @@
     </div>
     <hr class="header-hr" />
     <div class="details">
+        <h2>Patient Details</h2>
+        <div class="vitals-container">
+
+            <table class="vitals-table" >
+                <tr>
+                    <td class="params">Name</td>
+                    <td class="value" th:text="${patient.name}"></td>
+                    <td class="params">Gender</td>
+                    <td class="value" th:text="${patient.gender}"></td>
+                    <td class="params">Date of Birth</td>
+                    <td class="value" th:text="${patient.dob}"></td>
+                </tr>
+                <tr>
+                    <td class="params">Blood Group</td>
+                    <td class="value" th:text="${patient.bloodGroup}"></td>
+                    <td class="params">Mobile Number</td>
+                    <td class="value" th:text="${patient.mobileNumber}"></td>
+                    <td class="params">ABHA Address</td>
+                    <td class="value" th:text="${patient.abhaAddress}"></td>
+                </tr>
+                <!-- Add more vital details as needed -->
+            </table>
+        </div>
+    </div>
+    <hr class="section-hr" />
+    <div class="details" th:if="${observation != null}">
+        <h2>Observations</h2>
+        <p th:text="${observation}"></p>
+    </div>
+    <hr class="section-hr" th:if="${observation != null}" />
+    <div class="details">
         <h2>Vital Details</h2>
         <div class="vitals-container">
 
@@ -146,7 +180,7 @@
                     <th>Value</th>
                 </tr>
                 <tr>
-                    <td class="params">Weight:</td>
+                    <td class="params">Weight</td>
                     <td class="value" th:if="${patientVitals != null and patientVitals.weight != null}" th:text="${patientVitals.weight + ' (Kg)'}"></td>
                     <td class="value" th:unless="${patientVitals != null and patientVitals.weight != null}">--</td>
                     <td class="params">Pulse</td>
@@ -154,7 +188,7 @@
                     <td class="value" th:unless="${patientVitals != null and patientVitals.pulse_rate != null}">--</td>
                 </tr>
                 <tr>
-                    <td class="params">Height:</td>
+                    <td class="params">Height</td>
                     <td class="value" th:if="${patientVitals != null and patientVitals.height != null}" th:text="${patientVitals.height + ' (cms)'}"></td>
                     <td class="value" th:unless="${patientVitals != null and patientVitals.height != null}">--</td>
                     <td class="params">Resp. rate</td>
@@ -201,7 +235,7 @@
                 <th>Duration</th>
             </tr>
             <tr th:each="item : ${prescriptionList}">
-                <td class="params">1</td>
+                <td class="params" th:text="${itemStat.index + 1}"></td>
                 <td class="params" th:text="${item.drug}"></td>
                 <td class="value" th:text="${item.dosage}"></td>
                 <td class="value" th:text="${item.frequency}"></td>
@@ -211,11 +245,23 @@
         </table>
     </div>
     <hr class="section-hr" th:if="${prescriptionList != null and prescriptionList.size() > 0}" />
-    <div class="details" th:if="${observation != null}">
-        <h2>Observations</h2>
-        <p th:text="${observation}"></p>
-    </div>
-    <div style="margin-top: 40px">
+
+<!--    <div class="details" th:if="${attachmentDesc != null}">-->
+<!--        <h2>Attachment</h2>-->
+<!--        <p th:text="${attachmentDesc}"></p>-->
+<!--        <div class="image-div">-->
+<!--            <img th:if="${imageBytes}" th:src="'data:image/jpeg;base64,' + ${imageBytes}" alt="Image" width="50%">-->
+<!--        </div>-->
+
+<!--    </div>-->
+<!--    <hr class="section-hr" th:if="${attachmentDesc != null }" />-->
+
+
+
+
+
+    <div style="margin-top: 80px">    </div>
+
         <h5 style="text-align: right; padding-bottom: 10px;" th:text="${'Dr. ' + appointment.doctor_name}"></h5>
         <p style="font-size: 9px; text-align: center; padding-bottom: 10px;">This is a digitally generated Prescription</p>
     </div>
