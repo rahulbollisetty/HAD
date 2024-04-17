@@ -36,3 +36,5 @@ build/
 #appLog.log.*.*.tmp
 #appLog.log.*.*.gz
 appLog.*
+
+files/

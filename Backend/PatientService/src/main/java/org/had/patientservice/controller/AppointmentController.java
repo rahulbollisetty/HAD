@@ -1,8 +1,10 @@
 package org.had.patientservice.controller;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.validation.Valid;
 import org.had.patientservice.dto.AppointmentDto;
+import org.had.patientservice.entity.OpConsultation;
 import org.had.patientservice.service.AppointmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
@@ -16,7 +18,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Base64;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/patient/appointment")
@@ -48,8 +53,17 @@ public class AppointmentController {
 
     @PreAuthorize("hasAnyAuthority('DOCTOR','STAFF')")
     @PostMapping(value = "/completeAppointment", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> completeAppointment(@RequestBody JsonNode jsonNode) {
-        return appointmentService.completeAppointment(jsonNode);
+    public ResponseEntity<?> completeAppointment(@RequestParam("file") MultipartFile file,
+                                                 @RequestParam("requestBody") String jsonBody) throws IOException {
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            JsonNode jsonNode = objectMapper.readTree(jsonBody);
+            return appointmentService.completeAppointment(jsonNode, file);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
 
     @PreAuthorize("hasAnyAuthority('DOCTOR','STAFF')")
@@ -58,28 +72,26 @@ public class AppointmentController {
         return appointmentService.getPrescription(jsonNode);
     }
 
-    @PreAuthorize("hasAnyAuthority('DOCTOR','STAFF')")
-    @PostMapping(value = "/uploadFile")
-    public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file) {
-        if (file.isEmpty()) {
-            return ResponseEntity.badRequest().body("Please select a file to upload");
-        }
-        try {
-            appointmentService.saveFile(file.getOriginalFilename(), file.getBytes());
-            return ResponseEntity.ok("File uploaded successfully: " + file.getOriginalFilename());
-        } catch (IOException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to upload file: " + e.getMessage());
-        }
-    }
+//    @PreAuthorize("hasAnyAuthority('DOCTOR','STAFF')")
+//    @PostMapping(value = "/uploadFile")
+//    public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file) {
+//        if (file.isEmpty()) {
+//            return ResponseEntity.badRequest().body("Please select a file to upload");
+//        }
+//        String resp = appointmentService.handleFileUpload(file, "1");
+//        return ResponseEntity.ok("File uploaded successfully: " + resp);
+//    }
 
 
     @PreAuthorize("hasAnyAuthority('DOCTOR','STAFF')")
-    @GetMapping("files/{fileName:.+}")
-    public ResponseEntity<?> serveFile(@PathVariable String fileName) {
-        try {
-            byte[] fileData = appointmentService.getFile(fileName);
-            ByteArrayResource resource = new ByteArrayResource(fileData);
+    @GetMapping("/getOpData")
+    public ResponseEntity<?> serveFile(@RequestParam String id) {
 
+        try {
+            OpConsultation opConsultation = appointmentService.getOpConsultation(id);
+            String fileName = opConsultation.getFilePath().substring(opConsultation.getFilePath().lastIndexOf('/') + 1);
+            byte[] fileData = appointmentService.getFile(opConsultation.getFilePath());
+            String fileDataEncoded = Base64.getEncoder().encodeToString(fileData);
             // Determine the appropriate media type based on file extension
             MediaType mediaType = MediaType.APPLICATION_OCTET_STREAM;
             if (fileName.endsWith(".pdf")) {
@@ -88,22 +100,34 @@ public class AppointmentController {
                 mediaType = MediaType.IMAGE_JPEG;
             } // Add more conditions for other file types if needed
 
+
+            // Prepare JSON data
+            Map<String, Object> responseData = new HashMap<>();
+            responseData.put("fileData", fileDataEncoded); // Use byte array instead of ByteArrayResource
+            responseData.put("fileName", fileName);
+            responseData.put("fileDescription",opConsultation.getFileDescription());
+            responseData.put("observation",opConsultation.getObservations());
+            responseData.put("fileMediaType", mediaType.toString());
+
+            // Convert responseData to JSON format
+            ObjectMapper objectMapper = new ObjectMapper();
+            String jsonResponse = objectMapper.writeValueAsString(responseData);
+
             return ResponseEntity.ok()
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + fileName + "\"")
-                    .contentType(mediaType)
-                    .body(resource);
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(jsonResponse);
         } catch (IOException e) {
-            return ResponseEntity.notFound().build();
+            e.printStackTrace();
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
+    @GetMapping("/generate-pdf")
+    public String generatePdf(@RequestParam String id) throws Exception {
+        appointmentService.generatePdf(id);
+        return "pdf-generated";
+    }
 
-//    @PreAuthorize("hasAnyAuthority('DOCTOR','STAFF')")
-//    @PostMapping(value = "/uploadImage", produces = MediaType.APPLICATION_JSON_VALUE)
-//    public String handleFileUpload( @RequestParam("file") MultipartFile file, @RequestParam("folderName") String folderName) {
-//        return appointmentService.handleFileUpload(file, folderName);
-//    }
-//
 //    @PreAuthorize("hasAnyAuthority('DOCTOR','STAFF')")
 //    @GetMapping( value = "/getImageData", produces = MediaType.APPLICATION_JSON_VALUE)
 //    public ResponseEntity<?> getImagesFromFolder(@RequestParam("folderName") String folderName) {

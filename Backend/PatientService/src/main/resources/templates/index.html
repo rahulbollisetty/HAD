@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sf="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>EHR Prescription</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        .container {
+            /* border:1px solid black; */
+        }
+
+        h1 {
+            margin-bottom: 10px;
+        }
+
+        table {
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        th,
+        td {
+            /* border: 1px solid #ddd; */
+            padding: 8px;
+            text-align: left;
+        }
+
+        .observation-field {
+            width: 100%;
+            height: 100px;
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+
+        .header-details {
+            margin-bottom: 20px;
+            padding: 5px;
+        }
+
+        .header-details h3 {
+            margin: 0;
+        }
+
+        .header-hr {
+            border-top: 1px solid rgb(0, 0, 0);
+        }
+
+        .header-line{
+            display: -webkit-box;
+            -webkit-box-pack: justify;
+        }
+        /*.header-item {*/
+        /*    border: 2px solid black;*/
+        /*}*/
+
+        .image-div{
+            text-align: center;
+        }
+
+        .details {
+            padding: 20px;
+        }
+
+        .section-hr {
+            margin: 10px;
+            border: 1px solid #ddd;
+        }
+
+        .vitals-container{
+            width: 100%;
+            text-align: center;
+        }
+        .vitals-table {
+            display: inline-table;
+        }
+
+        .vitals-table th,
+        .vitals-table td {
+            padding: 8px;
+            text-align: left;
+        }
+
+        .params {
+            font-weight: 600;
+            color: rgb(105, 102, 102);
+        }
+
+        .value {
+            font-weight: 500;
+            color: rgb(104, 102, 102);
+        }
+
+        .sno-column {
+            width: 30px;
+        }
+
+        .prescription-table {
+            width: 100%;
+            margin: auto;
+        }
+
+        @page {
+            size: A4;
+            margin: 0;
+            background: #f5f6f7;
+            width: 21cm;
+            height: 29.7cm;
+        }
+
+    </style>
+</head>
+
+<body>
+<div class="container">
+    <div class="header-details">
+        <h2 style="text-align: center;">OP Consultation Note</h2>
+        <div class="header-line">
+            <div class="header-item">
+                <h1 th:text="${'Dr. '+  appointment.doctor_name}"></h1>
+                <div style="line-height: 1.5px;">
+                    <p style="display: block; font-size: small" th:text="${hospitalName}"></p>
+                    <p style="display: block; font-size: small" th:text="${hospitalId}"></p>
+                </div>
+            </div>
+            <div style="padding-right: 10px;" class="header-item">
+                <div style="margin-top: 21.44px;"><h4 style="margin: 5px; display: inline-block;">Date: </h4><p style="margin: 5px;display: inline-block;" th:text="${appointment.date}"></p></div>
+                <div ><h4 style="margin: 5px;display: inline-block;">Time: </h4><p style="margin: 5px;display: inline-block;" th:text="${appointment.time}"></p></div>
+
+            </div>
+        </div>
+
+    </div>
+    <hr class="header-hr" />
+    <div class="details">
+        <h2>Patient Details</h2>
+        <div class="vitals-container">
+
+            <table class="vitals-table" >
+                <tr>
+                    <td class="params">Name</td>
+                    <td class="value" th:text="${patient.name}"></td>
+                    <td class="params">Gender</td>
+                    <td class="value" th:text="${patient.gender}"></td>
+                    <td class="params">Date of Birth</td>
+                    <td class="value" th:text="${patient.dob}"></td>
+                </tr>
+                <tr>
+                    <td class="params">Blood Group</td>
+                    <td class="value" th:text="${patient.bloodGroup}"></td>
+                    <td class="params">Mobile Number</td>
+                    <td class="value" th:text="${patient.mobileNumber}"></td>
+                    <td class="params">ABHA Address</td>
+                    <td class="value" th:text="${patient.abhaAddress}"></td>
+                </tr>
+                <!-- Add more vital details as needed -->
+            </table>
+        </div>
+    </div>
+    <hr class="section-hr" />
+    <div class="details" th:if="${observation != null}">
+        <h2>Observations</h2>
+        <p th:text="${observation}"></p>
+    </div>
+    <hr class="section-hr" th:if="${observation != null}" />
+    <div class="details">
+        <h2>Vital Details</h2>
+        <div class="vitals-container">
+
+            <table class="vitals-table" >
+                <tr>
+                    <th>Parameter</th>
+                    <th>Value</th>
+                    <th>Parameter</th>
+                    <th>Value</th>
+                </tr>
+                <tr>
+                    <td class="params">Weight</td>
+                    <td class="value" th:if="${patientVitals != null and patientVitals.weight != null}" th:text="${patientVitals.weight + ' (Kg)'}"></td>
+                    <td class="value" th:unless="${patientVitals != null and patientVitals.weight != null}">--</td>
+                    <td class="params">Pulse</td>
+                    <td class="value" th:if="${patientVitals != null and patientVitals.pulse_rate != null}" th:text="${patientVitals.pulse_rate + ' (Heart beats/min)'}"></td>
+                    <td class="value" th:unless="${patientVitals != null and patientVitals.pulse_rate != null}">--</td>
+                </tr>
+                <tr>
+                    <td class="params">Height</td>
+                    <td class="value" th:if="${patientVitals != null and patientVitals.height != null}" th:text="${patientVitals.height + ' (cms)'}"></td>
+                    <td class="value" th:unless="${patientVitals != null and patientVitals.height != null}">--</td>
+                    <td class="params">Resp. rate</td>
+                    <td class="value" th:if="${patientVitals != null and patientVitals.respiration_rate != null}" th:text="${patientVitals.respiration_rate + ' (beats/min)'}"></td>
+                    <td class="value" th:unless="${patientVitals != null and patientVitals.respiration_rate != null}">--</td>
+                </tr>
+                <tr>
+                    <td class="params">Age</td>
+                    <td class="value" th:if="${patientVitals != null and patientVitals.age != null}" th:text="${patientVitals.age}"></td>
+                    <td class="value" th:unless="${patientVitals != null and patientVitals.age != null}">--</td>
+                    <td class="params">Total Cholesterol</td>
+                    <td class="value" th:if="${patientVitals != null and patientVitals.cholesterol != null}" th:text="${patientVitals.cholesterol + ' (mg/dL)'}"></td>
+                    <td class="value" th:unless="${patientVitals != null and patientVitals.cholesterol != null}">--</td>
+                </tr>
+                <tr>
+                    <td class="params">Temperature</td>
+                    <td class="value" th:if="${patientVitals != null and patientVitals.temperature != null}" th:text="${patientVitals.temperature + ' (Degree)'}"></td>
+                    <td class="value" th:unless="${patientVitals != null and patientVitals.temperature != null}">--</td>
+                    <td class="params">Triglycerides</td>
+                    <td class="value" th:if="${patientVitals != null and patientVitals.triglyceride != null}" th:text="${patientVitals.triglyceride + ' (mg/dL)'}"></td>
+                    <td class="value" th:unless="${patientVitals != null and patientVitals.triglyceride != null}">--</td>
+                </tr>
+                <tr>
+                    <td class="params">Blood Pressure</td>
+                    <td class="value" th:if="${patientVitals != null and patientVitals.blood_pressure_systolic != null and patientVitals.blood_pressure_distolic != null}" th:text="${patientVitals.blood_pressure_systolic + '/' + patientVitals.blood_pressure_distolic + ' (mmHg)'}"></td>
+                    <td class="value" th:unless="${patientVitals != null and patientVitals.blood_pressure_systolic != null and patientVitals.blood_pressure_distolic != null}">--</td>
+                    <td class="params">Blood Sugar Faster</td>
+                    <td class="value" th:if="${patientVitals != null and patientVitals.blood_sugar != null}" th:text="${patientVitals.blood_sugar + ' (md/dL)'}"></td>
+                    <td class="value" th:unless="${patientVitals != null and patientVitals.blood_sugar != null}">--</td>
+                </tr>
+                <!-- Add more vital details as needed -->
+            </table>
+        </div>
+    </div>
+    <hr class="section-hr" />
+    <div class="details" th:if="${prescriptionList != null and prescriptionList.size() > 0}">
+        <h2>List of Prescriptions</h2>
+        <table class="prescription-table">
+            <tr>
+                <th class="sno-column">Sno</th>
+                <th>Medication</th>
+                <th>Dosage</th>
+                <th>Frequency</th>
+                <th>Duration</th>
+            </tr>
+            <tr th:each="item : ${prescriptionList}">
+                <td class="params" th:text="${itemStat.index + 1}"></td>
+                <td class="params" th:text="${item.drug}"></td>
+                <td class="value" th:text="${item.dosage}"></td>
+                <td class="value" th:text="${item.frequency}"></td>
+                <td class="value" th:text="${item.duration}">5</td>
+            </tr>
+            <!-- Add more prescriptions as needed -->
+        </table>
+    </div>
+    <hr class="section-hr" th:if="${prescriptionList != null and prescriptionList.size() > 0}" />
+
+<!--    <div class="details" th:if="${attachmentDesc != null}">-->
+<!--        <h2>Attachment</h2>-->
+<!--        <p th:text="${attachmentDesc}"></p>-->
+<!--        <div class="image-div">-->
+<!--            <img th:if="${imageBytes}" th:src="'data:image/jpeg;base64,' + ${imageBytes}" alt="Image" width="50%">-->
+<!--        </div>-->
+
+<!--    </div>-->
+<!--    <hr class="section-hr" th:if="${attachmentDesc != null }" />-->
+
+
+
+
+
+    <div style="margin-top: 80px">    </div>
+
+        <h5 style="text-align: right; padding-bottom: 10px;" th:text="${'Dr. ' + appointment.doctor_name}"></h5>
+        <p style="font-size: 9px; text-align: center; padding-bottom: 10px;">This is a digitally generated Prescription</p>
+    </div>
+</div>
+
+
+
+</body>
+
+</html>

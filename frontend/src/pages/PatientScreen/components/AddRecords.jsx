@@ -1,6 +1,18 @@
 import { useState, useEffect, useRef } from "react";
 import { RiDeleteBinLine } from "react-icons/ri";
 import useAxiosPrivate from "../../../hooks/useAxiosPrivate";
+import {
+  Button,
+  Dialog,
+  DialogHeader,
+  DialogBody,
+  DialogFooter,
+} from "@material-tailwind/react";
+import { toast } from "react-toastify";
+
+import React, { Suspense } from "react";
+
+import PdfViewer from "../../../utilComponents/PdfViewer";
 
 function AddRecords({ patientId, appointment_id, sendDataToParent, status }) {
   const axiosPrivate = useAxiosPrivate();
@@ -22,38 +34,21 @@ function AddRecords({ patientId, appointment_id, sendDataToParent, status }) {
       console.log(error);
     }
 
-    // const getImageReports = async () => {
-    //   const folderName = `Appointment-${appointment_id}`;
-    //   const path = `http://127.0.0.1:9005/patient/appointment/getImageData?folderName=${encodeURIComponent(
-    //     folderName
-    //   )}`;
-    //   try {
-    //     const resp = await axiosPrivate.get(path);
-    //     console.log(resp.data);
-    //     const formattedImages = resp.data.map((item) => item.url);
-    //     setImages(formattedImages);
-    //   } catch (error) {
-    //     console.error("Error fetching image data:", error);
-    //   }
-    // };
+    const getOpData = async () => {
+      const path = `http://127.0.0.1:9005/patient/appointment/getOpData?id=${appointment_id}`;
+      try {
+        const response = await axiosPrivate.get(path);
+        const data = response.data;
+        setFileBase64Data(data.fileData);
+        setFileName(data.fileName);
+        setfileMediaType(data.fileMediaType);
+        setobservations(data.observation);
+      } catch (error) {
+        console.error("Error fetching image data:", error);
+      }
+    };
 
-    // getImageReports();
-
-    // const fetchFile = async () => {
-    //   try {
-    //     const response = await axios.get("/files/example.jpg", {
-    //       responseType: "arraybuffer",
-    //     });
-
-    //     const blob = new Blob([response.data]);
-    //     const url = URL.createObjectURL(blob);
-    //     setFileData(url);
-    //   } catch (error) {
-    //     setError("File not found");
-    //   }
-    // };
-
-    // fetchFile();
+    getOpData();
 
     const getPrescription = async () => {
       const path = `http://127.0.0.1:9005/patient/appointment/getPrescription`;
@@ -67,10 +62,12 @@ function AddRecords({ patientId, appointment_id, sendDataToParent, status }) {
     getPrescription();
   }, []);
 
-  const [fileData, setFileData] = useState(null);
   const [error, setError] = useState("");
   const [file, setFile] = useState(null);
   const [message, setMessage] = useState("");
+
+  const [open, setOpen] = useState(false);
+  const handleOpen = () => setOpen(!open);
 
   const [prescription, setPrescription] = useState([]);
   const [drug, setDrug] = useState("");
@@ -90,7 +87,10 @@ function AddRecords({ patientId, appointment_id, sendDataToParent, status }) {
   const [RespirationRate, setRespirationRate] = useState(0);
   const [Triglycerides, setTriglycerides] = useState(0);
   const [observations, setobservations] = useState("");
-  console.log(status, "Hello");
+  const [fileBase64Data, setFileBase64Data] = useState("");
+  const [fileName, setFileName] = useState("");
+  const [fileMediaType, setfileMediaType] = useState("");
+  const [fileDescription, setFileDescription] = useState("");
   function handleAddPrescription() {
     if (
       drug !== "" &&
@@ -125,9 +125,18 @@ function AddRecords({ patientId, appointment_id, sendDataToParent, status }) {
           prescription: prescription,
           patientId: parseInt(patientId.patientId),
           observations: observations,
+          fileDescription: fileDescription,
         };
+
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("requestBody", JSON.stringify(requestBody));
         console.log(requestBody);
-        const resp = await axiosPrivate.post(path, requestBody);
+        const resp = await axiosPrivate.post(path, formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
         console.log(resp.data, "Care Context Response");
       };
       completeAppointment();
@@ -145,11 +154,15 @@ function AddRecords({ patientId, appointment_id, sendDataToParent, status }) {
       const formData = new FormData();
       formData.append("file", file);
 
-      const response = await axiosPrivate.post("/patient/appointment/uploadFile", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      const response = await axiosPrivate.post(
+        "/patient/appointment/uploadFile",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
 
       setMessage(response.data);
     } catch (error) {
@@ -187,17 +200,17 @@ function AddRecords({ patientId, appointment_id, sendDataToParent, status }) {
   };
 
   const setVitals = (data) => {
-    setWeight(data.weight);
-    setCholestrol(data.cholesterol);
-    setDiastolic(data.blood_pressure_distolic);
-    setAge(data.age);
-    setHeight(data.height);
-    setPulse(data.pulse_rate);
-    setSystolic(data.blood_pressure_systolic);
-    setSugar(data.blood_sugar);
-    setTemperature(data.temperature);
-    setTriglycerides(data.triglyceride);
-    setRespirationRate(data.respiration_rate);
+    setWeight(data.weight || 0);
+    setCholestrol(data.cholesterol || 0);
+    setDiastolic(data.blood_pressure_distolic || 0);
+    setAge(data.age || 0);
+    setHeight(data.height || 0);
+    setPulse(data.pulse_rate || 0);
+    setSystolic(data.blood_pressure_systolic || 0);
+    setSugar(data.blood_sugar || 0);
+    setTemperature(data.temperature || 0);
+    setTriglycerides(data.triglyceride || 0);
+    setRespirationRate(data.respiration_rate || 0);
   };
   return (
     <div className="flex flex-col">
@@ -214,7 +227,7 @@ function AddRecords({ patientId, appointment_id, sendDataToParent, status }) {
                 </div>
                 <div className="flex flex-col">
                   <input
-                    className="rounded-md text-gray-500 cursor-not-allowed bg-gray-200"
+                    className="rounded-md text-gray-800 cursor-not-allowed bg-gray-200"
                     disabled={true}
                     type="number"
                     name="weight"
@@ -226,7 +239,7 @@ function AddRecords({ patientId, appointment_id, sendDataToParent, status }) {
                 </div>
                 <div className="flex flex-col">
                   <input
-                    className="rounded-md mr-8 text-gray-500 cursor-not-allowed bg-gray-200"
+                    className="rounded-md mr-8 text-gray-800 cursor-not-allowed bg-gray-200"
                     disabled={true}
                     type="number"
                     name="height"
@@ -239,7 +252,7 @@ function AddRecords({ patientId, appointment_id, sendDataToParent, status }) {
                 </div>
                 <div className="flex flex-col">
                   <input
-                    className="rounded-md text-gray-500 cursor-not-allowed bg-gray-200"
+                    className="rounded-md text-gray-800 cursor-not-allowed bg-gray-200"
                     disabled={true}
                     type="number"
                     name="age"
@@ -251,7 +264,7 @@ function AddRecords({ patientId, appointment_id, sendDataToParent, status }) {
                 </div>
                 <div className="flex flex-col">
                   <input
-                    className="rounded-md mr-8 text-gray-500 cursor-not-allowed bg-gray-200"
+                    className="rounded-md mr-8 text-gray-800 cursor-not-allowed bg-gray-200"
                     disabled={true}
                     type="number"
                     name="temperature"
@@ -265,7 +278,7 @@ function AddRecords({ patientId, appointment_id, sendDataToParent, status }) {
                 <div className="flex flex-col">
                   <div className="flex">
                     <input
-                      className="rounded-md text-gray-500 cursor-not-allowed bg-gray-200"
+                      className="rounded-md text-gray-800 cursor-not-allowed bg-gray-200"
                       disabled={true}
                       type="number"
                       name="blood_pressure_systolic"
@@ -274,7 +287,7 @@ function AddRecords({ patientId, appointment_id, sendDataToParent, status }) {
                     />
                     <p className="text-3xl pt-1 pl-4 pr-5"> / </p>
                     <input
-                      className="rounded-md text-gray-500 cursor-not-allowed bg-gray-200"
+                      className="rounded-md text-gray-800 cursor-not-allowed bg-gray-200"
                       disabled={true}
                       type="number"
                       name="blood_pressure_distolic"
@@ -291,7 +304,7 @@ function AddRecords({ patientId, appointment_id, sendDataToParent, status }) {
                 </div>
                 <div className="flex flex-col">
                   <input
-                    className="rounded-md text-gray-500 cursor-not-allowed bg-gray-200"
+                    className="rounded-md text-gray-800 cursor-not-allowed bg-gray-200"
                     disabled={true}
                     type="number"
                     name="pulse_rate"
@@ -303,7 +316,7 @@ function AddRecords({ patientId, appointment_id, sendDataToParent, status }) {
                 </div>
                 <div className="flex flex-col">
                   <input
-                    className="rounded-md mr-8 text-gray-500 cursor-not-allowed bg-gray-200"
+                    className="rounded-md mr-8 text-gray-800 cursor-not-allowed bg-gray-200"
                     disabled={true}
                     type="number"
                     name="respiration_rate"
@@ -316,7 +329,7 @@ function AddRecords({ patientId, appointment_id, sendDataToParent, status }) {
                 </div>
                 <div className="flex flex-col">
                   <input
-                    className="rounded-md text-gray-500 cursor-not-allowed bg-gray-200"
+                    className="rounded-md text-gray-800 cursor-not-allowed bg-gray-200"
                     disabled={true}
                     type="number"
                     name="cholesterol"
@@ -328,7 +341,7 @@ function AddRecords({ patientId, appointment_id, sendDataToParent, status }) {
                 </div>
                 <div className="flex flex-col">
                   <input
-                    className="rounded-md mr-8 text-gray-500 cursor-not-allowed bg-gray-200"
+                    className="rounded-md mr-8 text-gray-800 cursor-not-allowed bg-gray-200"
                     disabled={true}
                     type="number"
                     name="triglyceride"
@@ -341,7 +354,7 @@ function AddRecords({ patientId, appointment_id, sendDataToParent, status }) {
                 </div>
                 <div className="flex flex-col">
                   <input
-                    className="rounded-md text-gray-500 cursor-not-allowed bg-gray-200"
+                    className="rounded-md text-gray-800 cursor-not-allowed bg-gray-200"
                     disabled={true}
                     type="number"
                     name="blood_sugar"
@@ -351,20 +364,38 @@ function AddRecords({ patientId, appointment_id, sendDataToParent, status }) {
                 <div className="flex flex-col"></div>
                 <div className="flex flex-col"></div>
               </div>
-              <hr className="h-0 bg-[#7B7878] mx-6 mt-6" />
-
-              <hr className="bg-[#7B7878]" />
-              <p className="font-semibold text-lg ml-4 my-4">Prescription</p>
-              <hr className="mx-4 bg-[#7B7878]"></hr>
-
+              <div className="mx-6 mt-6" />
+              {!status ? (
+                <>
+                  <hr className="bg-[#7B7878]" />
+                  <p className="font-semibold text-lg ml-4 my-4">
+                    Prescription
+                  </p>
+                  <hr className="mx-4 bg-[#7B7878]"></hr>
+                </>
+              ) : (
+                <>
+                  {prescription.length === 0 ? (
+                    <></>
+                  ) : (
+                    <>
+                      <hr className="bg-[#7B7878]" />
+                      <p className="font-semibold text-lg ml-4 my-4">
+                        Prescription
+                      </p>
+                      <hr className="mx-4 bg-[#7B7878]" />
+                    </>
+                  )}
+                </>
+              )}
               <div>
                 {prescription.map((p, index) => (
                   <div key={index}>
-                    <div className="flex flex-wrap ml-4 text-[#7B7878] font-medium text-l w-full">
+                    <div className="flex flex-wrap pl-4 text-[#7B7878] font-medium text-l w-full">
                       <div className="w-1/4 px-4">
                         <p>Drug</p>
                         <input
-                          className="rounded-md w-72 mr-32 w-full bg-gray-200 text-gray-500 cursor-not-allowed"
+                          className="rounded-md w-72 mr-32 w-full bg-gray-200 text-gray-800 cursor-not-allowed"
                           disabled={true}
                           type="text"
                           value={p.drug}
@@ -373,7 +404,7 @@ function AddRecords({ patientId, appointment_id, sendDataToParent, status }) {
                       <div className=" w-1/4 px-4">
                         <p>Dosage</p>
                         <input
-                          className="rounded-md w-72 mr-32 w-full text-gray-500 cursor-not-allowed bg-gray-200"
+                          className="rounded-md w-72 mr-32 w-full text-gray-800 cursor-not-allowed bg-gray-200"
                           disabled={true}
                           type="number"
                           value={p.dosage}
@@ -382,7 +413,7 @@ function AddRecords({ patientId, appointment_id, sendDataToParent, status }) {
                       <div className=" w-1/4 px-4">
                         <p>Frequency</p>
                         <input
-                          className="rounded-md w-72 mr-32 w-full text-gray-500 cursor-not-allowed bg-gray-200"
+                          className="rounded-md w-72 mr-32 w-full text-gray-800 cursor-not-allowed bg-gray-200"
                           disabled={true}
                           type="number"
                           value={p.frequency}
@@ -391,7 +422,7 @@ function AddRecords({ patientId, appointment_id, sendDataToParent, status }) {
                       <div className=" w-1/4 px-4">
                         <p>Duration</p>
                         <input
-                          className="rounded-md w-72 w-full text-gray-500 cursor-not-allowed bg-gray-200"
+                          className="rounded-md w-72 w-full text-gray-800 cursor-not-allowed bg-gray-200"
                           disabled={true}
                           type="number"
                           value={p.duration}
@@ -402,7 +433,7 @@ function AddRecords({ patientId, appointment_id, sendDataToParent, status }) {
                       <div className="rounded-md my-2 pl-8 mr-32 w-2/3">
                         <p>Instructions</p>
                         <input
-                          className="my-2 rounded-md w-full text-gray-500 cursor-not-allowed bg-gray-200"
+                          className="my-2 rounded-md w-full text-gray-800 cursor-not-allowed bg-gray-200"
                           disabled={true}
                           type="text"
                           placeholder="Add Instructions"
@@ -484,43 +515,32 @@ function AddRecords({ patientId, appointment_id, sendDataToParent, status }) {
                       onChange={(e) => handleChangeInstructions(e)}
                     />
 
-                    <hr className="bg-[#7B7878] mx-4" />
+                    <hr className="bg-[#7B7878]" />
                     <p className="font-semibold text-lg ml-4 my-4">
                       Add Observations
                     </p>
+                    <hr className="bg-[#7B7878] mx-4" />
                     <input
                       type="text"
                       className="pl-4 my-6 ml-8 rounded-md w-2/3"
                       placeholder="Add Observations"
-                      value={observations}
                       onChange={(e) => changeObservations(e)}
                     />
-                    <hr className="bg-[#7B7878] mx-4" />
-                    <p className="font-semibold text-lg ml-4 my-4">Add Files</p>
 
+                    <hr className="bg-[#7B7878]" />
+                    <p className="font-semibold text-lg ml-4 my-4">Add Files</p>
+                    <hr className="bg-[#7B7878] mx-4" />
+
+                    <hr className="mx-4 bg-[#7B7878]" />
                     <div className="flex mx-4 my-6 ">
                       <input type="file" onChange={handleFileChange} />
-                      <button
-                        className="block bg-blue-500 border border-white text-white px-4 py-2
-                      rounded-md cursor-pointer"
-                        onClick={handleUpload}
-                      >
-                        Upload File
-                      </button>
-                      <p>{message}</p>
-                      {/* <label
-                        htmlFor="fileInput"
-                        className="bg-white border border-black mx-12 px-4 py-2 w-40 items-center justify-center flex rounded-md cursor-pointer"
-                      >
-                        Upload File
-                      </label>
-                      <input id="fileInput" className="hidden" type="file" /> */}
                     </div>
 
                     <input
                       className="ml-4 pl-4 rounded-md w-2/3"
                       type="text"
-                      placeholder="Add Instructions"
+                      placeholder="Add File Description"
+                      onChange={(e) => setFileDescription(e.target.value)}
                     />
                     <hr className="bg-[#7B7878] mx-4 my-6" />
                     <div className="flex">
@@ -538,7 +558,57 @@ function AddRecords({ patientId, appointment_id, sendDataToParent, status }) {
                     </div>
                   </>
                 ) : (
-                  <></>
+                  <>
+                    <hr className="bg-[#7B7878]" />
+                    <p className="font-semibold text-lg ml-4 my-4">
+                      Observations
+                    </p>
+                    <hr className="bg-[#7B7878] mx-4" />
+                    <input
+                      type="text"
+                      className="pl-4 my-6 ml-8 rounded-md w-2/3 text-gray-800 cursor-not-allowed bg-gray-200"
+                      disabled={true}
+                      value={observations}
+                    />
+                    <hr className="bg-[#7B7878]" />
+
+                    <Dialog open={open} handler={handleOpen} size="lg">
+                      <DialogHeader>New Appointment</DialogHeader>
+                      <div className="h-[1px] bg-[#827F7F82]"></div>
+                      <DialogBody>
+                        {fileMediaType === "image/jpeg" ? (
+                          <img
+                            src={`data:image/jpeg;base64,${fileBase64Data}`}
+                          />
+                        ) : (
+                            <PdfViewer file={fileBase64Data} />
+                        )}
+                      </DialogBody>
+                      <DialogFooter>
+                        <Button
+                          variant="text"
+                          color="red"
+                          onClick={handleOpen}
+                          className="mr-1"
+                        >
+                          <span>Cancel</span>
+                        </Button>
+                      </DialogFooter>
+                    </Dialog>
+
+                    <div className="flex justify-between items-center mx-4 ">
+                      <p className="font-semibold text-lg ml-4 my-4">Files</p>
+                      <button
+                        onClick={handleOpen}
+                        className="inline-flex gap-[15px] px-[1.05rem]  py-[0.25rem] h-[2.8rem] justify-center items-center text-white w-fit hover:bg-[#276059] bg-[#006666] rounded-[10px]"
+                      >
+                        <div className="relative w-fit font-semibold m-auto text-[20px]">
+                          View File
+                        </div>
+                      </button>
+                    </div>
+                    <hr className="bg-[#7B7878] mx-4 my-4" />
+                  </>
                 )}
               </div>
             </div>
