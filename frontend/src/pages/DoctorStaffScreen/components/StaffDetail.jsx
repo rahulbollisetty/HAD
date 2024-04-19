@@ -7,7 +7,7 @@ import {
 } from "@material-tailwind/react";
 import { useState } from "react";
 
-const DoctorDetail = () => {
+const StaffDetail = () => {
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(!open);
   return (
@@ -24,7 +24,7 @@ const DoctorDetail = () => {
       </button>
 
       <Dialog open={open} onClose={handleOpen} size="xl">
-        <DialogHeader>Doctor's Details</DialogHeader>
+        <DialogHeader>Staff's Details</DialogHeader>
         <div className="h-[1px] bg-[#827F7F82]"></div>
         <DialogBody>
           <div>
@@ -40,7 +40,7 @@ const DoctorDetail = () => {
                 <div className="w-full">
                   <div className="mt-4 ml-8">
                     <p className="text-xl font-semibold text-[#444444]">
-                      Dr B. Rahul
+                      B. Rahul
                     </p>
                   </div>
                   <div className="flex mt-2 ml-8 text-l">
@@ -80,9 +80,9 @@ const DoctorDetail = () => {
                     </div>
                     <div className="flex-1">
                       <span className="font-semibold flex ml-auto mr-20 text-[#7B7878]">
-                        Qualification
+                        Role
                         <p className="ml-6 text-black font-medium">
-                          MBBS, MD (Cardiology)
+                          Lab Attendant
                         </p>
                       </span>
                     </div>
@@ -94,7 +94,7 @@ const DoctorDetail = () => {
             <div className="grid grid-cols-3 place-items-center gap-3  text-[#7B7878] font-medium font-semibold text-l  p-5">
               <div className="flex flex-col  item-center">
                 <p className=" font-semibold ">Address Line*</p>
-                <p className="text-black text-center font-medium ">Lmao</p>
+                <p className="text-black text-center font-medium">Lmao</p>
               </div>
               <div className="flex flex-col item-center">
                 <p className=" font-semibold ">Town/City</p>
@@ -114,7 +114,7 @@ const DoctorDetail = () => {
         </DialogBody>
         <DialogFooter>
           <Button variant="filled" className="bg-[#FFA000]">
-            <span>Delete Doctor</span>
+            <span>Delete Staff</span>
           </Button>
           <Button
             variant="text"
@@ -129,4 +129,4 @@ const DoctorDetail = () => {
     </div>
   );
 };
-export default DoctorDetail;
+export default StaffDetail;

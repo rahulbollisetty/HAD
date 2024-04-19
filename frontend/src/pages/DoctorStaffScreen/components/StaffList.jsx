@@ -1,5 +1,6 @@
 import { MdSearch } from "react-icons/md";
 import AddStaffForm from "../forms/AddStaffForm";
+import StaffDetail from "./StaffDetail";
 
 const StaffList = () => {
   return (
@@ -15,7 +16,7 @@ const StaffList = () => {
           <input
             className="m-4 h-[3.375rem] border-[#827F7F82] rounded-md focus:outline-none focus:ring focus:ring-[#02685A] focus:ring-opacity-70"
             type="text"
-            placeholder="Search Doctor"
+            placeholder="Search Staff"
             name=""
             id=""
           />
@@ -52,7 +53,23 @@ const StaffList = () => {
                 </th>
               </tr>
             </thead>
-            <tbody className="text-sm text-[#444]"></tbody>
+            <tbody className="text-sm text-[#444]">
+              {/* {AllPatientList.map((item, index) => ( */}
+              {/* <tr className="bg-white border ">
+                <td
+                  scope="row"
+                  className="px-6 py-4 font-medium text-[#444] whitespace-nowrap"
+                ></td>
+                <td className="px-6 py-4"></td>
+                <td className="px-6 py-4"></td>
+                <td className="px-6 py-4"></td>
+                <td></td>
+                <td></td>
+                <td className="px-6 py-4 text-right">
+                  <StaffDetail />
+                </td>
+              </tr> */}
+            </tbody>
           </table>
         </div>
       </div>
