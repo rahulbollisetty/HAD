@@ -18,6 +18,7 @@ import { DoctorStaffScreen } from "./pages/DoctorStaffScreen/DoctorStaffScreen";
 import AddRecords from "./pages/PatientScreen/components/AddRecords";
 import AddAppointmentForm from "./pages/PatientScreen/forms/AddAppointmentForm";
 import CalendarScreen from "./pages/calendar/CalendarScreen";
+import SettingsScreen from "./pages/Settings/SettingsScreen";
 
 function App() {
   return (
@@ -43,6 +44,7 @@ function App() {
           {/* <Route path="linkpage" element={<LinkPage />} /> */}
           <Route path="unauthorized" element={<Unauthorized />} />
           <Route path="/calendar" element={<CalendarScreen />} />
+          <Route path="/settings" element={<SettingsScreen />} />
 
           <Route path="/staffList" element={<DoctorStaffScreen />} />
 
