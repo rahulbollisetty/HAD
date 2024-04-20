@@ -35,9 +35,6 @@ public class RabbitMqService {
                         sseService.consentOnInit(jsonNode);
                         System.out.println("Received consentOnInit: " + jsonData);
                         break;
-//                    case "consent":
-//                        System.out.println("Received userAuthOtpVerify: " + jsonData);
-//                        break;
                     case "consentOnStatus" :
                         System.out.println("Received consentOnStatus: " + jsonData);
                         consentService.consentOnStatus(jsonNode);
@@ -45,6 +42,10 @@ public class RabbitMqService {
                     case "consentOnNotify":
                         System.out.println("Received consentOnNotify: " + jsonData);
                         consentService.consentOnNotify(jsonNode);
+                        break;
+                    case "consentOnFetch":
+                        System.out.println("Received consentOnFetch: " + jsonData);
+                        consentService.consentOnFetch(jsonNode);
                         break;
                     default:
                         System.out.println("Unknown data type");

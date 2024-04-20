@@ -10,6 +10,8 @@ import org.had.abdm_backend.exception.MyWebClientException;
 import org.had.abdm_backend.repository.AbdmIdVerifyRepository;
 import org.had.abdm_backend.repository.ConsentRequestRepository;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
@@ -29,6 +31,7 @@ import java.util.UUID;
 
 @Service
 public class ABDMService {
+    private static final Logger log = LoggerFactory.getLogger(ABDMService.class);
     @Autowired
     private WebClient webClient;
 
@@ -462,19 +465,19 @@ public class ABDMService {
 
 //    M2 API's from here
 
-    public String linkCareContext(String opId, String accessToken) {
+    public String linkCareContext(String appointmentId, String accessToken, String patientId,String patientName, String hospitalId) {
         String timeStamp = getCurrentSimpleTimestamp();
         String requestId = generateUUID();
         LocalDate date = todayDate();
         String display = "OP Consultation on " + date;
 
         Map<String, String> careContexts = new HashMap<>();
-        careContexts.put("referenceNumber", opId);
+        careContexts.put("referenceNumber", hospitalId+":"+date+"_"+appointmentId);
         careContexts.put("display", display);
 
         Map<String, Object> patient = new HashMap<>();
-        patient.put("referenceNumber" , opId);
-        patient.put("display" , display);
+        patient.put("referenceNumber" , patientId);
+        patient.put("display" , patientName +":" + display);
         patient.put("careContexts" , List.of(careContexts));
 
         Map<String, Object> link = new HashMap<>();
@@ -607,7 +610,7 @@ public class ABDMService {
     }
 
     public String consentStatus(JsonNode jsonNode) throws JsonProcessingException{
-        System.out.println("Consent Status Service");
+        log.info("Consent Status Service");
         String consent_request_id = jsonNode.get("consent_request_id").asText();
         String requestId = jsonNode.get("request_id").asText();
 
@@ -634,7 +637,7 @@ public class ABDMService {
     }
 
     public String consentFetch(JsonNode jsonNode) throws JsonProcessingException {
-        System.out.println("Consent FEtch Service");
+        log.info("Consent Fetch Service");
         String consent_id = jsonNode.get("artefactId").asText();
         Map<String, String> data = new HashMap<>();
         data.put("requestId",UUID.randomUUID().toString());

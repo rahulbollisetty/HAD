@@ -1,7 +1,11 @@
-package org.had.consentservice.entity;
+package org.had.patientservice.entity;
+
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -9,17 +13,13 @@ import java.util.Set;
 @Entity
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 public class CareContexts {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-
-    private String hipId;
-
-    private String hipName;
 
     private String patientSbx;
 
@@ -27,12 +27,6 @@ public class CareContexts {
 
     private String careContextReference;
 
-    @Column(length = 500)
-    private String signature;
-
-    private String content;
-
     @ManyToMany(mappedBy = "careContexts")
-    private Set<ConsentArtefact> consentArtefacts = new HashSet<>();
-
+    private Set<ConsentDetails> consentArtefacts = new HashSet<>();
 }

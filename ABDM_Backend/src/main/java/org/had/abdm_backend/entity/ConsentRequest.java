@@ -8,15 +8,16 @@ import lombok.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
 public class ConsentRequest {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    private String consent_id;
+    @Column(unique = true)
+    private String consentId;
 
+    @Column(nullable = false, unique = true)
     private String request_id;
 
     private String status = "REQUESTED";
