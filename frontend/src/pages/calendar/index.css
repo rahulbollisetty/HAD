@@ -1,0 +1,9 @@
+.rbc-active {
+  background: #ffbc00 !important;
+  color: #444444 !important;
+}
+
+.option-hover:hover {
+  background: white;
+  color: #006666;
+}

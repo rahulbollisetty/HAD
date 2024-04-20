@@ -65,7 +65,31 @@ public class ConsentAPI {
         return abdmService.linkCareContext(opId, accessToken);
     }
 
+    @PostMapping(value = "/hipOnRequest", produces = MediaType.APPLICATION_JSON_VALUE)
+    ResponseEntity<?> hipOnRequest(@RequestBody JsonNode jsonNode) throws JsonProcessingException{
+        abdmService.setToken();
+        abdmService.hipOnRequest(jsonNode);
+        return ResponseEntity.ok("requested");
+    }
 
+    @PostMapping(value = "/healthInfoNotify", produces = MediaType.APPLICATION_JSON_VALUE)
+    ResponseEntity<?> healthInfoNotify(@RequestBody JsonNode jsonNode) throws JsonProcessingException{
+        abdmService.setToken();
+        abdmService.healthInfoNotify(jsonNode);
+        return ResponseEntity.ok("requested");
+    }
 
+    @PostMapping(value = "healthInfoCmRequest",produces = MediaType.APPLICATION_JSON_VALUE)
+    ResponseEntity<?> healthInfoCmRequest(@RequestBody JsonNode jsonNode) throws JsonProcessingException{
+        abdmService.setToken();
+        abdmService.healthInfoCmRequest(jsonNode);
+        return ResponseEntity.ok("req");
+    }
 
+    @PostMapping(value = "dataPush",produces = MediaType.APPLICATION_JSON_VALUE)
+    ResponseEntity<?> dataPush(@RequestBody JsonNode jsonNode) throws JsonProcessingException{
+        abdmService.setToken();
+        abdmService.dataPush(jsonNode);
+        return ResponseEntity.ok("data pushed");
+    }
 }

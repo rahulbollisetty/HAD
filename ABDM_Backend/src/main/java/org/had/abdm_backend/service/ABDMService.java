@@ -22,10 +22,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class ABDMService {
@@ -733,6 +730,212 @@ public class ABDMService {
                             .flatMap(errorBody -> Mono.error(new MyWebClientException(errorBody, clientResponse.statusCode().value())));
                 })
                 .bodyToMono(String.class).block();
+    }
+
+    public String hipOnRequest(JsonNode jsonNode) throws JsonProcessingException{
+        String transaction_id = jsonNode.get("transactionId").asText();
+        String req_id = jsonNode.get("requestId").asText();
+
+        Map<String,Object> root = new HashMap<>();
+        root.put("requestId",UUID.randomUUID().toString());
+        root.put("timestamp", getISOTimestamp());
+
+        Map<String, Object> hiRequestMap = new HashMap<>();
+        hiRequestMap.put("transactionId", transaction_id);
+        hiRequestMap.put("sessionStatus", "ACKNOWLEDGED");
+
+        root.put("hiRequest",hiRequestMap);
+        Map<String, String> respMap = new HashMap<>();
+        respMap.put("requestId", req_id);
+
+        root.put("resp", respMap);
+
+        var objectMapper = new ObjectMapper();
+        String requestBody = objectMapper.writeValueAsString(root);
+
+        return webClient.post().uri("https://dev.abdm.gov.in/gateway/v0.5/health-information/hip/on-request")
+                .header("Authorization","Bearer "+token)
+//                .header("accept", "*/*")
+                .header("X-CM-ID", "sbx")
+//                .header("Content-Type", MediaType.APPLICATION_JSON_VALUE)
+                .body(BodyInserters.fromValue(requestBody.toString()))
+                .retrieve()
+                .onStatus(HttpStatusCode::isError,clientResponse -> {
+                    return clientResponse.bodyToMono(String.class)
+                            .flatMap(errorBody -> Mono.error(new MyWebClientException(errorBody, clientResponse.statusCode().value())));
+                })
+                .bodyToMono(String.class).block();
+    }
+
+    public String healthInfoNotify(JsonNode jsonNode) throws  JsonProcessingException{
+        String transaction_id = jsonNode.get("transactionId").asText();
+        String consent_id = jsonNode.get("consentId").asText();
+        String hip_id = jsonNode.get("hipId").asText();
+
+        Map<String, Object> rootMap = new HashMap<>();
+
+        rootMap.put("requestId", UUID.randomUUID().toString());
+        rootMap.put("timestamp", getISOTimestamp());
+
+        Map<String, Object> notificationMap = new HashMap<>();
+        notificationMap.put("transactionId", transaction_id);
+        notificationMap.put("consentId", consent_id);
+        notificationMap.put("doneAt", getISOTimestamp());
+
+        Map<String, String> notifierMap = new HashMap<>();
+        notifierMap.put("type", "HIP");
+        notifierMap.put("id", hip_id);
+
+        notificationMap.put("notifier", notifierMap);
+
+        Map<String, Object> statusNotificationMap = new HashMap<>();
+        statusNotificationMap.put("sessionStatus", "TRANSFERRED");
+        statusNotificationMap.put("hipId", hip_id);
+
+        List<Map<String, String>> statusResponses = new ArrayList<>();
+        Map<String, String> statusResponse = new HashMap<>();
+        statusResponse.put("careContextReference", "appt_march_02");
+        statusResponse.put("hiStatus", "OK");
+        statusResponse.put("description", "data sent to datapush url");
+        statusResponses.add(statusResponse);
+
+        statusNotificationMap.put("statusResponses", statusResponses);
+
+        notificationMap.put("statusNotification", statusNotificationMap);
+
+        rootMap.put("notification", notificationMap);
+
+        var objectMapper = new ObjectMapper();
+        String requestBody = objectMapper.writeValueAsString(rootMap);
+
+        return webClient.post().uri("https://dev.abdm.gov.in/gateway/v0.5/health-information/notify")
+                .header("Authorization","Bearer "+token)
+                .header("accept", "*/*")
+                .header("X-CM-ID", "sbx")
+                .header("Content-Type", MediaType.APPLICATION_JSON_VALUE)
+                .body(BodyInserters.fromValue(requestBody.toString()))
+                .retrieve()
+                .onStatus(HttpStatusCode::isError,clientResponse -> {
+                    return clientResponse.bodyToMono(String.class)
+                            .flatMap(errorBody -> Mono.error(new MyWebClientException(errorBody, clientResponse.statusCode().value())));
+                })
+                .bodyToMono(String.class).block();
+
+    }
+
+    public String dataPush(JsonNode jsonNode) throws  JsonProcessingException{
+        String expiry = jsonNode.get("expiry").asText();
+        String keyval = jsonNode.get("keyval").asText();
+        String nonce = jsonNode.get("nonce").asText();
+        String transaction_id = jsonNode.get("transactionId").asText();
+        String content = jsonNode.get("content").asText();
+
+
+        Map<String, Object> rootMap = new HashMap<>();
+
+        // Basic properties
+        rootMap.put("pageNumber", 0);
+        rootMap.put("pageCount", 0);
+        rootMap.put("transactionId", transaction_id);
+
+        List<Map<String, String>> entries = new ArrayList<>();
+        Map<String, String> entry = new HashMap<>();
+        entry.put("content", content);
+        entry.put("media", "application/fhir+json");
+        entry.put("checksum", "MD5");
+        entry.put("careContextReference", "ref_1");
+        entries.add(entry);
+
+        rootMap.put("entries", entries);
+
+        Map<String, Object> keyMaterialMap = new HashMap<>();
+        keyMaterialMap.put("cryptoAlg", "ECDH");
+        keyMaterialMap.put("curve", "Curve25519");
+
+        Map<String, String> dhPublicKeyMap = new HashMap<>();
+        dhPublicKeyMap.put("expiry", expiry);
+        dhPublicKeyMap.put("parameters", "Curve25519/32byte random key");
+        dhPublicKeyMap.put("keyValue", keyval);
+
+        keyMaterialMap.put("dhPublicKey", dhPublicKeyMap);
+        keyMaterialMap.put("nonce", nonce);
+
+        rootMap.put("keyMaterial", keyMaterialMap);
+
+        var objectMapper = new ObjectMapper();
+        String requestBody = objectMapper.writeValueAsString(rootMap);
+
+        return webClient.post().uri("https://webhook.site/8905738a-9ae9-406b-8d4d-ee6c5abf63f8/data/push")
+                .header("Authorization","Bearer "+token)
+//                .header("accept", "*/*")
+//                .header("X-CM-ID", "sbx")
+//                .header("Content-Type", MediaType.APPLICATION_JSON_VALUE)
+                .body(BodyInserters.fromValue(requestBody.toString()))
+                .retrieve()
+                .onStatus(HttpStatusCode::isError,clientResponse -> {
+                    return clientResponse.bodyToMono(String.class)
+                            .flatMap(errorBody -> Mono.error(new MyWebClientException(errorBody, clientResponse.statusCode().value())));
+                })
+                .bodyToMono(String.class).block();
+    }
+    public String healthInfoCmRequest(JsonNode jsonNode) throws  JsonProcessingException{
+        String consent_id = jsonNode.get("consentId").asText();
+        String from = jsonNode.get("from").asText();
+        String to = jsonNode.get("to").asText();
+        String expiry = jsonNode.get("expiry").asText();
+        String keyval = jsonNode.get("keyval").asText();
+        String nonce = jsonNode.get("nonce").asText();
+
+        Map<String, Object> rootMap = new HashMap<>();
+        rootMap.put("requestId", UUID.randomUUID().toString());
+        rootMap.put("timestamp", getISOTimestamp());
+
+        Map<String, Object> hiRequestMap = new HashMap<>();
+
+        Map<String, String> consentMap = new HashMap<>();
+        consentMap.put("id", consent_id);
+        hiRequestMap.put("consent", consentMap);
+
+        Map<String, String> dateRangeMap = new HashMap<>();
+        dateRangeMap.put("from", from);
+        dateRangeMap.put("to", to);
+        hiRequestMap.put("dateRange", dateRangeMap);
+
+        hiRequestMap.put("dataPushUrl", "https://webhook.site/8905738a-9ae9-406b-8d4d-ee6c5abf63f8/data/push");
+
+        Map<String, Object> keyMaterialMap = new HashMap<>();
+        keyMaterialMap.put("cryptoAlg", "ECDH");
+        keyMaterialMap.put("curve", "Curve25519");
+
+        Map<String, String> dhPublicKeyMap = new HashMap<>();
+        dhPublicKeyMap.put("expiry", expiry);
+        dhPublicKeyMap.put("parameters", "Curve25519/32byte random key");
+        dhPublicKeyMap.put("keyValue",keyval);
+
+        keyMaterialMap.put("dhPublicKey", dhPublicKeyMap);
+
+        keyMaterialMap.put("nonce",nonce);
+
+        hiRequestMap.put("keyMaterial", keyMaterialMap);
+
+        rootMap.put("hiRequest", hiRequestMap);
+
+        var objectMapper = new ObjectMapper();
+        String requestBody = objectMapper.writeValueAsString(rootMap);
+
+        return webClient.post().uri("https://dev.abdm.gov.in/gateway/v0.5/health-information/cm/request")
+                .header("Authorization","Bearer "+token)
+                .header("accept", "*/*")
+                .header("X-CM-ID", "sbx")
+                .header("Content-Type", MediaType.APPLICATION_JSON_VALUE)
+                .body(BodyInserters.fromValue(requestBody.toString()))
+                .retrieve()
+                .onStatus(HttpStatusCode::isError,clientResponse -> {
+                    return clientResponse.bodyToMono(String.class)
+                            .flatMap(errorBody -> Mono.error(new MyWebClientException(errorBody, clientResponse.statusCode().value())));
+                })
+                .bodyToMono(String.class).block();
+
     }
     //    private String handleErrorResponse(ClientResponse response) {
 //        // Handle the error response

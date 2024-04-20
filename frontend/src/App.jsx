@@ -17,6 +17,8 @@ import { DoctorStaffScreen } from "./pages/DoctorStaffScreen/DoctorStaffScreen";
 
 import AddRecords from "./pages/PatientScreen/components/AddRecords";
 import AddAppointmentForm from "./pages/PatientScreen/forms/AddAppointmentForm";
+import CalendarScreen from "./pages/calendar/CalendarScreen";
+import SettingsScreen from "./pages/Settings/SettingsScreen";
 
 function App() {
   return (
@@ -41,6 +43,8 @@ function App() {
           <Route path="register/doctor" element={<Register />} />
           {/* <Route path="linkpage" element={<LinkPage />} /> */}
           <Route path="unauthorized" element={<Unauthorized />} />
+          <Route path="/calendar" element={<CalendarScreen />} />
+          <Route path="/settings" element={<SettingsScreen />} />
 
           <Route path="/staffList" element={<DoctorStaffScreen />} />
 
@@ -48,8 +52,14 @@ function App() {
           <Route element={<PersistLogin />}>
             <Route element={<RequireAuth allowedRoles={["DOCTOR"]} />}>
               <Route path="/" element={<AllPatientList />} />
-              <Route path="/patientScreen/:id" element={<PatientScreen tab={"Past Records"}/>} />
-              <Route path="/patientScreen/:id/appointment/:appid" element={<PatientScreen   />} />
+              <Route
+                path="/patientScreen/:id"
+                element={<PatientScreen tab={"Past Records"} />}
+              />
+              <Route
+                path="/patientScreen/:id/appointment/:appid"
+                element={<PatientScreen />}
+              />
             </Route>
 
             {/* <Route element={<RequireAuth allowedRoles={[ROLES.Editor]} />}>
