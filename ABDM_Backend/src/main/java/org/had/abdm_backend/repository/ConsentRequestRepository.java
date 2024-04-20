@@ -11,4 +11,6 @@ public interface ConsentRequestRepository extends JpaRepository<ConsentRequest, 
     @Query("SELECT cr FROM ConsentRequest cr WHERE cr.request_id = :requestId")
     Optional<ConsentRequest> findByRequest_id(String requestId);
 
+    Optional<ConsentRequest> findByConsentId(String consent_id);
+
 }

@@ -16,6 +16,10 @@ public class RabbitMqService {
     @Autowired
     private SSEService sseService;
 
+    @Autowired
+    private ConsentService consentService;
+
+
     @RabbitListener(queues = "${queue.name}")
     public void receiveJsonData(String jsonData) {
         if (!jsonData.isEmpty()){
@@ -32,6 +36,10 @@ public class RabbitMqService {
                     case "userAuthOnConfirm":
                         sseService.sendUserAuthVerifyData(jsonNode);
                         System.out.println("Received userAuthOnConfirm: " + jsonData);
+                        break;
+                    case "consentOnNotifyHIP":
+                        consentService.consentOnNotifyHIP(jsonNode);
+                        System.out.println("Received consentOnNotifyHIP: " + jsonData);
                         break;
                     default:
                     System.out.println("Unknown data type");

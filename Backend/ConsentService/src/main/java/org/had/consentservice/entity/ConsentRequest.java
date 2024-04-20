@@ -10,19 +10,18 @@ import lombok.ToString;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
 public class ConsentRequest {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-
+    @Column(unique = true)
     private String consent_id;
 
     private String status = "REQUESTED";
 
-    @Column(nullable = false, unique = false)
+    @Column(nullable = false, unique = true)
     private String request_id;
 
     private String patient_id;

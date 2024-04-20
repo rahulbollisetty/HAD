@@ -57,14 +57,6 @@ public class AppointmentService {
     @Autowired
     private WebClient webClient;
 
-    @Autowired
-    private TemplateEngine templateEngine;
-
-    @Autowired
-    private ResourceLoader resourceLoader;
-
-    @Value("${pdf.directory}")
-    private String pdfDirectory;
 
     @Value("${hospital.name}")
     private String hospitalName;
@@ -146,10 +138,12 @@ public class AppointmentService {
     public ResponseEntity<?> completeAppointment(JsonNode jsonNode, MultipartFile file) {
         try {
             JsonNode prescriptionArray = jsonNode.get("prescription");
-            Integer opId = jsonNode.get("opId").asInt();
+            Integer appointmentId = jsonNode.get("appointmentId").asInt();
             Integer patientId = jsonNode.get("patientId").asInt();
             String Observations = jsonNode.get("observations").asText();
-            Optional<OpConsultation> opConsultationOptional = opConsultationRepository.findById(opId);
+            AppointmentDetails appointmentDetails = appointmentRepository.findById(appointmentId).orElseThrow(() -> new RuntimeException("Appointment not found"));;
+
+            Optional<OpConsultation> opConsultationOptional = opConsultationRepository.findByAppointmentDetails(appointmentDetails);
             if (opConsultationOptional.isPresent()) {
                 OpConsultation opConsultation = opConsultationOptional.get();
                 if (prescriptionArray != null && prescriptionArray.isArray()) {
@@ -170,31 +164,24 @@ public class AppointmentService {
                         prescriptionDetailsRepository.save(prescriptionDetails);
                     }
                     opConsultation.setObservations(Observations);
-                    String destPath = handleFileUpload(file, jsonNode.get("opId").asText());
+                    String destPath = handleFileUpload(file, String.valueOf(appointmentId));
                     opConsultation.setFileDescription(jsonNode.get("fileDescription").asText());
                     opConsultation.setFilePath(destPath);
                     opConsultationRepository.save(opConsultation);
 
-//                    String res = linkCareContext(opId+"", patientId);
-//                    System.out.println(res);
+                    String res = linkCareContext(appointmentId+"", patientId);
+                    System.out.println(res);
 
-                    Optional<AppointmentDetails> appointmentDetailsOptional = appointmentRepository.findById(opId);
-                    if (appointmentDetailsOptional.isPresent()) {
-                        AppointmentDetails appointmentDetails = appointmentDetailsOptional.get();
                         appointmentDetails.setStatus("Completed");
                         System.out.println("Updated Status");
                         appointmentRepository.save(appointmentDetails);
-                    } else {
-                        System.out.println("Appointment Not found");
-                    }
-
 
                     return ResponseEntity.ok("Prescription Record saved");
                 } else {
                     return ResponseEntity.badRequest().body("Invalid Prescription Array");
                 }
             } else {
-                return ResponseEntity.badRequest().body("OpConsultation with id " + opId + " not found");
+                return ResponseEntity.badRequest().body("OpConsultation with id " + appointmentId + " not found");
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -202,14 +189,17 @@ public class AppointmentService {
         }
     }
 
-    private String linkCareContext(String opId, Integer patientId) {
+    private String linkCareContext(String appointmentId, Integer patientId) {
         PatientDetails patientDetails = patientDetailsRepository.findById(patientId)
                 .orElseThrow(() -> new RuntimeException("Patient not found"));
 
         String accessToken = patientDetails.getLinkToken();
         System.out.println(accessToken);
         var values = new HashMap<String, String>() {{
-            put("opId", opId);
+            put("appointmentId", appointmentId);
+            put("patientId", String.valueOf(patientId));
+            put("hospitalId",hospitalId);
+            put("patientName",patientDetails.getName());
             put("accessToken", accessToken);
         }};
         String requestBody = null;
@@ -324,45 +314,5 @@ public class AppointmentService {
         return Files.readAllBytes(filePath);
     }
 
-    private String getResourceFilePath() throws IOException {
-        return resourceLoader.getResource("classpath:static/files/").getFile().getAbsolutePath() + "/";
-    }
-
-
-
-    public String generatePdf(String Opid) throws IOException, InterruptedException, DocumentException {
-        // Load data from repositories
-        OpConsultation opConsultation = opConsultationRepository.findById(Integer.valueOf(Opid)).get();
-        PatientVitals patientVitals = patientVitalsRepository.findByOpId(Integer.valueOf(Opid)).getFirst();
-        List<PrescriptionDetails> prescriptionDetailsList = prescriptionDetailsRepository.findByOpConsultation(Integer.valueOf(Opid));
-        AppointmentDetails appointmentDetails = opConsultation.getAppointmentDetails();
-        PatientDetails patientDetails = appointmentDetails.getPatientId();
-
-        // Create Thymeleaf context
-        Context context = new Context();
-        context.setVariable("patientVitals", patientVitals);
-        context.setVariable("appointment", appointmentDetails);
-        context.setVariable("patient", patientDetails);
-        context.setVariable("hospitalName", hospitalName);
-        context.setVariable("hospitalId", hospitalId);
-        context.setVariable("observation", opConsultation.getObservations());
-        context.setVariable("prescriptionList", prescriptionDetailsList);
-
-        // Process the Thymeleaf template to generate HTML content
-        String processedHtml = templateEngine.process("index", context);
-
-        // Create PDF from HTML content
-        Pdf pdf = new Pdf();
-        pdf.addPageFromString(processedHtml);
-        pdf.saveAs("report/" + "Report" + patientDetails.getName() + ":" + appointmentDetails.getAppointment_id().toString() + ".pdf");
-
-        // Load the first PDF as a byte array
-        byte[] reportBytes = Files.readAllBytes(Paths.get("report/" + "Report" + patientDetails.getName() + ":" + appointmentDetails.getAppointment_id().toString() + ".pdf"));
-
-
-        return Base64.getEncoder().encodeToString(reportBytes);
-        // Clean up the temporary file
-//        Files.deleteIfExists(Paths.get("report/" + "Report" + patientDetails.getName() + ":" + appointmentDetails.getAppointment_id().toString() + ".pdf"));
-    }
 
 }

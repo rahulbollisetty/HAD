@@ -48,7 +48,7 @@ function AddRecords({ patientId, appointment_id, sendDataToParent, status }) {
       }
     };
 
-    getOpData();
+    if(status)getOpData();
 
     const getPrescription = async () => {
       const path = `http://127.0.0.1:9005/patient/appointment/getPrescription`;
@@ -121,7 +121,7 @@ function AddRecords({ patientId, appointment_id, sendDataToParent, status }) {
       const completeAppointment = async () => {
         const path = `http://127.0.0.1:9005/patient/appointment/completeAppointment`;
         const requestBody = {
-          opId: appointment_id,
+          appointmentId: appointment_id,
           prescription: prescription,
           patientId: parseInt(patientId.patientId),
           observations: observations,

@@ -122,11 +122,11 @@ public class AppointmentController {
         }
     }
 
-    @GetMapping("/generate-pdf")
-    public String generatePdf(@RequestParam String id) throws Exception {
-        appointmentService.generatePdf(id);
-        return "pdf-generated";
-    }
+//    @GetMapping("/generate-pdf")
+//    public String generatePdf(@RequestParam String id) throws Exception {
+//        appointmentService.generatePdf(id);
+//        return "pdf-generated";
+//    }
 
 //    @PreAuthorize("hasAnyAuthority('DOCTOR','STAFF')")
 //    @GetMapping( value = "/getImageData", produces = MediaType.APPLICATION_JSON_VALUE)

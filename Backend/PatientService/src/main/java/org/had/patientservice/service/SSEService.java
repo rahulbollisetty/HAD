@@ -19,7 +19,7 @@ public class SSEService {
 
     private final Map<String, SseEmitter> emitters = new HashMap<>();
     public SseEmitter createSseEmitter(String requestId) {
-        SseEmitter sseEmitter = new SseEmitter(5000L);
+        SseEmitter sseEmitter = new SseEmitter(35000L);
         emitters.put(requestId, sseEmitter);
         sseEmitter.onCompletion(() -> removeEmitter(requestId));
         sseEmitter.onTimeout(() -> removeEmitter(requestId));

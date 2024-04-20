@@ -50,13 +50,27 @@ public class WebhookController {
         consentService.consentRequestOnStatus(jsonNode, hiuId);
     }
 
-    @PostMapping("api/v3/hiu/consent/request/notify")
+    @PostMapping("/api/v3/hiu/consent/request/notify")
     public void consentRequestNotifyHIU(@RequestBody JsonNode jsonNode, HttpServletRequest httpServlet){
-        System.out.println("Webhook COntroller hiu notify");
+        System.out.println("Webhook Controller hiu notify");
         String hiuId = httpServlet.getHeader("x-hiu-id");
         consentService.consentRequestNotifyHIU(jsonNode, hiuId);
     }
 
+    @PostMapping("/api/v3/hiu/consent/on-fetch")
+    public void consentFetch(@RequestBody JsonNode jsonNode, HttpServletRequest httpServlet){
+        System.out.println("Webhook Controller on-fetch");
+        String hiuId = httpServlet.getHeader("x-hiu-id");
+        consentService.consentArtefactOnFetch(jsonNode, hiuId);
+    }
+
+//
+    @PostMapping("/api/v3/consent/request/hip/notify")
+    public void consentRequestNotifyHIP(@RequestBody JsonNode jsonNode, HttpServletRequest httpServlet){
+        System.out.println("Webhook Controller hip notify");
+        String hiuId = httpServlet.getHeader("x-hip-id");
+        consentService.consentRequestNotifyHIP(jsonNode, hiuId);
+    }
 
 
 }
