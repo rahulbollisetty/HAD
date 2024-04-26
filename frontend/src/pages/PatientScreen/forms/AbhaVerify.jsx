@@ -52,7 +52,7 @@ function AbhaVerify({sendDataToParent}) {
                 onClick={handleSubmit1(async () => {
                   const data = {
                     patientSBXId: getValues1("patientSBXId"),
-                    requesterId: "IN2210000259",
+                    requesterId: "IN2210000258",
                     requesterType: "HIP",
                   };
 

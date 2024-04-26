@@ -403,7 +403,7 @@ function AbhaRegister({ sendDataToParent }) {
               try {
                 const data = {
                   patientSBXId: getValues1("phrAddress") + "@sbx",
-                  requesterId: "IN2210000259",
+                  requesterId: "IN2210000258",
                   requesterType: "HIP",
                 };
                 const abortController = new AbortController();
