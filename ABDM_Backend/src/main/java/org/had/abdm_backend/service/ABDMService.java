@@ -462,14 +462,13 @@ public class ABDMService {
 
 //    M2 API's from here
 
-    public String linkCareContext(String appointmentId, String accessToken, String patientId,String patientName, String hospitalId) {
+    public String linkCareContext(String appointmentId, String accessToken,String date, String patientId,String patientName, String hospitalId) {
         String timeStamp = getCurrentSimpleTimestamp();
         String requestId = generateUUID();
-        LocalDate date = todayDate();
         String display = "OP Consultation on " + date;
 
         Map<String, String> careContexts = new HashMap<>();
-        careContexts.put("referenceNumber", hospitalId+":"+date+"_"+appointmentId);
+        careContexts.put("referenceNumber", hospitalId+"."+date+"."+appointmentId);
         careContexts.put("display", display);
 
         Map<String, Object> patient = new HashMap<>();
@@ -659,10 +658,10 @@ public class ABDMService {
 
     }
 
-    public String hipOnNotify(JsonNode jsonNode) throws JsonProcessingException {
+    public String hipOnNotify(String consentId, String requestId) throws JsonProcessingException {
         System.out.println("Consent hip on-notify Service");
-        String consent_id = jsonNode.get("consent_id").asText();
-        String request_id = jsonNode.get("request_id").asText();
+        String consent_id = consentId;
+        String request_id = requestId;
 
         Map<String, Object> data = new HashMap<>();
 
@@ -735,9 +734,9 @@ public class ABDMService {
                 .bodyToMono(String.class).block();
     }
 
-    public String hipOnRequest(JsonNode jsonNode) throws JsonProcessingException{
-        String transaction_id = jsonNode.get("transactionId").asText();
-        String req_id = jsonNode.get("requestId").asText();
+    public String hipOnRequest(String txnId, String requestId) throws JsonProcessingException{
+        String transaction_id = txnId;
+        String req_id = requestId;
 
         Map<String,Object> root = new HashMap<>();
         root.put("requestId",UUID.randomUUID().toString());
@@ -758,9 +757,9 @@ public class ABDMService {
 
         return webClient.post().uri("https://dev.abdm.gov.in/gateway/v0.5/health-information/hip/on-request")
                 .header("Authorization","Bearer "+token)
-//                .header("accept", "*/*")
+                .header("accept", "*/*")
                 .header("X-CM-ID", "sbx")
-//                .header("Content-Type", MediaType.APPLICATION_JSON_VALUE)
+                .header("Content-Type", MediaType.APPLICATION_JSON_VALUE)
                 .body(BodyInserters.fromValue(requestBody.toString()))
                 .retrieve()
                 .onStatus(HttpStatusCode::isError,clientResponse -> {
@@ -774,6 +773,7 @@ public class ABDMService {
         String transaction_id = jsonNode.get("transactionId").asText();
         String consent_id = jsonNode.get("consentId").asText();
         String hip_id = jsonNode.get("hipId").asText();
+        JsonNode statusResponses = jsonNode.get("statusResponses");
 
         Map<String, Object> rootMap = new HashMap<>();
 
@@ -795,12 +795,7 @@ public class ABDMService {
         statusNotificationMap.put("sessionStatus", "TRANSFERRED");
         statusNotificationMap.put("hipId", hip_id);
 
-        List<Map<String, String>> statusResponses = new ArrayList<>();
-        Map<String, String> statusResponse = new HashMap<>();
-        statusResponse.put("careContextReference", "appt_march_02");
-        statusResponse.put("hiStatus", "OK");
-        statusResponse.put("description", "data sent to datapush url");
-        statusResponses.add(statusResponse);
+
 
         statusNotificationMap.put("statusResponses", statusResponses);
 
@@ -882,15 +877,17 @@ public class ABDMService {
                 .bodyToMono(String.class).block();
     }
     public String healthInfoCmRequest(JsonNode jsonNode) throws  JsonProcessingException{
+        String requestId = jsonNode.get("requestId").asText();
         String consent_id = jsonNode.get("consentId").asText();
         String from = jsonNode.get("from").asText();
         String to = jsonNode.get("to").asText();
         String expiry = jsonNode.get("expiry").asText();
         String keyval = jsonNode.get("keyval").asText();
         String nonce = jsonNode.get("nonce").asText();
+        String dataPushUrl = jsonNode.get("dataPushUrl").asText();
 
         Map<String, Object> rootMap = new HashMap<>();
-        rootMap.put("requestId", UUID.randomUUID().toString());
+        rootMap.put("requestId", requestId);
         rootMap.put("timestamp", getISOTimestamp());
 
         Map<String, Object> hiRequestMap = new HashMap<>();
@@ -904,7 +901,7 @@ public class ABDMService {
         dateRangeMap.put("to", to);
         hiRequestMap.put("dateRange", dateRangeMap);
 
-        hiRequestMap.put("dataPushUrl", "https://webhook.site/8905738a-9ae9-406b-8d4d-ee6c5abf63f8/data/push");
+        hiRequestMap.put("dataPushUrl", dataPushUrl);
 
         Map<String, Object> keyMaterialMap = new HashMap<>();
         keyMaterialMap.put("cryptoAlg", "ECDH");

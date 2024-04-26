@@ -28,4 +28,8 @@ boolean existsByConsentIdAndCareContexts(Integer consentId,
                                          String hipId);
 
     List<ConsentArtefact> findAllByConsentRequest(ConsentRequest consentRequest);
+
+    Optional<ConsentArtefact> findByHeathInfoRequestId(String requestId);
+
+    Optional<ConsentArtefact> findByTransactionId(String transactionId);
 }

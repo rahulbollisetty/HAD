@@ -573,7 +573,7 @@ function AddRecords({ patientId, appointment_id, sendDataToParent, status }) {
                     <hr className="bg-[#7B7878]" />
 
                     <Dialog open={open} handler={handleOpen} size="lg">
-                      <DialogHeader>New Appointment</DialogHeader>
+                      <DialogHeader>Attachment</DialogHeader>
                       <div className="h-[1px] bg-[#827F7F82]"></div>
                       <DialogBody>
                         {fileMediaType === "image/jpeg" ? (

@@ -47,6 +47,10 @@ public class RabbitMqService {
                         System.out.println("Received consentOnFetch: " + jsonData);
                         consentService.consentOnFetch(jsonNode);
                         break;
+                    case "hiuOnRequest":
+                        System.out.println("Received hiuOnRequest: " + jsonData);
+                        consentService.hiuOnRequest(jsonNode);
+                        break;
                     default:
                         System.out.println("Unknown data type");
                 }

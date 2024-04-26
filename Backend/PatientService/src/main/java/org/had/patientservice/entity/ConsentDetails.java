@@ -23,13 +23,13 @@ public class ConsentDetails {
     @Column(unique = true)
     private String consentId;
 
+    private String status;
+
     private String patientId;
 
     private String purposeText;
 
     private String purposeCode;
-
-    private String consentStatus;
 
     private String hiTypes;
 

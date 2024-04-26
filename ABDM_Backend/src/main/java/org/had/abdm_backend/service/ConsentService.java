@@ -1,5 +1,6 @@
 package org.had.abdm_backend.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.extern.slf4j.Slf4j;
@@ -8,7 +9,6 @@ import org.had.abdm_backend.repository.ConsentRequestRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.swing.text.html.Option;
 import java.util.Optional;
 
 @Slf4j
@@ -20,6 +20,9 @@ public class ConsentService {
 
     @Autowired
     private RabbitMqService rabbitMqService;
+
+    @Autowired
+    private ABDMService abdmService;
 
     public void consentRequestOnInit(JsonNode jsonNode) {
         System.out.println("jsonNode: " + jsonNode);
@@ -113,39 +116,64 @@ public class ConsentService {
 
     }
 
-    public void consentRequestNotifyHIP(JsonNode jsonNode, String hipID) {
+    public void consentRequestNotifyHIP(JsonNode jsonNode, String hipID, String requestId) throws JsonProcessingException {
         System.out.println("jsonNode: " + jsonNode);
         System.out.println("hip notify service");
-        ((ObjectNode) jsonNode).put("type", "consentOnNotifyHIP");
-        String data = jsonNode.toString();
-        System.out.println(data);
-        rabbitMqService.sendMessage(data, hipID + "-patient");
 
-//        String consentStatus = jsonNode.get("notification").get("status").asText();
-//        String consentRequestId = jsonNode.get("notification").get("consentRequestId").asText();
-//        if (consentStatus.equals("GRANTED")) {
-//            ((ObjectNode) jsonNode).put("type", "consentOnNotifyHIP");
-//            String data = jsonNode.toString();
-//            System.out.println(data);
-//            rabbitMqService.sendMessage(data, hipID + "-patient");
-//        }
-//        else if(consentStatus.equals("REVOKED")) {
-//            Optional<ConsentRequest> consentRequest = consentRequestRepository.findByConsentId(consentRequestId);
-//            consentRequest.ifPresent(request -> consentRequestRepository.delete(request));
-//            ((ObjectNode) jsonNode).put("type", "consentOnNotifyHIP");
-//            String data = jsonNode.toString();
-//            System.out.println(data);
-//            rabbitMqService.sendMessage(data, hipID + "-patient");
-//        }
-//        else if(consentStatus.equals("DENIED")) {
-//            ((ObjectNode) jsonNode).put("type", "consentOnNotifyHIP");
-//            String data = jsonNode.toString();
-//            Optional<ConsentRequest> consentRequest = consentRequestRepository.findByConsentId(consentRequestId);
-//            consentRequest.ifPresent(request -> consentRequestRepository.delete(request));
-//            System.out.println(data);
-//            rabbitMqService.sendMessage(data, hipID + "-patient");
-//        }
+        String consentStatus = jsonNode.get("notification").get("status").asText();
+        if (consentStatus.equals("GRANTED")) {
+            String consentRequestId = jsonNode.get("notification").get("consentId").asText();
+            abdmService.setToken();
+            abdmService.hipOnNotify(consentRequestId, requestId);
+            ((ObjectNode) jsonNode).put("type", "consentOnNotifyHIP");
+            String data = jsonNode.toString();
+            System.out.println(data);
+            rabbitMqService.sendMessage(data, hipID + "-patient");
+        }
+        else if(consentStatus.equals("REVOKED")) {
+            String consentRequestId = jsonNode.get("notification").get("consentId").asText();
+            Optional<ConsentRequest> consentRequest = consentRequestRepository.findByConsentId(consentRequestId);
+            consentRequest.ifPresent(request -> consentRequestRepository.delete(request));
+            ((ObjectNode) jsonNode).put("type", "consentOnNotifyHIP");
+            String data = jsonNode.toString();
+            System.out.println(data);
+            rabbitMqService.sendMessage(data, hipID + "-patient");
+        }
+        else if(consentStatus.equals("DENIED")) {
+            String consentRequestId = jsonNode.get("notification").get("consentId").asText();
+            Optional<ConsentRequest> consentRequest = consentRequestRepository.findByConsentId(consentRequestId);
+            consentRequest.ifPresent(request -> consentRequestRepository.delete(request));
+            ((ObjectNode) jsonNode).put("type", "consentOnNotifyHIP");
+            String data = jsonNode.toString();
+            System.out.println(data);
+            rabbitMqService.sendMessage(data, hipID + "-patient");
+        }
     }
 
 
+    public void healthInformationRequestNotifyHIP(JsonNode jsonNode, String hipId, String requestId) throws JsonProcessingException {
+        System.out.println("jsonNode: " + jsonNode);
+        System.out.println("Health Information Req notify HIP service");
+        abdmService.setToken();
+        String txnId = jsonNode.get("transactionId").asText();
+        abdmService.hipOnRequest(txnId,requestId);
+        ((ObjectNode) jsonNode).put("type", "healthInformationRequestHIP");
+        String data = jsonNode.toString();
+        System.out.println(data);
+        rabbitMqService.sendMessage(data, hipId + "-patient");
+    }
+
+    public void hiuOnRequest(JsonNode jsonNode, String hiuId) {
+        System.out.println("jsonNode: " + jsonNode);
+        System.out.println("HIU on request service");
+        if(jsonNode.hasNonNull("error")){
+            log.error("errror has occurred for hiuOnRequest");
+            return;
+        }
+        ((ObjectNode) jsonNode).put("type", "hiuOnRequest");
+        String data = jsonNode.toString();
+        System.out.println(data);
+        rabbitMqService.sendMessage(data, hiuId + "-consent");
+
+    }
 }

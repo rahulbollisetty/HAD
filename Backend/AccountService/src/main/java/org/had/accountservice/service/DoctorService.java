@@ -9,6 +9,7 @@ import org.had.accountservice.exception.MyWebClientException;
 import org.had.accountservice.repository.DoctorDetailsRepository;
 import org.had.accountservice.repository.UserCredentialRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
@@ -39,6 +40,9 @@ public class DoctorService {
     @Autowired
     private Environment environment;
 
+    @Value("${abdm.url}")
+    private String abdmUrl;
+
     public String getDoctorDetails(String hprId, String password){
         var values = new HashMap<String, String>() {{
             put("hprId",hprId);
@@ -53,7 +57,7 @@ public class DoctorService {
             throw new RuntimeException(e);
         }
 
-        return webClient.post().uri("http://127.0.0.1:9008/abdm/hpr/getdoctordetails")
+        return webClient.post().uri(abdmUrl+"/abdm/hpr/getdoctordetails")
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(BodyInserters.fromValue(requestBody))
                 .retrieve()

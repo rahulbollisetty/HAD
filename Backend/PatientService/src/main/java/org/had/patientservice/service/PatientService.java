@@ -35,6 +35,9 @@ public class PatientService {
     @Value("${routingKey.name}")
     private String routingKey;
 
+    @Value("${abdm.url}")
+    private String abdmUrl;
+
     @Autowired
     private SSEService sseService;
 
@@ -53,7 +56,7 @@ public class PatientService {
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
-        return webClient.post().uri("http://127.0.0.1:9008/abdm/patient/aadhaarOTPInit")
+        return webClient.post().uri(abdmUrl+"/abdm/patient/aadhaarOTPInit")
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(BodyInserters.fromValue(requestBody))
                 .retrieve()
@@ -77,7 +80,7 @@ public class PatientService {
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
-        return webClient.post().uri("http://127.0.0.1:9008/abdm/patient/aadhaarOTPVerify")
+        return webClient.post().uri(abdmUrl+"/abdm/patient/aadhaarOTPVerify")
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(BodyInserters.fromValue(requestBody))
                 .retrieve()
@@ -102,7 +105,7 @@ public class PatientService {
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
-        return webClient.post().uri("http://127.0.0.1:9008/abdm/patient/checkAndMobileOTPInit")
+        return webClient.post().uri(abdmUrl+"/abdm/patient/checkAndMobileOTPInit")
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(BodyInserters.fromValue(requestBody))
                 .retrieve()
@@ -126,7 +129,7 @@ public class PatientService {
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
-        return webClient.post().uri("http://127.0.0.1:9008/abdm/patient/mobileOTPVerify")
+        return webClient.post().uri(abdmUrl+"/abdm/patient/mobileOTPVerify")
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(BodyInserters.fromValue(requestBody))
                 .retrieve()
@@ -149,7 +152,7 @@ public class PatientService {
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
-        return webClient.post().uri("http://127.0.0.1:9008/abdm/patient/createHealthId")
+        return webClient.post().uri(abdmUrl+"/abdm/patient/createHealthId")
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(BodyInserters.fromValue(requestBody))
                 .retrieve()
@@ -172,7 +175,7 @@ public class PatientService {
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
-        return webClient.post().uri("http://127.0.0.1:9008/abdm/patient/getProfileDetails")
+        return webClient.post().uri(abdmUrl+"/abdm/patient/getProfileDetails")
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(BodyInserters.fromValue(requestBody))
                 .retrieve()
@@ -194,7 +197,7 @@ public class PatientService {
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
-        return webClient.post().uri("http://127.0.0.1:9008/abdm/patient/healthIdSuggestions")
+        return webClient.post().uri(abdmUrl+"/abdm/patient/healthIdSuggestions")
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(BodyInserters.fromValue(requestBody))
                 .retrieve()
@@ -217,7 +220,7 @@ public class PatientService {
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
-        return webClient.post().uri("http://127.0.0.1:9008/abdm/patient/checkPHRAddressExist")
+        return webClient.post().uri(abdmUrl+"/abdm/patient/checkPHRAddressExist")
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(BodyInserters.fromValue(requestBody))
                 .retrieve()
@@ -241,7 +244,7 @@ public class PatientService {
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
-        return webClient.post().uri("http://127.0.0.1:9008/abdm/patient/createPHRAddress")
+        return webClient.post().uri(abdmUrl+"/abdm/patient/createPHRAddress")
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(BodyInserters.fromValue(requestBody))
                 .retrieve()
@@ -272,7 +275,7 @@ public class PatientService {
         }
         SseEmitter sseEmitter = sseService.createSseEmitter(requestId);
         try{
-            String response = webClient.post().uri("http://127.0.0.1:9008/abdm/patient/userAuthInit")
+            String response = webClient.post().uri(abdmUrl+"/abdm/patient/userAuthInit")
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(BodyInserters.fromValue(requestBody))
                 .retrieve()
@@ -310,7 +313,7 @@ public class PatientService {
 
         SseEmitter sseEmitter = sseService.createSseEmitter(requestId);
         try{
-            String response = webClient.post().uri("http://127.0.0.1:9008/abdm/patient/userAuthVerify")
+            String response = webClient.post().uri(abdmUrl+"/abdm/patient/userAuthVerify")
                     .contentType(MediaType.APPLICATION_JSON)
                     .body(BodyInserters.fromValue(requestBody))
                     .retrieve()
@@ -357,7 +360,7 @@ public class PatientService {
 
 
     public String getLgdStatesList() {
-        return webClient.post().uri("http://127.0.0.1:9008/abdm/hpr/getLgdStatesList")
+        return webClient.post().uri(abdmUrl+"/abdm/hpr/getLgdStatesList")
                 .contentType(MediaType.APPLICATION_JSON)
                 .retrieve()
                 .onStatus(HttpStatusCode::isError, clientResponse -> {

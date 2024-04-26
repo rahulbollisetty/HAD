@@ -24,6 +24,17 @@ public class ConsentArtefact {
     @JoinColumn(name = "consent_id")
     private ConsentRequest consentRequest;
 
+    private String requesterPrivateKey;
+
+    private String requesterNonce;
+
+    private String transactionId;
+
+    @Column(unique = true)
+    private String heathInfoRequestId;
+
+    private String healthInfoRequestStatus;
+
     @ManyToMany(cascade = {CascadeType.REMOVE ,CascadeType.PERSIST, CascadeType.MERGE }, fetch = FetchType.EAGER)
     @JoinTable(
             name = "consent_artefact_context",

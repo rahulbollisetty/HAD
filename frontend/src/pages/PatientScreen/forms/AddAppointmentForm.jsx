@@ -38,13 +38,16 @@ function AddAppointmentForm({patientId}) {
   }, []);
 
   const onSubmit = async () => {
+
     setValue("patient_id", patientId.patientId);
-    
-    let doctor_id = getValues("doctor").split(";")[0];
-    let doctor_name = getValues("doctor").split(";")[1];
+
+    let doc_reg_no = getValues("doctor").split(";")[0];
+    let doctor_id = getValues("doctor").split(";")[1];
+    let doctor_name = getValues("doctor").split(";")[2];
 
     setValue("doctor_id",doctor_id);                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
     setValue("doctor_name",doctor_name);
+    setValue("doctorRegNumber",doc_reg_no);
 
     let data = getValues();
     console.log(data);
@@ -92,8 +95,8 @@ function AddAppointmentForm({patientId}) {
                     >
                       <option>Select Doctor</option>
                       {AllDoctorList.map((item, index) => (
-                        <option value={`${item.doctor_Id};${item.first_Name} ${item.last_Name}`} key={item.doctor_Id}>
-                          {item.first_Name} {item.last_Name}
+                        <option value={`${item.registration_number};${item.doctor_Id};${item.first_Name} ${item.last_Name}`} key={item.doctor_Id}>
+                          {item.first_Name} {item.last_Name} 
                         </option>
                       ))}
                     </select>

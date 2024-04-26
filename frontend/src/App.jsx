@@ -51,11 +51,11 @@ function App() {
           {/* we want to protect these routes */}
           <Route element={<PersistLogin />}>
             <Route element={<RequireAuth allowedRoles={["DOCTOR"]} />}>
-              <Route path="/" element={<AllPatientList />} />
               <Route
                 path="/patientScreen/:id"
                 element={<PatientScreen tab={"Past Records"} />}
               />
+              <Route path="/" element={<AllPatientList />} />
               <Route
                 path="/patientScreen/:id/appointment/:appid"
                 element={<PatientScreen />}

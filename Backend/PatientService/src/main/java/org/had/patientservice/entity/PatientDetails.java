@@ -1,6 +1,7 @@
 package org.had.patientservice.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -47,6 +48,7 @@ public class PatientDetails {
     private String state;
 
     @Column(length = 3000)
+    @JsonIgnore
     private String linkToken;
 
 //    private String hospital_id;

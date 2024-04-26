@@ -28,5 +28,5 @@ public class CareContexts {
     private String careContextReference;
 
     @ManyToMany(mappedBy = "careContexts")
-    private Set<ConsentDetails> consentArtefacts = new HashSet<>();
+    private Set<ConsentDetails> consentDetails = new HashSet<>();
 }

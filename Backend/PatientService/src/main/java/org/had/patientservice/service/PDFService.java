@@ -215,10 +215,10 @@ public class PDFService {
         // Load the first PDF as a byte array
         byte[] reportBytes = Files.readAllBytes(Paths.get("report/" + "Report" + patientDetails.getName() + ":" + appointmentDetails.getAppointment_id().toString() + ".pdf"));
 
+        // Clean up the temporary file
+        Files.deleteIfExists(Paths.get("report/" + "Report" + patientDetails.getName() + ":" + appointmentDetails.getAppointment_id().toString() + ".pdf"));
 
         return Base64.getEncoder().encodeToString(reportBytes);
-        // Clean up the temporary file
-//        Files.deleteIfExists(Paths.get("report/" + "Report" + patientDetails.getName() + ":" + appointmentDetails.getAppointment_id().toString() + ".pdf"));
     }
 
 

@@ -1,6 +1,7 @@
 package org.had.abdm_backend.controller;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -9,6 +10,8 @@ import org.had.abdm_backend.service.ConsentService;
 import org.had.abdm_backend.service.RabbitMqService;
 import org.had.abdm_backend.service.UserAuthService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @CrossOrigin
@@ -64,12 +67,28 @@ public class WebhookController {
         consentService.consentArtefactOnFetch(jsonNode, hiuId);
     }
 
-//
+
     @PostMapping("/api/v3/consent/request/hip/notify")
-    public void consentRequestNotifyHIP(@RequestBody JsonNode jsonNode, HttpServletRequest httpServlet){
+    public void consentRequestNotifyHIP(@RequestBody JsonNode jsonNode, HttpServletRequest httpServlet) throws JsonProcessingException {
         System.out.println("Webhook Controller hip notify");
-        String hiuId = httpServlet.getHeader("x-hip-id");
-        consentService.consentRequestNotifyHIP(jsonNode, hiuId);
+        String hipId = httpServlet.getHeader("x-hip-id");
+        String requestId = httpServlet.getHeader("request-id");
+        consentService.consentRequestNotifyHIP(jsonNode, hipId, requestId);
+    }
+
+    @PostMapping("/api/v3/hip/health-information/request")
+    public void healthInformationRequestNotifyHIP(@RequestBody JsonNode jsonNode, HttpServletRequest httpServlet) throws JsonProcessingException {
+        System.out.println("Health Information Req notify HIP");
+        String hipId = httpServlet.getHeader("x-hip-id");
+        String requestId = httpServlet.getHeader("request-id");
+        consentService.healthInformationRequestNotifyHIP(jsonNode, hipId, requestId);
+    }
+
+    @PostMapping(value = "/api/v3/hiu/health-information/on-request")
+    ResponseEntity<?> hiuOnRequest(@RequestBody JsonNode jsonNode, HttpServletRequest httpServlet) throws JsonProcessingException {
+        String hiuId = httpServlet.getHeader("x-hiu-id");
+        consentService.hiuOnRequest(jsonNode,hiuId);
+        return ResponseEntity.ok("HIU on request webhook");
     }
 
 

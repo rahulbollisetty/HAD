@@ -21,6 +21,8 @@ public class AppointmentDetails {
 
     private String doctor_id;
 
+    private String doctorRegNumber;
+
     private String doctor_name;
 
     @ManyToOne(cascade = CascadeType.REMOVE)

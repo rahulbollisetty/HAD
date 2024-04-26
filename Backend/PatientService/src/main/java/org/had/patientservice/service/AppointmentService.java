@@ -64,12 +64,16 @@ public class AppointmentService {
     @Value("${hospital.id}")
     private String hospitalId;
 
+    @Value("${abdm.url}")
+    private String abdmUrl;
+
 
 
     public void createNewAppointment(AppointmentDto appointmentDto) {
         AppointmentDetails appointmentDetails = new AppointmentDetails();
         appointmentDetails.setDoctor_id(appointmentDto.getDoctor_id());
         appointmentDetails.setDoctor_name(appointmentDto.getDoctor_name());
+        appointmentDetails.setDoctorRegNumber(appointmentDto.getDoctorRegNumber());
 
         PatientDetails patientDetails = patientDetailsRepository.findById(appointmentDto.getPatient_id())
                 .orElseThrow(() -> new RuntimeException("Parent not found"));
@@ -164,12 +168,12 @@ public class AppointmentService {
                         prescriptionDetailsRepository.save(prescriptionDetails);
                     }
                     opConsultation.setObservations(Observations);
-                    String destPath = handleFileUpload(file, String.valueOf(appointmentId));
+                    String destPath = handleFileUpload(file ,String.valueOf(appointmentId));
                     opConsultation.setFileDescription(jsonNode.get("fileDescription").asText());
                     opConsultation.setFilePath(destPath);
                     opConsultationRepository.save(opConsultation);
 
-                    String res = linkCareContext(appointmentId+"", patientId);
+                    String res = linkCareContext(appointmentId+"", patientId,appointmentDetails.getDate());
                     System.out.println(res);
 
                         appointmentDetails.setStatus("Completed");
@@ -189,7 +193,7 @@ public class AppointmentService {
         }
     }
 
-    private String linkCareContext(String appointmentId, Integer patientId) {
+    private String linkCareContext(String appointmentId, Integer patientId, String date) {
         PatientDetails patientDetails = patientDetailsRepository.findById(patientId)
                 .orElseThrow(() -> new RuntimeException("Patient not found"));
 
@@ -201,6 +205,7 @@ public class AppointmentService {
             put("hospitalId",hospitalId);
             put("patientName",patientDetails.getName());
             put("accessToken", accessToken);
+            put("date",date);
         }};
         String requestBody = null;
         var objectMapper = new ObjectMapper();
@@ -209,7 +214,7 @@ public class AppointmentService {
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
-        return webClient.post().uri("http://127.0.0.1:9008/abdm/consent/linkCareContext")
+        return webClient.post().uri(abdmUrl+"/abdm/consent/linkCareContext")
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(BodyInserters.fromValue(requestBody))
                 .retrieve()

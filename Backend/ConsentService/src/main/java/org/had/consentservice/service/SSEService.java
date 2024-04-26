@@ -28,7 +28,7 @@ public class SSEService {
     private ConsentArtefactRepository consentArtefactRepository;
 
     public SseEmitter createSseEmitter(String requestId) {
-        SseEmitter sseEmitter = new SseEmitter(10000L);
+        SseEmitter sseEmitter = new SseEmitter(30000L);
         emitters.put(requestId, sseEmitter);
         sseEmitter.onCompletion(() -> removeEmitter(requestId));
         sseEmitter.onTimeout(() -> removeEmitter(requestId));
@@ -68,6 +68,12 @@ public class SSEService {
                     String consentRequestId = jsonNode.get("consentRequest").get("id").asText();
                     consentRequest.setConsent_id(consentRequestId);
                     consentRequestRepository.save(consentRequest);
+                    try {
+                        emitter.send(ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body("Consent Initiated"));
+                        emitter.complete();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -76,9 +82,5 @@ public class SSEService {
             System.out.println("No SSE emitter found for requestId: " + requestId);
         }
     }
-
-
-
-
 
 }

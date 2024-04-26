@@ -3,7 +3,9 @@ package org.had.consentservice.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.rabbitmq.client.Return;
 import org.had.consentservice.entity.CareContexts;
 import org.had.consentservice.entity.ConsentArtefact;
 import org.had.consentservice.entity.ConsentRequest;
@@ -11,6 +13,7 @@ import org.had.consentservice.exception.MyWebClientException;
 import org.had.consentservice.repository.CareContextRepository;
 import org.had.consentservice.repository.ConsentArtefactRepository;
 import org.had.consentservice.repository.ConsentRequestRepository;
+import org.hl7.fhir.r4.model.Bundle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,13 +23,17 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.FileSystemUtils;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import reactor.core.publisher.Mono;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.Path;
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
 
 @Service
 public class ConsentService {
@@ -44,6 +51,15 @@ public class ConsentService {
     @Value("${hospital.Id}")
     private String hospitalId;
 
+    @Value("${hospital.name}")
+    private String hospitalName;
+
+    @Value("${ngrok.uri}")
+    private String ngrokUri;
+
+    @Value("${abdm.url}")
+    private String abdmUrl;
+
     @Autowired
     private ConsentRequestRepository consentRequestRepository;
 
@@ -53,21 +69,32 @@ public class ConsentService {
     @Autowired
     private CareContextRepository careContextRepository;
 
+    @Autowired
+    private FideliusService fideliusService;
+
+    @Autowired
+    private  FhirService fhirService;
+
+    @Autowired
+    private EncryptionDecryptionService encryptionDecryptionService;
+
     public ResponseEntity<SseEmitter> consentInit(JsonNode jsonNode) {
         System.out.println("consentInit Service");
-        String patient_id = jsonNode.get("patient_id").asText();
-        String hiu_id = jsonNode.get("hiu_id").asText();
-        String hiu_name = jsonNode.get("hiu_name").asText();
+        String patient_id_sbx = jsonNode.get("patient_id_sbx").asText();
+        String hiu_id = hospitalId;
+        String hiu_name = hospitalName;
         String requester_name = jsonNode.get("requester_name").asText();
         String identifier_value = jsonNode.get("identifier_value").asText();
         String permission_from = jsonNode.get("permission_from").asText();
         String permission_to = jsonNode.get("permission_to").asText();
         String data_erase_at = jsonNode.get("data_erase_at").asText();
         String purpose_code = jsonNode.get("purpose_code").asText();
+        Integer patient_id = jsonNode.get("patient_id").asInt();
         JsonNode hi_type = jsonNode.get("hi_type");
+
         String requestId = UUID.randomUUID().toString();
         var values = new HashMap<String, Object>() {{
-            put("patient_id", patient_id);
+            put("patient_id", patient_id_sbx);
             put("hiu_id", hiu_id);
             put("hiu_name", hiu_name);
             put("requester_name", requester_name);
@@ -90,6 +117,7 @@ public class ConsentService {
         ConsentRequest consentRequest = new ConsentRequest();
         consentRequest.setRequest_id(requestId);
         consentRequest.setRequester_name(requester_name);
+        consentRequest.setPatient_id_sbx(patient_id_sbx);
         consentRequest.setPatient_id(patient_id);
         consentRequest.setPurpose_code(purpose_code);
         consentRequest.setData_erase_at(data_erase_at);
@@ -111,7 +139,7 @@ public class ConsentService {
 //        System.out.println("requestBody: " + requestBody);
         SseEmitter sseEmitter = sseService.createSseEmitter(requestId);
         try {
-            webClient.post().uri("http://127.0.0.1:9008/abdm/consent/consentInit")
+            webClient.post().uri(abdmUrl+"/abdm/consent/consentInit")
                     .contentType(MediaType.APPLICATION_JSON)
                     .body(BodyInserters.fromValue(requestBody))
                     .retrieve()
@@ -145,7 +173,7 @@ public class ConsentService {
             }
             SseEmitter sseEmitter = sseService.createSseEmitter(requestId);
             try {
-                return webClient.post().uri("http://127.0.0.1:9008/abdm/consent/consentStatus")
+                return webClient.post().uri(abdmUrl+"/abdm/consent/consentStatus")
                         .contentType(MediaType.APPLICATION_JSON)
                         .body(BodyInserters.fromValue(requestBody))
                         .retrieve()
@@ -239,11 +267,25 @@ public class ConsentService {
                         for (JsonNode artefact : consentArtefactsArray) {
                             // get all cc and remove content from mongo
                             Optional<ConsentArtefact> consentArtefact = consentArtefactRepository.findByConsentArtefact(artefact.get("id").asText());
-                            consentArtefact.ifPresent(value -> consentArtefactRepository.delete(value));
-//                            delete data from care-context table as well
+                            if(consentArtefact.isPresent()) {
+                                ConsentArtefact ca = consentArtefact.get();
+                                String consentRequestDir = System.getProperty("user.dir") + "/consentData/" + ca.getConsentRequest().getConsent_id();
+                                boolean deleted = FileSystemUtils.deleteRecursively(new File(consentRequestDir));
+
+                                if (deleted) {
+                                    System.out.println("Directory deleted successfully.");
+                                } else {
+                                    System.err.println("Failed to delete directory.");
+                                }
+                                ConsentRequest cr = ca.getConsentRequest();
+                                cr.setStatus("REVOKED");
+                                consentRequestRepository.save(cr);
+                                consentArtefactRepository.delete(consentArtefact.get());
+
+                            }
+
                         }
                     }
-
 //                    List<ConsentArtefact> consentArtefactList = consentArtefactRepository.findAllByConsentRequest(consentRequest);
 //                    if (consentArtefactList.isEmpty()) {
 //                        consentRequestRepository.delete(consentRequest);
@@ -258,27 +300,27 @@ public class ConsentService {
         }
     }
 
-    public String notify(String requestId, String consentRequestId) {
-        System.out.println("Consent on-notify Hiu Service");
-        var values = new HashMap<String, Object>();
-        values.put("requestID", requestId);
-        values.put("consentRequestId", consentRequestId);
-
-        String requestBody = null;
-        var objectMapper = new ObjectMapper();
-        try {
-            requestBody = objectMapper.writeValueAsString(values);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
-        return webClient.post().uri("http://127.0.0.1:9008/abdm/consent/HIUOnNotify")
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(BodyInserters.fromValue(requestBody))
-                .retrieve()
-                .onStatus(HttpStatusCode::isError, clientResponse -> clientResponse.bodyToMono(String.class)
-                        .flatMap(errorBody -> Mono.error(new MyWebClientException(errorBody, clientResponse.statusCode().value()))))
-                .bodyToMono(String.class).block();
-    }
+//    public String notify(String requestId, String consentRequestId) {
+//        System.out.println("Consent on-notify Hiu Service");
+//        var values = new HashMap<String, Object>();
+//        values.put("requestID", requestId);
+//        values.put("consentRequestId", consentRequestId);
+//
+//        String requestBody = null;
+//        var objectMapper = new ObjectMapper();
+//        try {
+//            requestBody = objectMapper.writeValueAsString(values);
+//        } catch (JsonProcessingException e) {
+//            throw new RuntimeException(e);
+//        }
+//        return webClient.post().uri("http://127.0.0.1:9008/abdm/consent/HIUOnNotify")
+//                .contentType(MediaType.APPLICATION_JSON)
+//                .body(BodyInserters.fromValue(requestBody))
+//                .retrieve()
+//                .onStatus(HttpStatusCode::isError, clientResponse -> clientResponse.bodyToMono(String.class)
+//                        .flatMap(errorBody -> Mono.error(new MyWebClientException(errorBody, clientResponse.statusCode().value()))))
+//                .bodyToMono(String.class).block();
+//    }
 
     public String consentFetch(String artefactId) {
         System.out.println("fetch Service");
@@ -292,7 +334,7 @@ public class ConsentService {
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
-        return webClient.post().uri("http://127.0.0.1:9008/abdm/consent/consentFetch")
+        return webClient.post().uri(abdmUrl+"/abdm/consent/consentFetch")
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(BodyInserters.fromValue(requestBody))
                 .retrieve()
@@ -303,7 +345,7 @@ public class ConsentService {
 
 
     @Transactional
-    public void consentOnFetch(JsonNode jsonNode) {
+    public void consentOnFetch(JsonNode jsonNode) throws IOException {
 
         String status = jsonNode.get("consent").get("status").asText();
         JsonNode consentDetail = jsonNode.get("consent").get("consentDetail");
@@ -332,6 +374,7 @@ public class ConsentService {
                         if(!consentArtefactRepository.existsByConsentIdAndCareContexts(consentArtefact.getConsentRequest().getId()
                                 ,artefact.get("careContextReference").asText(),
                                 hipId)){
+
                             String ccRef = artefact.get("careContextReference").asText();
 
                             System.out.println(ccRef);
@@ -356,6 +399,13 @@ public class ConsentService {
                             return;
                         }
                     }
+
+                    // cm -request
+                    Optional<ConsentArtefact> optionalConsentArtefact = consentArtefactRepository.findByConsentArtefact(consentArtefactId);
+                    if(optionalConsentArtefact.isPresent()) {
+                        healthInformationRequest(optionalConsentArtefact.get());
+                    }
+
                 }
             }
             else {
@@ -363,8 +413,182 @@ public class ConsentService {
                 return;
             }
         }
+    }
+
+    @Transactional
+    public String healthInformationRequest(ConsentArtefact consentArtefact) throws IOException {
+        System.out.println("CM Request Service");
+
+        // Generating key material
+        JsonNode jsonNode = fideliusService.generateKeyMaterials();
+
+        String requestId = UUID.randomUUID().toString();
+        consentArtefact.setHeathInfoRequestId(requestId);
+        consentArtefact.setRequesterNonce(jsonNode.get("nonce").textValue());
+        consentArtefact.setRequesterPrivateKey(jsonNode.get("privateKey").textValue());
+
+        consentArtefactRepository.save(consentArtefact);
+
+        var values = new HashMap<String, Object>();
+        values.put("requestId", requestId);
+        values.put("consentId", consentArtefact.getConsentArtefact());
+        values.put("from", consentArtefact.getConsentRequest().getPermission_from());
+        values.put("to", consentArtefact.getConsentRequest().getPermission_to());
+        values.put("expiry", consentArtefact.getConsentRequest().getData_erase_at());
+        values.put("keyval", jsonNode.get("x509PublicKey").textValue());
+        values.put("nonce", jsonNode.get("nonce").textValue());
+        values.put("dataPushUrl",ngrokUri);
+
+        String requestBody = null;
+        var objectMapper = new ObjectMapper();
+        try {
+            requestBody = objectMapper.writeValueAsString(values);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+        return webClient.post().uri(abdmUrl+"/abdm/consent/healthInfoCmRequest")
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(BodyInserters.fromValue(requestBody))
+                .retrieve()
+                .onStatus(HttpStatusCode::isError, clientResponse -> clientResponse.bodyToMono(String.class)
+                        .flatMap(errorBody -> Mono.error(new MyWebClientException(errorBody, clientResponse.statusCode().value()))))
+                .bodyToMono(String.class).block();
+
+    }
+
+    public void hiuOnRequest(JsonNode jsonNode) {
+        String requestId = jsonNode.get("response").get("requestId").asText();
+        ConsentArtefact consentArtefact = consentArtefactRepository.findByHeathInfoRequestId(requestId).get();
+        consentArtefact.setTransactionId(jsonNode.get("hiRequest").get("transactionId").asText());
+        consentArtefact.setHealthInfoRequestStatus(jsonNode.get("hiRequest").get("sessionStatus").asText());
+        consentArtefactRepository.save(consentArtefact);
+    }
 
 
+    @Transactional
+    public void dataPushHandler(JsonNode jsonNode) throws Exception {
+        String transactionId = jsonNode.get("transactionId").asText();
+        ConsentArtefact consentArtefact = consentArtefactRepository.findByTransactionId(transactionId).get();
+        consentArtefact.setHealthInfoRequestStatus("RECEIVED");
+        consentArtefactRepository.save(consentArtefact);
+        ConsentRequest consentRequest = consentArtefact.getConsentRequest();
 
+        String senderPublicKey = jsonNode.get("keyMaterial").get("dhPublicKey").get("keyValue").asText();
+        String senderNonce =  jsonNode.get("keyMaterial").get("nonce").asText();
+
+        JsonNode entries = jsonNode.get("entries");
+
+
+        List<Map<String,Object>> jsonNodeList = new ArrayList<>();
+
+        if (entries != null && entries.isArray()){
+            for (JsonNode entry : entries) {
+                String encryptedData = entry.get("content").asText();
+                String decrypted = fideliusService.decrypt(encryptedData,senderNonce,consentArtefact.getRequesterNonce(),consentArtefact.getRequesterPrivateKey(),senderPublicKey);
+//                System.out.println(decrypted);
+                JsonNode bundleJson = fhirService.convertJsonToBundle(decrypted);
+                Map<String, Object> node = new HashMap<>();
+
+                // Add 'content' key with decrypted value
+                node.put("content",bundleJson);
+
+                // Add other properties
+                node.put("media", "application/json");
+                node.put("careContextReference", entry.get("careContextReference").asText());
+
+                jsonNodeList.add(node);
+            }
+        }
+
+        // Specify the directory where you want to save the file on the server
+        String currentDirectory = System.getProperty("user.dir");
+        String uploadDir = currentDirectory + "/consentData/";
+
+        // Create the directory if it doesn't exist
+        File directory = new File(uploadDir);
+        if (!directory.exists()) {
+            directory.mkdirs();
+        }
+
+        // Subdirectory name
+        String subDirName = consentRequest.getConsent_id();
+
+        File subDirectory = new File(uploadDir + subDirName);
+        if (!subDirectory.exists()) {
+            subDirectory.mkdirs();
+        }
+        String fileName = subDirectory.getPath() + "/" + consentArtefact.getConsentArtefact()+".txt";
+
+        // storing into file;
+
+        // Serialize jsonNodeList to JSON
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
+        ArrayNode arrayNode = objectMapper.valueToTree(jsonNodeList);
+
+        // Write JSON to file
+         try (FileWriter fileWriter = new FileWriter(fileName)) {
+             objectMapper.writeValue(fileWriter, arrayNode);
+             System.out.println("JsonNodeList written to file successfully.");
+         } catch (IOException e) {
+             System.out.println("Error writing JsonNodeList to file: " + e.getMessage());
+         }
+
+
+         encryptionDecryptionService.encryptFile(Path.of(fileName),consentRequest.getIdentifier_value(),consentRequest.getPatient_id().toString());
+         List<ConsentArtefact> consentArtefactList = consentArtefactRepository.findAllByConsentRequest(consentRequest);
+         if(!consentArtefactList.isEmpty()){
+             boolean flag = true;
+             for (ConsentArtefact ca : consentArtefactList) {
+                 if (!Objects.equals(ca.getHealthInfoRequestStatus(), "RECEIVED")) {
+                     flag = false;
+                     break;
+                 }
+             }
+             if(flag){
+                 consentRequest.setStatus("RECEIVED");
+             }
+
+         }
+//        System.out.println(encryptionDecryptionService.decryptFile(Path.of(fileName),consentRequest.getIdentifier_value(),consentRequest.getPatient_id().toString()));
+    }
+
+    public ResponseEntity<?> getAllConsentList(String doctorRegNo, String patientId) {
+        List<ConsentRequest> consentRequestList = consentRequestRepository.findByDocRegNoAndPatientId(doctorRegNo,Integer.parseInt(patientId));
+        if(consentRequestList.isEmpty()){
+            return new ResponseEntity<>("No Consent Requests found",HttpStatusCode.valueOf(404));
+        }
+        return ResponseEntity.ok(consentRequestList);
+    }
+
+    public ResponseEntity<?> getAllConsentData(String consentId) throws Exception {
+
+        Optional<ConsentRequest> consentRequest = consentRequestRepository.findById(Long.parseLong(consentId));
+        if(!consentRequest.isPresent())new ResponseEntity<>("Consent Data Not Received",HttpStatusCode.valueOf(404));
+        ConsentRequest consentReq = consentRequest.get();
+
+        List<ConsentArtefact> consentArtefactList = consentArtefactRepository.findAllByConsentRequest(consentReq);
+
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        List<Map<String, Object>> consentData = new ArrayList<>();
+
+        if(!consentArtefactList.isEmpty()){
+            for (ConsentArtefact ca : consentArtefactList) {
+                String consentRequestDir = System.getProperty("user.dir") + "/consentData/" + ca.getConsentRequest().getConsent_id() + "/";
+
+                String fileName = consentRequestDir + ca.getConsentArtefact() + ".txt";
+
+                String decrypted = encryptionDecryptionService.decryptFile(Path.of(fileName),ca.getConsentRequest().getIdentifier_value(),ca.getConsentRequest().getPatient_id().toString());
+
+                JsonNode consentArtefactData = objectMapper.readTree(decrypted);
+
+                Map<String,Object> node = new HashMap<>();
+                        node.put("consentArtefactId", ca.getConsentArtefact());
+                        node.put("consentArtefactData", consentArtefactData);
+                consentData.add(node);
+            }
+        }
+        return ResponseEntity.ok(consentData);
     }
 }

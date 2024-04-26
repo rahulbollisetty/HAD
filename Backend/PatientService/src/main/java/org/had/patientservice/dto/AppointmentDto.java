@@ -15,6 +15,8 @@ public class AppointmentDto {
 
     private String doctor_name;
 
+    private String doctorRegNumber;
+
     private Integer patient_id;
 
     private String date;

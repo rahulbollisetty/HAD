@@ -41,11 +41,17 @@ public class RabbitMqService {
                         consentService.consentOnNotifyHIP(jsonNode);
                         System.out.println("Received consentOnNotifyHIP: " + jsonData);
                         break;
+                    case "healthInformationRequestHIP":
+                        consentService.healthInformationRequestHIP(jsonNode);
+                        System.out.println("Received healthInformationRequestHIP: " + jsonData);
+                        break;
                     default:
                     System.out.println("Unknown data type");
                 }
             } catch (IOException e) {
                 e.printStackTrace();
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
             }
         }
     }

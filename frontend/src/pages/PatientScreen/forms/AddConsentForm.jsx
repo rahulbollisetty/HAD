@@ -8,18 +8,24 @@ import {
   DialogBody,
   DialogFooter,
 } from "@material-tailwind/react";
+import { toast } from "react-toastify";
 
-function AddConsentForm() {
+import useAuth from "../../../hooks/useAuth";
+import { jwtDecode } from "jwt-decode";
+import { useForm } from "react-hook-form";
+import useFetchEventSource from "../../../hooks/useFetchEventSource";
+
+function AddConsentForm({ patientDetails, sendDataToParent }) {
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(!open);
   const options = [
-    { value: "OP consultation", label: "OP consultation" },
-    { value: "Discharge Summary", label: "Discharge Summary" },
-    { value: "Immunization Record", label: "Immunization Record" },
-    { value: "Wellness Record", label: "Wellness Record" },
-    { value: "Diagnostic Reports", label: "Diagnostic Reports" },
+    { value: "OPConsultation", label: "OP consultation" },
+    { value: "DischargeSummary", label: "Discharge Summary" },
+    { value: "ImmunizationRecord", label: "Immunization Record" },
+    { value: "WellnessRecord", label: "Wellness Record" },
+    { value: "DiagnosticReport", label: "Diagnostic Reports" },
     { value: "Prescription", label: "Prescription" },
-    { value: "Health Document Record", label: "Health Document Record" },
+    { value: "HealthDocumentRecord", label: "Health Document Record" },
   ];
 
   const customStyles = {
@@ -38,8 +44,70 @@ function AddConsentForm() {
     // Apply similar styles to options if needed
   };
 
+  const { auth } = useAuth();
+  const doctorDecoded = auth?.accessToken
+    ? jwtDecode(auth.accessToken)
+    : undefined;
+  const eventSource = useFetchEventSource();
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    getValues,
+    formState: { errors },
+  } = useForm();
+
+  const [hiTypes, setHiTypes] = useState([]);
   const handleChange = (selectedOptions) => {
-    console.log(selectedOptions);
+    const selectedHiTypes = selectedOptions.map((option) => option.value);
+    setHiTypes(selectedHiTypes);
+  };
+
+  const onSubmit = async () => {
+    const data = getValues();
+    const formattedData = {
+      ...data,
+      permission_from: new Date(data.permission_from).toISOString(),
+      permission_to: new Date(data.permission_to).toISOString(),
+      data_erase_at: new Date(data.data_erase_at).toISOString(),
+      hi_type: hiTypes,
+      identifier_value: doctorDecoded.registrationNumber,
+      requester_name: "Dr. " + doctorDecoded.name,
+      patient_id: patientDetails.mrn,
+      patient_id_sbx: patientDetails.abhaAddress,
+    };
+
+    try {
+      const abortController = new AbortController();
+      await eventSource("/consent/consentInit", {
+        method: "POST",
+        body: JSON.stringify(formattedData),
+        onmessage(response) {
+          var status = JSON.parse(response.data).statusCodeValue;
+          if (status >= 400) console.error(JSON.parse(response.data).body);
+          else if (status === 200) {
+            sendDataToParent(true);
+            toast.success(JSON.parse(response.data).body);
+            setOpen(!open);
+          }
+          abortController.abort();
+        },
+        onclose(resp) {
+          console.log(resp);
+          abortController.abort();
+        },
+        onerror(error) {
+          console.log(error);
+          abortController.abort();
+          throw new Error(error);
+        },
+        signal: abortController.signal,
+      });
+    } catch (err) {
+      console.log(err);
+      //   toast.error(err);
+    }
   };
   return (
     <div>
@@ -57,36 +125,44 @@ function AddConsentForm() {
         <DialogHeader>Consent Request Form</DialogHeader>
         <div className="h-[1px] bg-[#827F7F82]"></div>
         <DialogBody>
-          <div className="grid grid-cols-2  gap-5 text-[#7B7878] font-medium text-xl p-5">
-            <div>
-              <div className="flex flex-col">
-                <p className="text-xl pb-2 font-medium">ABHA ID</p>
-                <div className=" ">
-                  <input className="rounded-md"></input>
-                  <Button className="bg-gray-600 rounded-none">
-                    <span>Verify</span>
-                  </Button>
-                </div>
-              </div>
-            </div>
-            <div>
-              <div className="flex flex-col">
-                <p className="text-xl pb-2 font-medium">Verify OTP</p>
-              </div>
-            </div>
-          </div>
           <div className="grid grid-cols-3  gap-5 text-[#7B7878] font-medium text-xl  p-5">
             <div className="flex flex-col">
               <p className="text-xl pb-2 font-medium">Purpose of Request</p>
-              <select className="w-full rounded-md">
-                <option></option>
+              <select
+                className="w-full rounded-md font-semibold"
+                {...register("purpose_code", { required: true })}
+              >
+                <option hidden defaultValue={true}>
+                  Select Purpose
+                </option>
+                <option className="font-medium" value="CAREMGT">
+                  Care Management
+                </option>
+                <option className="font-medium" value="BTG">
+                  Break the Glass
+                </option>
+                <option className="font-medium" value="PUBHLTH">
+                  Public Health
+                </option>
+                <option className="font-medium" value="DSRCH">
+                  Disease Specific Healthcare Research
+                </option>
+                <option className="font-medium" value="PatRQT">
+                  Self Requested
+                </option>
               </select>
             </div>
             <div className="flex flex-col">
               <p className="text-xl pb-2 font-medium">Requested by</p>
-              <select className="w-full rounded-md">
-                <option></option>
-              </select>
+              <p className="m-2 text-[#292524]">Dr. {doctorDecoded.name}</p>
+            </div>
+            <div className="flex flex-col">
+              <p className="text-xl pb-2 font-medium">
+                Requester Medical Number
+              </p>
+              <p className="m-2 text-[#292524]">
+                {doctorDecoded.registrationNumber}
+              </p>
             </div>
             <div className="flex flex-col"></div>
           </div>
@@ -94,35 +170,26 @@ function AddConsentForm() {
             <div>
               <div className="flex flex-col">
                 <p className="text-xl pb-2 font-medium">Health info from</p>
-                <input className="rounded-md" type="date" />
+                <input
+                  className="rounded-md"
+                  type="datetime-local"
+                  {...register("permission_from", { required: true })}
+                />
               </div>
             </div>
             <div>
               <div className="flex flex-col">
                 <p className="text-xl pb-2 font-medium">Health info to</p>
-                <input className="rounded-md" type="date" />
+                <input
+                  className="rounded-md"
+                  type="datetime-local"
+                  {...register("permission_to", { required: true })}
+                />
               </div>
             </div>
             <div>
               <div className="flex flex-col">
                 <p className="text-xl pb-2">Health info type</p>
-                {/* <select
-                  className="w-full rounded-md"
-                  multiple={true}
-                  value={info}
-                >
-                  <option value="OP consultation">OP consultation</option>
-                  <option value="Discharge Summary">Discharge Summary</option>
-                  <option value="Immunization Record">
-                    Immunization Record
-                  </option>
-                  <option value="Wellness Record">Wellness Record</option>
-                  <option value="Diagnostic Reports">Diagnostic Reports</option>
-                  <option value="Prescription">Prescription</option>
-                  <option value="Health Document Record">
-                    Health Document Record
-                  </option>
-                </select> */}
                 <Select
                   className="rounded-md text-ellipsis"
                   classNamePrefix="react-select"
@@ -140,13 +207,11 @@ function AddConsentForm() {
             <div>
               <div className="flex flex-col">
                 <p className="text-xl pb-2 font-medium">Consent Expiry</p>
-                <input className="rounded-md w-full" type="date" />
-              </div>
-            </div>
-            <div>
-              <div className="flex flex-col">
-                <p className="text-xl pb-2 font-medium">Time</p>
-                <input className="rounded-md w-full" type="time" />
+                <input
+                  className="rounded-md w-full"
+                  type="datetime-local"
+                  {...register("data_erase_at", { required: true })}
+                />
               </div>
             </div>
             <div>
@@ -165,7 +230,7 @@ function AddConsentForm() {
             <span>Cancel</span>
           </Button>
 
-          <Button variant="filled" className="bg-[#FFA000]">
+          <Button variant="filled" className="bg-[#FFA000]" onClick={onSubmit}>
             <span>Request Consent</span>
           </Button>
         </DialogFooter>

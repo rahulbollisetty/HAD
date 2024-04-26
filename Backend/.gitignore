@@ -38,3 +38,6 @@ build/
 appLog.*
 
 files/
+report/
+temp/
+consentData/

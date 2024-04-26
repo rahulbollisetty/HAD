@@ -51,13 +51,13 @@ public class ConsentAPI {
         return ResponseEntity.ok("Consent Fetch initiated");
     }
 
-    @PostMapping(value = "/hipOnNotify", produces = MediaType.APPLICATION_JSON_VALUE)
-    ResponseEntity<?> hipOnNotify(@RequestBody JsonNode jsonNode) throws JsonProcessingException{
-        abdmService.setToken();
-        log.info("Consent HIP notify Controller");
-        abdmService.hipOnNotify(jsonNode);
-        return ResponseEntity.ok("notified");
-    }
+//    @PostMapping(value = "/hipOnNotify", produces = MediaType.APPLICATION_JSON_VALUE)
+//    ResponseEntity<?> hipOnNotify(@RequestBody JsonNode jsonNode) throws JsonProcessingException{
+//        abdmService.setToken();
+//        log.info("Consent HIP notify Controller");
+//        abdmService.hipOnNotify(jsonNode);
+//        return ResponseEntity.ok("notified");
+//    }
 
     @PostMapping(value = "/linkCareContext", produces = MediaType.APPLICATION_JSON_VALUE)
     public String linkCareContext(@RequestBody JsonNode jsonNode) throws JsonProcessingException {
@@ -67,21 +67,22 @@ public class ConsentAPI {
         String patientId = jsonNode.path("patientId").asText();
         String patientName = jsonNode.path("patientName").asText();
         String hospitalId = jsonNode.path("hospitalId").asText();
-        return abdmService.linkCareContext(appointmentId, accessToken, patientId, patientName, hospitalId);
+        String appointmentDate = jsonNode.get("date").asText();
+        return abdmService.linkCareContext(appointmentId, accessToken,appointmentDate, patientId, patientName, hospitalId);
     }
 
-    @PostMapping(value = "/hipOnRequest", produces = MediaType.APPLICATION_JSON_VALUE)
-    ResponseEntity<?> hipOnRequest(@RequestBody JsonNode jsonNode) throws JsonProcessingException{
-        abdmService.setToken();
-        abdmService.hipOnRequest(jsonNode);
-        return ResponseEntity.ok("requested");
-    }
+//    @PostMapping(value = "/hipOnRequest", produces = MediaType.APPLICATION_JSON_VALUE)
+//    ResponseEntity<?> hipOnRequest(@RequestBody JsonNode jsonNode) throws JsonProcessingException{
+//        abdmService.setToken();
+//        abdmService.hipOnRequest(jsonNode);
+//        return ResponseEntity.ok("requested");
+//    }
 
     @PostMapping(value = "/healthInfoNotify", produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<?> healthInfoNotify(@RequestBody JsonNode jsonNode) throws JsonProcessingException{
         abdmService.setToken();
-        abdmService.healthInfoNotify(jsonNode);
-        return ResponseEntity.ok("requested");
+        String resp = abdmService.healthInfoNotify(jsonNode);
+        return ResponseEntity.ok("healthInfoNotify response: "+resp);
     }
 
     @PostMapping(value = "healthInfoCmRequest",produces = MediaType.APPLICATION_JSON_VALUE)
@@ -91,10 +92,11 @@ public class ConsentAPI {
         return ResponseEntity.ok("req");
     }
 
-    @PostMapping(value = "dataPush",produces = MediaType.APPLICATION_JSON_VALUE)
-    ResponseEntity<?> dataPush(@RequestBody JsonNode jsonNode) throws JsonProcessingException{
-        abdmService.setToken();
-        abdmService.dataPush(jsonNode);
-        return ResponseEntity.ok("data pushed");
-    }
+//    @PostMapping(value = "dataPush",produces = MediaType.APPLICATION_JSON_VALUE)
+//    ResponseEntity<?> dataPush(@RequestBody JsonNode jsonNode) throws JsonProcessingException{
+//        abdmService.setToken();
+//        abdmService.dataPush(jsonNode);
+//        return ResponseEntity.ok("data pushed");
+//    }
+//
 }

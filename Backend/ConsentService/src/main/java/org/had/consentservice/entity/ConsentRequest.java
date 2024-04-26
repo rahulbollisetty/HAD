@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 
 @Entity
 @Data
@@ -24,7 +23,9 @@ public class ConsentRequest {
     @Column(nullable = false, unique = true)
     private String request_id;
 
-    private String patient_id;
+    private String patient_id_sbx;
+
+    private Integer patient_id;
 
     private String requester_name;
 
