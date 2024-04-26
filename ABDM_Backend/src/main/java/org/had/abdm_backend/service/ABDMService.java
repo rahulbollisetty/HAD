@@ -937,6 +937,49 @@ public class ABDMService {
                 .bodyToMono(String.class).block();
 
     }
+
+    public String registerFacility(JsonNode jsonNode) {
+//        This can be CHanged
+        String hipName = jsonNode.get("facilityName").asText();
+
+        String facilityName = jsonNode.get("facilityName").asText();
+        String facilityId = jsonNode.get("facilityId").asText();
+        String bridgeId = jsonNode.get("bridgeId").asText();
+
+        Map<String, Object> HRP = new HashMap<>();
+        HRP.put("bridgeId", bridgeId);
+        HRP.put("hipName", hipName);
+        HRP.put("type", "HIP");
+        HRP.put("active", true);
+
+        Map<String, Object> content = new HashMap<>();
+        content.put("facilityId",facilityId);
+        content.put("facilityName",facilityName);
+        content.put("HRP", List.of(HRP));
+
+        var objectMapper = new ObjectMapper();
+        String requestBody = null;
+        try {
+            requestBody = objectMapper.writeValueAsString(content);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+
+        return webClient.post().uri("https://facilitysbx.abdm.gov.in/v1/bridges/MutipleHRPAddUpdateServices")
+                .header("Authorization", "Bearer " + token)
+                .header("Content-Type", "application/json")
+//                .header("X-CM-ID", "sbx")
+                .header("accept", "application/json")
+                .body(BodyInserters.fromValue(requestBody))
+                .retrieve()
+                .onStatus(HttpStatusCode::isError,clientResponse -> {
+                    return clientResponse.bodyToMono(String.class)
+                            .flatMap(errorBody -> Mono.error(new MyWebClientException(errorBody, clientResponse.statusCode().value())));
+                })
+                .bodyToMono(String.class)
+                .block();
+
+    }
     //    private String handleErrorResponse(ClientResponse response) {
 //        // Handle the error response
 //        HttpStatus status = (HttpStatus) response.statusCode();

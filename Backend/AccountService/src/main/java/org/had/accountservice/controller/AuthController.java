@@ -1,5 +1,6 @@
 package org.had.accountservice.controller;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -8,7 +9,9 @@ import org.had.accountservice.dto.AuthRequest;
 import org.had.accountservice.dto.DoctorDetailsDTO;
 import org.had.accountservice.dto.DoctorHPR;
 import org.had.accountservice.dto.StaffDetailsDTO;
+import org.had.accountservice.entity.DoctorDetails;
 import org.had.accountservice.entity.RefreshToken;
+import org.had.accountservice.entity.StaffDetails;
 import org.had.accountservice.exception.TokenRefreshException;
 import org.had.accountservice.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,61 +50,109 @@ public class AuthController {
     private RefreshTokenService refreshTokenService;
 
     @PostMapping("/login")
-    public ResponseEntity<?> authenticateAndGetToken(@RequestBody AuthRequest authRequest){
+    public ResponseEntity<?> authenticateAndGetToken(@RequestBody AuthRequest authRequest) {
         Authentication authenticate = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword()));
-        if(authenticate.isAuthenticated()){
+        if (authenticate.isAuthenticated()) {
             UserCredentialUserDetails credential = (UserCredentialUserDetails) authenticate.getPrincipal();
             String role = authService.getAuthoritiesAsString(credential.getAuthorities());
-            String token = authService.generateToken(authRequest.getUsername(),role);
+            String token = authService.generateToken(authRequest.getUsername(), role);
             RefreshToken refreshToken = refreshTokenService.createRefreshToken(credential.getId());
             ResponseCookie jwtRefreshCookie = jwtService.generateRefreshJwtCookie(refreshToken.getToken());
 
             Map<String, String> response = new HashMap<>();
-            response.put("status","Logged in successfully");
+            response.put("status", "Logged in successfully");
             response.put("token", token);
+            response.put("role", role);
+            response.put("username", authRequest.getUsername());
 
             return ResponseEntity.ok()
-                    .header(HttpHeaders.SET_COOKIE,jwtRefreshCookie.toString())
+                    .header(HttpHeaders.SET_COOKIE, jwtRefreshCookie.toString())
                     .body(response);
-        }
-        else {
+        } else {
             throw new UsernameNotFoundException("invalid user request !");
         }
     }
 
-    @PostMapping(value = "/registerDoctor" ,produces = MediaType.APPLICATION_JSON_VALUE)
-        public ResponseEntity<?> registerDoctor(@Valid @RequestBody DoctorDetailsDTO doctorDetailsDTO) {
+    @PostMapping(value = "/registerDoctor", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> registerDoctor(@Valid @RequestBody DoctorDetailsDTO doctorDetailsDTO) {
         String result = doctorService.addDoctor(doctorDetailsDTO);
-        if(result.equals("Doctor added to system")){
+        if (result.equals("Doctor added to system")) {
             Authentication authenticate = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(doctorDetailsDTO.getUsername(), doctorDetailsDTO.getPassword()));
-            if(authenticate.isAuthenticated()){
+            if (authenticate.isAuthenticated()) {
                 UserCredentialUserDetails credential = (UserCredentialUserDetails) authenticate.getPrincipal();
                 String role = authService.getAuthoritiesAsString(credential.getAuthorities());
-                String token = authService.generateToken(doctorDetailsDTO.getUsername(),role);
+                String token = authService.generateToken(doctorDetailsDTO.getUsername(), role);
                 Map<String, String> response = new HashMap<>();
                 response.put("status", result);
                 response.put("token", token);
                 return ResponseEntity.ok(response);
-            }
-            else {
+            } else {
                 throw new UsernameNotFoundException("invalid user request !");
             }
         }
-        return  ResponseEntity.badRequest().body(result);
+        return ResponseEntity.badRequest().body(result);
     }
+
+    @PostMapping(value = "/sendEmail")
+    public String sendMail(@RequestBody JsonNode jsonNode) {
+        return authService.sendMail(jsonNode);
+    }
+
+    @PostMapping(value = "verifyEmail")
+    public String verifyEmail(@RequestBody JsonNode jsonNode) {
+        return authService.verifyEmail(jsonNode);
+    }
+
+//    @PostMapping(value = "/registerHeadDoctor" ,produces = MediaType.APPLICATION_JSON_VALUE)
+//    public ResponseEntity<?> registerHeadDoctor(@Valid @RequestBody DoctorDetailsDTO doctorDetailsDTO) {
+//        String result = doctorService.registerHeadDoctor(doctorDetailsDTO);
+//        if(result.equals("Head Doctor added to system")){
+//            Authentication authenticate = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(doctorDetailsDTO.getUsername(), doctorDetailsDTO.getPassword()));
+//            if(authenticate.isAuthenticated()){
+//                UserCredentialUserDetails credential = (UserCredentialUserDetails) authenticate.getPrincipal();
+//                String role = authService.getAuthoritiesAsString(credential.getAuthorities());
+//                String token = authService.generateToken(doctorDetailsDTO.getUsername(),role);
+//                Map<String, String> response = new HashMap<>();
+//                response.put("status", result);
+//                response.put("token", token);
+//                return ResponseEntity.ok(response);
+//            }
+//            else {
+//                throw new UsernameNotFoundException("invalid user request !");
+//            }
+//        }
+//        return  ResponseEntity.badRequest().body(result);
+//    }
 
     @PostMapping(value = "/get-doctor-details", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getDoctorDetails(@Valid @RequestBody DoctorHPR doctorHPR) {
-        String details = doctorService.getDoctorDetails(doctorHPR.getHprId(),doctorHPR.getPassword());
-        return  ResponseEntity.ok(details);
+
+        String details = doctorService.getDoctorDetails(doctorHPR.getHprId(), doctorHPR.getPassword());
+        return ResponseEntity.ok(details);
     }
-    @PostMapping(value = "/registerStaff" ,produces = MediaType.APPLICATION_JSON_VALUE)
+
+    @PostMapping(value = "/get-staff-details-by-username", produces = MediaType.APPLICATION_JSON_VALUE)
+    public StaffDetails getStaffDetailsByUsername(@RequestBody JsonNode jsonNode) {
+        String username = jsonNode.get("username").asText();
+//        System.out.println("Hello");
+        return staffService.getStaffDetailsByUsername(username);
+    }
+
+    @PostMapping(value = "/get-doctor-details-by-username", produces = MediaType.APPLICATION_JSON_VALUE)
+    public DoctorDetails getDoctorDetailsByUsername(@RequestBody JsonNode jsonNode) {
+//        System.out.println("Hello");
+        String username = jsonNode.get("username").asText();
+
+        return doctorService.getDoctorDetailsByUsername(username);
+    }
+
+    @PostMapping(value = "/registerStaff", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> registerStaff(@Valid @RequestBody StaffDetailsDTO staffDetailsDTO) {
         String result = staffService.addStaff(staffDetailsDTO);
-        if(result.equals("Staff added to system")){
+        if (result.equals("Staff added to system")) {
             return ResponseEntity.ok(result);
         }
-        return  ResponseEntity.badRequest().body(result);
+        return ResponseEntity.badRequest().body(result);
     }
 
     @PostMapping("/signout")
@@ -114,7 +165,7 @@ public class AuthController {
 
         ResponseCookie jwtRefreshCookie = jwtService.getCleanJwtRefreshCookie();
         Map<String, String> response = new HashMap<>();
-        response.put("status","You've been signed out!" );
+        response.put("status", "You've been signed out!");
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, jwtRefreshCookie.toString())
                 .body(response);
@@ -130,7 +181,7 @@ public class AuthController {
                     .map(RefreshToken::getUser)
                     .map(user -> {
                         String role = user.getRole();
-                        String token = authService.generateToken(user.getUsername(),role);
+                        String token = authService.generateToken(user.getUsername(), role);
                         Map<String, String> response = new HashMap<>();
                         response.put("status", "Token is refreshed successfully!");
                         response.put("token", token);
@@ -144,4 +195,18 @@ public class AuthController {
 
         return ResponseEntity.badRequest().body("Refresh Token is empty!");
     }
+
+    @PostMapping(value = "registerFacility", produces = MediaType.APPLICATION_JSON_VALUE)
+    public String registerFacility(@RequestBody JsonNode jsonNode) {
+        String res = authService.registerFacility(jsonNode);
+        return res;
+    }
+
+    @PostMapping(value = "/editDetails", produces = MediaType.APPLICATION_JSON_VALUE)
+    public String editDetails(@RequestBody JsonNode jsonNode) {
+        authService.editDetails(jsonNode);
+        return "Details edited successfully";
+    }
+
+
 }

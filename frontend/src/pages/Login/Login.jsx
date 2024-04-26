@@ -20,8 +20,6 @@ const Login = () => {
     formState: { errors },
   } = useForm();
 
-  const navigateTo = useNavigate();
-
   const onSubmit = async (data) => {
     try {
       const response = await axios.post("/auth/login", JSON.stringify(data), {
@@ -29,6 +27,9 @@ const Login = () => {
         withCredentials: true,
       });
       console.log(JSON.stringify(response?.data));
+      const { username, role } = response.data;
+      localStorage.setItem("username", username);
+      localStorage.setItem("role", role);
       const accessToken = response?.data?.token;
       setAuth({ accessToken });
       navigate(from, { replace: true });

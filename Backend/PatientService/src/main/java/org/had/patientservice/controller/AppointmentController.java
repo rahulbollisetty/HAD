@@ -4,12 +4,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.validation.Valid;
 import org.had.patientservice.dto.AppointmentDto;
+import org.had.patientservice.entity.AppointmentDetails;
 import org.had.patientservice.entity.OpConsultation;
 import org.had.patientservice.service.AppointmentService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ByteArrayResource;
-import org.springframework.core.io.FileSystemResource;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -71,6 +69,14 @@ public class AppointmentController {
     public ResponseEntity<?> getPrescription(@RequestBody JsonNode jsonNode) {
         return appointmentService.getPrescription(jsonNode);
     }
+
+    @PreAuthorize("hasAnyAuthority('DOCTOR','STAFF')")
+    @GetMapping(value = "/getAllAppointments", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<AppointmentDetails> getAllAppointments() {
+        return appointmentService.getAllAppointments();
+    }
+
+
 
 //    @PreAuthorize("hasAnyAuthority('DOCTOR','STAFF')")
 //    @PostMapping(value = "/uploadFile")

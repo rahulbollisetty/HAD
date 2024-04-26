@@ -30,7 +30,10 @@ public class StaffDetailsDTO {
     private String district;
 
     @NotNull
-    private Integer pincode;
+    private String mobile;
+
+    @NotNull
+    private String pincode;
 
     @NotNull
     private String address;

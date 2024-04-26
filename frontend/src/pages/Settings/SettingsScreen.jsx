@@ -1,9 +1,35 @@
 import Sidebar from "../Sidebar";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import EditTab from "./components/EditTab";
 import StaffEdit from "./components/StaffEdit";
+import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 
 const SettingsScreen = () => {
+  const axiosPrivate = useAxiosPrivate();
+  const [userDetails, setUserDetails] = useState({});
+  useEffect(() => {
+    const username = localStorage.getItem("username");
+    const role = localStorage.getItem("role");
+    console.log(role, username)
+    const requestBody = {
+      username : username
+    }
+    const getUserDetails = async () => {
+      try {
+        const response = await axiosPrivate.post(
+          `http://127.0.0.1:9005/auth/get-${role.toLocaleLowerCase()}-details-by-username`,
+          requestBody
+        );
+        console.log(JSON.stringify(response?.data));
+        setUserDetails(response.data);
+      } catch (err) {
+        if (!err?.response) {
+          console.error("No Server Response");
+        }
+      }
+    };
+    getUserDetails();
+  }, []);
   return (
     <div className="flex flex-row w-full">
       <div className="w-fit">
@@ -21,7 +47,7 @@ const SettingsScreen = () => {
             </div>
             <div className="mx-2">
               <p className="text-[#787887] text-m font-semibold">
-                Dr. B. Rahul
+                {userDetails.first_Name}  {userDetails.last_Name}
               </p>
             </div>
           </div>

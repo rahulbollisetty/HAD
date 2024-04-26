@@ -20,7 +20,11 @@ function AccountDetails({ data }) {
 
   const navigate = useNavigate();
 
-  useEffect(()=>{
+  useEffect(() => {
+    console.log(data)
+    const windowValues = window.location.search;
+    const requestParams = new URLSearchParams(windowValues);
+    const isHeadDoctor = "true" === requestParams.get("isHeadDoctor");
     setValue("hpr_Id", data.hprId);
     setValue("first_Name", data.firstName);
     setValue("last_Name", data.lastName);
@@ -31,29 +35,30 @@ function AccountDetails({ data }) {
     setValue("district_Code", data.districtCode);
     setValue("pincode", data.pincode);
     setValue("address", data.address);
-    setValue("isHeadDoctor", false);
-  })
+    setValue("isHeadDoctor", isHeadDoctor);
+  });
 
   const axiosPrivate = useAxiosPrivate();
   const onSubmit = async () => {
-
     try {
-      const resp = await axios.post(
+      const resp = await axiosPrivate.post(
         "http://127.0.0.1:9005/auth/registerDoctor",
         getValues()
       );
       console.log(resp);
       if (resp.status === 200) {
         toast.success(resp.data.status);
+        if(isHeadDoctor)
+          navigate("/register/HPR")
         navigate("/login");
       }
     } catch (error) {
-     console.log(error);
+      console.log(error);
       toast.error(error.response.data);
     }
   };
 
-  return (    
+  return (
     <div className="bg-white">
       <div className="bg-white mx-10 text-white h-screen">
         <div className="h-4"></div>
@@ -107,9 +112,7 @@ function AccountDetails({ data }) {
             <div className="my-12 bg-white px-32 text-black overflow-auto h-[350px]">
               <div className="flex mb-3 grid grid-cols-3 gap-5">
                 <div className="flex-1">
-                  <p className="text-sm font-semibold ">
-                    First Name*
-                  </p>
+                  <p className="text-sm font-semibold ">First Name*</p>
                   <input
                     className="mt-3 rounded-md w-full"
                     type="text"
@@ -118,9 +121,7 @@ function AccountDetails({ data }) {
                   />
                 </div>
                 <div className="flex-1 ">
-                  <p className="text-sm font-semibold ">
-                    Last Name*
-                  </p>
+                  <p className="text-sm font-semibold ">Last Name*</p>
                   <input
                     className="mt-3 rounded-md w-full"
                     type="text"
@@ -128,9 +129,7 @@ function AccountDetails({ data }) {
                   />
                 </div>
                 <div className="flex-1 ">
-                  <p className="text-sm font-semibold ">
-                    Date of Birth*
-                  </p>
+                  <p className="text-sm font-semibold ">Date of Birth*</p>
                   <input
                     className="mt-3 rounded-md w-full"
                     type="date"
@@ -139,9 +138,7 @@ function AccountDetails({ data }) {
                 </div>
 
                 <div className="flex-1">
-                  <p className="text-sm font-semibold ">
-                    Gender*
-                  </p>
+                  <p className="text-sm font-semibold ">Gender*</p>
                   <select
                     className="w-full mt-3 rounded-md"
                     {...register("gender", { required: "Required" })}
@@ -154,9 +151,7 @@ function AccountDetails({ data }) {
                   </select>
                 </div>
                 <div className="flex-1">
-                  <p className="text-sm font-semibold ">
-                    Mobile Number*
-                  </p>
+                  <p className="text-sm font-semibold ">Mobile Number*</p>
                   <input
                     className="mt-3 rounded-md w-full"
                     type="text"
@@ -171,7 +166,7 @@ function AccountDetails({ data }) {
                 </div>
                 <div className="flex-1">
                   <p className="text-sm font-semibold ">
-                    Registration Number*
+                    getValues Registration Number*
                   </p>
                   <input
                     className="mt-3 rounded-md w-full"
@@ -187,9 +182,7 @@ function AccountDetails({ data }) {
 
               <div className="flex mt-3 mb-3">
                 <div className="flex-1">
-                  <p className="text-sm font-semibold ">
-                    Address Line*
-                  </p>
+                  <p className="text-sm font-semibold ">Address Line*</p>
                   <input
                     className="mt-3 rounded-md w-full"
                     type="text"
@@ -205,9 +198,7 @@ function AccountDetails({ data }) {
                   />
                 </div>
                 <div className="flex-1">
-                  <p className="text-sm font-semibold ">
-                    Pincode*
-                  </p>
+                  <p className="text-sm font-semibold ">Pincode*</p>
                   <input
                     className="mt-3 rounded-md w-full"
                     type="number"
@@ -224,9 +215,7 @@ function AccountDetails({ data }) {
 
               <div className="flex">
                 <div className="flex-1">
-                  <p className="text-sm font-semibold  mb-2">
-                    State*
-                  </p>
+                  <p className="text-sm font-semibold  mb-2">State*</p>
                   <input
                     className="w-full rounded-md"
                     type="text"
@@ -241,9 +230,7 @@ function AccountDetails({ data }) {
 
               <div className="flex mt-3 mb-3">
                 <div className="flex-1">
-                  <p className="text-sm font-semibold ">
-                    Set Username*
-                  </p>
+                  <p className="text-sm font-semibold ">Set Username*</p>
                   <input
                     className="mt-3 rounded-md w-full"
                     type="text"
@@ -251,9 +238,7 @@ function AccountDetails({ data }) {
                   />
                 </div>
                 <div className="flex-1 mx-10">
-                  <p className="text-sm font-semibold ">
-                    Set Password*
-                  </p>
+                  <p className="text-sm font-semibold ">Set Password*</p>
                   <input
                     className="mt-3 rounded-md w-full"
                     type="password"

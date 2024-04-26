@@ -6,6 +6,7 @@ import useAxiosPrivate from "../../../hooks/useAxiosPrivate";
 import { Link } from "react-router-dom";
 
 import AddPatientForm from "../forms/AddPatientForm";
+import Sidebar from "../../Sidebar";
 
 const AllPatientList = () => {
   const axiosPrivate = useAxiosPrivate();
@@ -22,11 +23,15 @@ const AllPatientList = () => {
     };
     getAllPatientList();
   }, []);
+  console.log(AllPatientList, "patientlist");
 
   const navigate = useNavigate();
 
   return (
     <div className="flex flex-col h-full">
+      {/* <div className="w-fit">
+        <Sidebar />
+      </div> */}
       <div className="basis-[15%]">
         <div className="text-[1.75rem] m-4 p-4 text-[#02685A] font-semibold">
           All Patients List

@@ -6,7 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.validator.constraints.UniqueElements;
 
 import java.util.Date;
 
@@ -32,14 +31,14 @@ public class StaffDetails {
     @NotNull
     private String gender;
 
-    @NotNull
+    private String mobile;
+
     private String state;
 
     @NotNull
     private String district;
 
-    @NotNull
-    private Integer pincode;
+    private String pincode;
 
     @NotNull
     private String address;

@@ -1,4 +1,4 @@
-package org.had.accountservice.controller;//                                .requestMatchers("/patient/**").permitAll()
+package org.had.accountservice.controller;
 
 
 import jakarta.validation.Valid;
@@ -22,7 +22,6 @@ public class DoctorController {
 
     @Autowired
     private DoctorService doctorService;
-
 
     @PreAuthorize("hasAnyAuthority('DOCTOR','STAFF')")
     @GetMapping(value = "/getAllDoctorList",produces = MediaType.APPLICATION_JSON_VALUE)

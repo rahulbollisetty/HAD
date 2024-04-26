@@ -4,11 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import com.github.jhonnymertz.wkhtmltopdf.wrapper.Pdf;
-import com.itextpdf.text.Document;
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.pdf.PdfCopy;
-import com.itextpdf.text.pdf.PdfReader;
 import org.had.accountservice.exception.MyWebClientException;
 import org.had.patientservice.dto.AppointmentDto;
 import org.had.patientservice.entity.*;
@@ -16,7 +11,6 @@ import org.had.patientservice.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
-import org.springframework.core.io.ResourceLoader;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
@@ -25,8 +19,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
-import org.thymeleaf.TemplateEngine;
-import org.thymeleaf.context.Context;
 import reactor.core.publisher.Mono;
 
 
@@ -320,4 +312,7 @@ public class AppointmentService {
     }
 
 
+    public List<AppointmentDetails> getAllAppointments() {
+        return appointmentRepository.findAll();
+    }
 }

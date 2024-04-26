@@ -268,7 +268,7 @@ function AddPatientForm() {
                   <p className="text-sm">State</p>
                   <select
                     className="w-full rounded-md"
-                    name="bloodGroup"
+                    name="state"
                     id=""
                     {...register("state", {
                       required: "Required",

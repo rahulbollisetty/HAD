@@ -1,14 +1,22 @@
 package org.had.accountservice.entity;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotNull;
+import lombok.*;
 
 @Entity
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
 public class HospitalDetails {
 
     @Id
-    private Integer hospital_id;
+    private String hospital_id;
 
     @NotNull
     private String hospital_name;
@@ -30,4 +38,7 @@ public class HospitalDetails {
 
     @NotNull
     private Integer pincode;
+
+    @NotNull
+    private String specialization;
 }

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "../../api/axios";
 import { toast } from "react-toastify";
 import { useForm } from "react-hook-form";
@@ -13,12 +13,23 @@ function LinkHPR() {
     handleSubmit,
     reset,
     getValues,
+    setValues,
     formState: { errors },
   } = useForm();
-
   const [success, setSuccess] = useState(false);
   const [isLoading, setLoading] = useState(false);
   const [doctorDetails, setDoctorDetails] = useState({});
+
+  // useEffect(() => {
+  //   const windowValues = window.location.search;
+  //   const requestParams = new URLSearchParams(windowValues);
+  //   const isHeadDoctor = requestParams.get("isHeadDoctor");
+  //   console.log(data)
+  //   setDoctorDetails((prevDoctorDetails) => ({
+  //     ...prevDoctorDetails,
+  //     isHeadDoctor: isHeadDoctor === "true",
+  //   }));
+  // }, []);
 
   const onSubmit = async () => {
     setLoading(true);
@@ -42,7 +53,7 @@ function LinkHPR() {
       }
     } catch (error) {
       setLoading(false);
-      setSuccess(false)
+      setSuccess(false);
       toast.error(error.response.data.details[0].message);
     }
   };

@@ -1,5 +1,5 @@
 import { MdSearch } from "react-icons/md";
-import AddStaffForm from "../forms/AddStaffForm";
+import AddDoctorForm from "../forms/AddDoctorForm";
 import StaffDetail from "./StaffDetail";
 
 const StaffList = () => {
@@ -8,7 +8,7 @@ const StaffList = () => {
       <div className="basis-[15%]">
         <div className="text-[1.75rem] m-4 p-4 text-[#02685A] font-semibold flex flex-row m-4 justify-between items-center">
           <div className="relative">All Staff List</div>
-          <AddStaffForm />
+          <AddDoctorForm />
         </div>
       </div>
       <div className="flex flex-row m-4 justify-between items-center">
@@ -26,7 +26,7 @@ const StaffList = () => {
         </div>
       </div>
       <div className="basis-[85%]">
-        <div className="m-4 shadow-lg sm:rounded-lg 2xl:max-h-[500px] 4xl:max-h-[800px] lg:max-h-[50px] flex flex-col overflow-auto">
+        <div claAddStaffFormssName="m-4 shadow-lg sm:rounded-lg 2xl:max-h-[500px] 4xl:max-h-[800px] lg:max-h-[50px] flex flex-col overflow-auto">
           <table className="w-full text-sm text-left rtl:text-right text-gray-500">
             <thead className="text-xs text-gray-700 uppercase h-[4.5rem] bg-gray-50 bg-[#F5F6F8] text-[#7B7878] sticky top-0">
               <tr className="text-sm">
