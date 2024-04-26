@@ -9,6 +9,7 @@
         <outputRelativeToContentRoot value="true" />
         <module name="API-Gateway" />
         <module name="ConsentService" />
+        <module name="ABDM_Backend" />
         <module name="DiscoveryServer" />
         <module name="AccountService" />
         <module name="PatientService" />
@@ -17,6 +18,7 @@
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="ABDM_Backend" options="-parameters" />
       <module name="API-Gateway" options="-parameters" />
       <module name="AccountService" options="-parameters" />
       <module name="Backend" options="" />
