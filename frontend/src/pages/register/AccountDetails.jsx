@@ -35,6 +35,7 @@ function AccountDetails({ data }) {
     setValue("district_Code", data.districtCode);
     setValue("pincode", data.pincode);
     setValue("address", data.address);
+    setValue("dob", data.dob);
     setValue("isHeadDoctor", isHeadDoctor);
   });
 

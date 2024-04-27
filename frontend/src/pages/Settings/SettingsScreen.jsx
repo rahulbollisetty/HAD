@@ -3,14 +3,22 @@ import React, { useState, useEffect } from "react";
 import EditTab from "./components/EditTab";
 import StaffEdit from "./components/StaffEdit";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
+import { jwtDecode }from "jwt-decode";
+import useAuth from "../../hooks/useAuth";
+import TopBar from "../TopBar";
+
 
 const SettingsScreen = () => {
   const axiosPrivate = useAxiosPrivate();
   const [userDetails, setUserDetails] = useState({});
+  const {auth} = useAuth();
+  const[username, setUsername] = useState("")
+  const[role, setRole] = useState("");
+  const decoded = auth?.accessToken
+  ?jwtDecode(auth.accessToken):undefined;
   useEffect(() => {
-    const username = localStorage.getItem("username");
-    const role = localStorage.getItem("role");
-    console.log(role, username)
+    setUsername(decoded?.sub)
+    setRole(decoded?.role)
     const requestBody = {
       username : username
     }
@@ -20,7 +28,7 @@ const SettingsScreen = () => {
           `http://127.0.0.1:9005/auth/get-${role.toLocaleLowerCase()}-details-by-username`,
           requestBody
         );
-        console.log(JSON.stringify(response?.data));
+        console.log((response.data));
         setUserDetails(response.data);
       } catch (err) {
         if (!err?.response) {
@@ -29,29 +37,14 @@ const SettingsScreen = () => {
       }
     };
     getUserDetails();
-  }, []);
+  }, [auth]);
   return (
     <div className="flex flex-row w-full">
       <div className="w-fit">
-        <Sidebar />
+        <Sidebar/>
       </div>
       <div className="flex flex-col w-full">
-        <div className="w-full h-[4.5rem] flex flex-row-reverse p-2">
-          <div className="flex items-center mr-[2em]">
-            <div className="flex justify-center items-center h-4/5">
-              <img
-                className="rounded-full h-full object-contain"
-                src="https://wallpapers.com/images/hd/handsome-giga-chad-hmsvijj0ji4dhedr.jpg"
-                alt="profile photo"
-              />
-            </div>
-            <div className="mx-2">
-              <p className="text-[#787887] text-m font-semibold">
-                {userDetails.first_Name}  {userDetails.last_Name}
-              </p>
-            </div>
-          </div>
-        </div>
+        <TopBar />
         <div className="basis-full bg-[#F1F5FC] overflow-hidden">
           <div className="flex flex-col h-full">
             {/* <div className="h-[64px] w-full pb-16 bg-white"></div> */}

@@ -5,14 +5,22 @@ import {
   Tab,
   TabPanel,
 } from "@material-tailwind/react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import PracticeEdit from "./PracticeEdit";
 import DoctorEdit from "./DoctorEdit";
 import Sidebar from "../../Sidebar";
 import StaffEdit from "./StaffEdit";
+import { jwtDecode } from "jwt-decode";
+import useAuth from "../../../hooks/useAuth";
 
 const EditTab = () => {
   const [activeTab, setActiveTab] = useState("Practice Details");
+  const [role, setRole] = useState("");
+  const { auth } = useAuth;
+  const decoded = auth?.accessToken ? jwtDecode(auth.accessToken) : undefined;
+  useEffect(() => {
+    setRole(decoded?.role);
+  }, []);
   const data = [
     {
       label: "Practice Details",
@@ -29,7 +37,7 @@ const EditTab = () => {
   return (
     <div className="flex flex-row w-full">
       <div className="w-fit">
-        <Sidebar />
+        <Sidebar  />
       </div>
       <div className="flex flex-col w-full">
         <div className="w-full h-[4.5rem] flex flex-row-reverse p-2">

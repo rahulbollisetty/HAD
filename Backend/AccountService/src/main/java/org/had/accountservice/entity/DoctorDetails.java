@@ -71,7 +71,6 @@ public class DoctorDetails {
     private final LocalDateTime editedAt = LocalDateTime.now();
 
     @OneToOne(targetEntity = UserCredential.class, cascade = CascadeType.ALL)
-    @JsonIgnore
     @JoinColumn(name = "login_id", referencedColumnName = "UserCred_id", unique = true)
     private UserCredential loginCredential;
 }

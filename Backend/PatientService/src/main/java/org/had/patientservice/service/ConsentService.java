@@ -39,6 +39,7 @@ public class ConsentService {
 
     @Autowired
     public FhirService fhirService;
+
     @Autowired
     private FideliusService fideliusService;
 

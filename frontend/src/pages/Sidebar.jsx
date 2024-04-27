@@ -23,15 +23,19 @@ import { Calendar } from "antd";
 import AllPatientList from "./PatientScreen/components/AllPatientList";
 import { Settings } from "@mui/icons-material";
 import EditTab from "./Settings/components/EditTab";
+import { Link } from "react-router-dom";
+// import { jwtDecode } from "jwt-decode";
+// import useAuth from "../hooks/useAuth";
 
-const Sidebar = () => {
-  const [role, setRole] = useState("");
-  const [username, setUsername] = useState("");
-  const [activeTab, setActiveTab] = useState("Calender");
-  useEffect(() => {
-    setRole(localStorage.getItem("role"));
-    setUsername(localStorage.getItem("username"));
-  }, []);
+const Sidebar = ({active_tab}) => {
+  // const [username, setUsername] = useState("");
+  const [activeTab, setActiveTab] = useState("Calendar");
+  // const { auth } = useAuth();
+  // const decoded = auth?.accessToken ? jwtDecode(auth.accessToken) : undefined;
+  // const [role, setRole] = useState("");
+  // useEffect(() => {
+  //   setRole(decoded?.role);
+  // }, []);
 
   const navigate = useNavigate();
   const logout = useLogout();
@@ -44,21 +48,19 @@ const Sidebar = () => {
     {
       label: (
         <span className="flex font-semibold flex-start">
-          <BiSolidCalendarPlus className="w-7 h-7 mr-2" /> Calendar
+          <BiSolidCalendarPlus className="w-7 h-7 mr-2" /><Link to="/calendar">Calendar</Link>
         </span>
         // "Calendar"
       ),
-      value: "Calender",
-      desc: <Calendar />,
+      value: "Calendar",
     },
     {
       label: (
         <span className="flex font-semibold flex-start">
-          <FaUserInjured className="w-7 h-7 mr-2" /> All Patient
+          <FaUserInjured className="w-7 h-7 mr-2" /> <Link to="/" >All Patient</Link>
         </span>
       ),
-      value: "All Patients",
-      desc: <AllPatientList />,
+      value: "All Patient",
     },
     {
       label: (
@@ -66,8 +68,7 @@ const Sidebar = () => {
           <FaUserDoctor className="w-7 h-7 mr-2" /> Doctor List
         </span>
       ),
-      value: "All Doctors",
-      desc: <AllPatientList />,
+      value: "Doctor List",
     },
     {
       label: (
@@ -76,9 +77,25 @@ const Sidebar = () => {
         </span>
       ),
       value: "Settings",
-      desc: role === "HEAD_DOCTOR" ? <EditTab /> : <Settings />,
     },
   ];
+
+  const handleToggleTab = (v) => {
+    setActiveTab(v);
+    // let navigateTo = "";
+    // switch (v) {
+    //   case "Doctor List":
+    //     navigateTo = "stafflist";
+    //     break;
+    //   case "Settings":
+    //     navigateTo = "settings";
+    //     break;
+    //   case "Calendar":
+    //     navigateTo = "Calendar";
+    //     break;
+    // }
+    // navigate(`/${navigateTo}`);
+  };
   return (
     <>
       <div className="h-[100vh] top-0  w-[250px] left-0">
@@ -122,7 +139,7 @@ const Sidebar = () => {
                 </div>
               </div>
             </a> */}
-            <div className="w-full pt-5 h-[400px] ">
+            <div className="w-full pt-5 h-[450px] ">
               {/* <div className="text-[#02685A] text-3xl font-bold p-0 ml-10 w-1/5 flex flex-col justify-center items-center">
                 <p>Edit Details</p>
               </div> */}
@@ -138,7 +155,7 @@ const Sidebar = () => {
                       <Tab
                         key={value}
                         value={value}
-                        onClick={() => setActiveTab(value)}
+                        onClick={() => handleToggleTab(value)}
                         className={
                           activeTab === value
                             ? "h-[80px] text-[#02685A] text-[1.3rem]"

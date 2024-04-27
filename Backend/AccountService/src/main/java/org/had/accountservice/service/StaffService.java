@@ -31,11 +31,10 @@ public class StaffService {
         if (userCredentialRepository.findByUsername(staffDetailsDTO.getUsername()).isPresent()) {
             return "Username is already taken";
         }
-
         UserCredential userCredential = new UserCredential();
         userCredential.setUsername(staffDetailsDTO.getUsername());
         userCredential.setPassword(passwordEncoder.encode(staffDetailsDTO.getPassword()));
-
+        userCredential.setRole("STAFF");
         userCredentialRepository.save(userCredential);
 
         StaffDetails staffDetails = getStaffDetails(staffDetailsDTO, userCredential);

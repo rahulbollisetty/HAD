@@ -28,6 +28,7 @@ import VerifyEmail from "./pages/DoctorStaffScreen/forms/VerifyEmail";
 import DoctorEdit from "./pages/Settings/components/DoctorEdit";
 import EditTab from "./pages/Settings/components/EditTab";
 import StaffEdit from "./pages/Settings/components/StaffEdit";
+import { Settings } from "@mui/icons-material";
 
 function App() {
   return (
@@ -61,7 +62,7 @@ function App() {
 
           {/* we want to protect these routes */}
           <Route element={<PersistLogin />}>
-            <Route element={<RequireAuth allowedRoles={["DOCTOR"]} />}>
+            <Route element={<RequireAuth allowedRoles={["DOCTOR"]}/>}>
               <Route path="register/faculty" element={<AddDoctorForm />} />
               <Route path="register/HPR" element={<PracticeDetails />} />
               

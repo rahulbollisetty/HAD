@@ -3,6 +3,7 @@ package org.had.accountservice.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import org.had.accountservice.entity.*;
 import org.had.accountservice.exception.MyWebClientException;
@@ -98,7 +99,7 @@ public class AuthService {
             helper.setSubject(subject);
             helper.setText(htmlBody, true); // true indicates HTML content
             javaMailSender.send(message);
-        } catch (jakarta.mail.MessagingException e) {
+        } catch (MessagingException e) {
             throw new RuntimeException(e);
         }
         return "Email Sent";
@@ -254,5 +255,33 @@ public class AuthService {
         return webClient.post().uri("http://127.0.0.1:9008/abdm/hpr/registerFacility").contentType(MediaType.APPLICATION_JSON).body(BodyInserters.fromValue(requestBody)).retrieve().onStatus(HttpStatusCode::isError, clientResponse -> {
             return clientResponse.bodyToMono(String.class).flatMap(errorBody -> Mono.error(new MyWebClientException(errorBody, clientResponse.statusCode().value())));
         }).bodyToMono(String.class).block();
+    }
+
+    public List<StaffDetails> getAllStaffList() {
+        return staffDetailsRepository.findAll();
+    }
+
+    public void deleteFaculty(JsonNode jsonNode) {
+        String username = jsonNode.get("username").asText();
+        UserCredential userCredential = null;
+        String role = "";
+        if(userCredentialRepository.findByUsername(username).isPresent()) {
+            userCredential = userCredentialRepository.findByUsername(username).get();
+            role = userCredential.getRole();
+        }
+        switch(role) {
+            case "STAFF":
+                Optional<StaffDetails> staffDetails = staffDetailsRepository.findByLoginCredential(userCredential);
+                staffDetails.ifPresent(details -> staffDetailsRepository.delete(details));
+                userCredentialRepository.delete(userCredential);
+                break;
+            case "DOCTOR":
+                Optional<DoctorDetails> doctorDetails = doctorDetailsRepository.findByLoginCredential(userCredential);
+                doctorDetails.ifPresent(details -> doctorDetailsRepository.delete(details));
+                userCredentialRepository.delete(userCredential);
+                break;
+
+        }
+
     }
 }

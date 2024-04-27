@@ -44,7 +44,7 @@ function AddRecords({ patientId, appointment_id, sendDataToParent, status }) {
         setfileMediaType(data.fileMediaType);
         setobservations(data.observation);
       } catch (error) {
-        console.error("Error fetching image data:", error);
+        console.error("Error fetching data:", error);
       }
     };
 
@@ -215,8 +215,8 @@ function AddRecords({ patientId, appointment_id, sendDataToParent, status }) {
   return (
     <div className="flex flex-col">
       <div className="">
-        <div className="border mx-3 my-4 border-[#006666] rounded-md border-l-4">
-          <div className="m-s:max-h-[350px] lg:max-h-[420px] lg:s:max-h-[450px] 2xl:max-h-[470px] 3xl:max-h-[580px] 4xl:max-h-[850px] flex flex-col overflow-auto">
+        <div className="border mx-3 my-4 border-[#006666] rounded-md border-l-4 ">
+          <div className="m-s:max-h-[350px] md:max-h-[400px] lg:max-h-[450px] 2xl:max-h-[470px] 3xl:max-h-[580px] 4xl:max-h-[850px] flex flex-col overflow-auto">
             <div className="">
               <p className="font-semibold ml-4 mt-4 text-lg">Vital Signs</p>
 

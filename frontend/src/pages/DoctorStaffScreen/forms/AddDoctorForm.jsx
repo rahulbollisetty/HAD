@@ -51,12 +51,12 @@ const AddDoctorForm = () => {
       >
         {/* <MdAdd className="h-[35px] w-[35px] m-auto" /> */}
         <div className="relative w-fit font-semibold m-auto text-[20px]">
-          Add New Doctor
+          Invite Faculty
         </div>
       </button>
 
       <Dialog open={open} onClose={handleOpen} size="lg">
-        <DialogHeader>Add Doctor</DialogHeader>
+        <DialogHeader>Send Invite Link</DialogHeader>
         <div className="h-[1px] bg-[#827F7F82]"></div>
         <DialogBody>
           {/* <div className="grid grid-cols-2  gap-5 text-[#7B7878] font-medium text-xl p-5">

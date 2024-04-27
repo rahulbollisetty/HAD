@@ -16,6 +16,7 @@ import org.had.accountservice.exception.TokenRefreshException;
 import org.had.accountservice.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -24,6 +25,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -62,8 +64,6 @@ public class AuthController {
             Map<String, String> response = new HashMap<>();
             response.put("status", "Logged in successfully");
             response.put("token", token);
-            response.put("role", role);
-            response.put("username", authRequest.getUsername());
 
             return ResponseEntity.ok()
                     .header(HttpHeaders.SET_COOKIE, jwtRefreshCookie.toString())
@@ -103,46 +103,27 @@ public class AuthController {
         return authService.verifyEmail(jsonNode);
     }
 
-//    @PostMapping(value = "/registerHeadDoctor" ,produces = MediaType.APPLICATION_JSON_VALUE)
-//    public ResponseEntity<?> registerHeadDoctor(@Valid @RequestBody DoctorDetailsDTO doctorDetailsDTO) {
-//        String result = doctorService.registerHeadDoctor(doctorDetailsDTO);
-//        if(result.equals("Head Doctor added to system")){
-//            Authentication authenticate = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(doctorDetailsDTO.getUsername(), doctorDetailsDTO.getPassword()));
-//            if(authenticate.isAuthenticated()){
-//                UserCredentialUserDetails credential = (UserCredentialUserDetails) authenticate.getPrincipal();
-//                String role = authService.getAuthoritiesAsString(credential.getAuthorities());
-//                String token = authService.generateToken(doctorDetailsDTO.getUsername(),role);
-//                Map<String, String> response = new HashMap<>();
-//                response.put("status", result);
-//                response.put("token", token);
-//                return ResponseEntity.ok(response);
-//            }
-//            else {
-//                throw new UsernameNotFoundException("invalid user request !");
-//            }
-//        }
-//        return  ResponseEntity.badRequest().body(result);
-//    }
-
     @PostMapping(value = "/get-doctor-details", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getDoctorDetails(@Valid @RequestBody DoctorHPR doctorHPR) {
-
         String details = doctorService.getDoctorDetails(doctorHPR.getHprId(), doctorHPR.getPassword());
         return ResponseEntity.ok(details);
+    }
+
+    @PostMapping(value = "/deleteFaculty", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> deleteFaculty( @RequestBody JsonNode jsonNode) {
+        authService.deleteFaculty(jsonNode);
+        return ResponseEntity.ok("Faculty deleted successfully");
     }
 
     @PostMapping(value = "/get-staff-details-by-username", produces = MediaType.APPLICATION_JSON_VALUE)
     public StaffDetails getStaffDetailsByUsername(@RequestBody JsonNode jsonNode) {
         String username = jsonNode.get("username").asText();
-//        System.out.println("Hello");
         return staffService.getStaffDetailsByUsername(username);
     }
 
     @PostMapping(value = "/get-doctor-details-by-username", produces = MediaType.APPLICATION_JSON_VALUE)
     public DoctorDetails getDoctorDetailsByUsername(@RequestBody JsonNode jsonNode) {
-//        System.out.println("Hello");
         String username = jsonNode.get("username").asText();
-
         return doctorService.getDoctorDetailsByUsername(username);
     }
 
@@ -210,6 +191,15 @@ public class AuthController {
     public String editDetails(@RequestBody JsonNode jsonNode) {
         authService.editDetails(jsonNode);
         return "Details edited successfully";
+    }
+
+    @PreAuthorize("hasAnyAuthority('DOCTOR','STAFF')")
+    @GetMapping(value = "/getAllStaffList",produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getAllStaffList(){
+        List<StaffDetails> staffDetailsList = authService.getAllStaffList();
+        if(staffDetailsList.isEmpty())
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("no staff found");
+        return ResponseEntity.ok(staffDetailsList);
     }
 
 

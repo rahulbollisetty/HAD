@@ -5,11 +5,38 @@ import {
   DialogBody,
   DialogFooter,
 } from "@material-tailwind/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import useAuth from "../../../hooks/useAuth";
+import { jwtDecode } from "jwt-decode";
+import { axiosPrivate } from "../../../api/axios";
 
-const StaffDetail = () => {
+const StaffDetail = (staff) => {
+  const { auth } = useAuth();
+  const decoded = auth?.accessToken ? jwtDecode(auth.accessToken) : undefined;
+  const [role, setRole] = useState("");
+
+  useEffect(() => {
+    setRole(decoded?.role.toLowerCase());
+  }, []);
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(!open);
+  const deleteStaff = async (username) => {
+    const requestBody = {
+      username: username,
+    };
+    try {
+      const response = await axiosPrivate.post(
+        `http://127.0.0.1:9005/auth/deleteFaculty`,
+        requestBody
+      );
+      console.log(response.data);
+    } catch (err) {
+      console.log(err);
+      if (!err?.response) {
+        console.error("No Server Response");
+      }
+    }
+  };
   return (
     <div>
       <button
@@ -24,7 +51,7 @@ const StaffDetail = () => {
       </button>
 
       <Dialog open={open} onClose={handleOpen} size="xl">
-        <DialogHeader>Staff's Details</DialogHeader>
+        <DialogHeader>Staff Details</DialogHeader>
         <div className="h-[1px] bg-[#827F7F82]"></div>
         <DialogBody>
           <div>
@@ -40,50 +67,54 @@ const StaffDetail = () => {
                 <div className="w-full">
                   <div className="mt-4 ml-8">
                     <p className="text-xl font-semibold text-[#444444]">
-                      B. Rahul
+                      {staff.staff.first_Name} {staff.staff.last_Name}
                     </p>
                   </div>
                   <div className="flex mt-2 ml-8 text-l">
-                    <div className="flex-1">
+                    {/* <div className="flex-1">
                       <span className="font-semibold flex mr-20 text-[#7B7878]">
                         Registration Number*
                         <p className="ml-6 text-black font-medium">123456789</p>
                       </span>
-                    </div>
+                    </div> */}
                     <div className="flex-1">
                       <span className="font-semibold flex ml-auto mr-20 text-[#7B7878]">
                         Mobile Number*
-                        <p className="ml-6 text-black font-medium">123456789</p>
+                        <p className="ml-6 text-black font-medium">
+                          {staff.staff.mobile}
+                        </p>
                       </span>
                     </div>
-                    <div className="flex-1">
+                    {/* <div className="flex-1">
                       <span className="font-semibold flex ml-auto mr-20 text-[#7B7878]">
                         Email Address
                         <p className="ml-6 text-black font-medium">
                           rahulb01@gmail.com
                         </p>
                       </span>
-                    </div>
+                    </div> */}
                   </div>
                   <div className="flex mt-2 ml-8 text-l">
                     <div className="flex-1">
                       <span className="font-semibold flex mr-20 text-[#7B7878]">
-                        Date Of Birth(DD/MM/YY)
-                        <p className="ml-6 text-black font-medium">06/09/69</p>
+                        Date Of Birth
+                        <p className="ml-6 text-black font-medium">
+                          {staff.staff.dob}
+                        </p>
                       </span>
                     </div>
                     <div className="flex-1">
                       <span className="font-semibold flex ml-auto mr-20 text-[#7B7878]">
                         Gender
-                        <p className="ml-6 text-black font-medium">Male</p>
+                        <p className="ml-6 text-black font-medium">
+                          {staff.staff.gender}
+                        </p>
                       </span>
                     </div>
                     <div className="flex-1">
                       <span className="font-semibold flex ml-auto mr-20 text-[#7B7878]">
                         Role
-                        <p className="ml-6 text-black font-medium">
-                          Lab Attendant
-                        </p>
+                        <p className="ml-6 text-black font-medium">Staff</p>
                       </span>
                     </div>
                   </div>
@@ -94,28 +125,36 @@ const StaffDetail = () => {
             <div className="grid grid-cols-3 place-items-center gap-3  text-[#7B7878] font-medium font-semibold text-l  p-5">
               <div className="flex flex-col  item-center">
                 <p className=" font-semibold ">Address Line*</p>
-                <p className="text-black text-center font-medium">Lmao</p>
+                <p className="text-black text-center font-medium">{staff.staff.address}</p>
               </div>
               <div className="flex flex-col item-center">
-                <p className=" font-semibold ">Town/City</p>
-                <p className="text-black text-center font-medium">Andaman</p>
+                <p className=" font-semibold ">State</p>
+                <p className="text-black text-center font-medium">{staff.staff.state}</p>
               </div>
               <div className="flex flex-col item-center">
-                <p className=" font-semibold ">Pincde</p>
-                <p className="text-black text-center font-medium">472000</p>
+                <p className=" font-semibold ">District</p>
+                <p className="text-black text-center font-medium">{staff.staff.district}</p>
               </div>
               <div className="flex flex-col col-span-1 item-center px-0">
-                <p className=" pb-2 font-semibold">State</p>
-                <p className="text-black text-center font-medium">CG</p>
+                <p className=" pb-2 font-semibold">Pincode</p>
+                <p className="text-black text-center font-medium">{staff.staff.pincode}</p>
               </div>
             </div>
           </div>
           <hr className="h-[3px] bg-[#7B7878] mx-2 mt-6 opacity-50	" />
         </DialogBody>
         <DialogFooter>
-          <Button variant="filled" className="bg-[#FFA000]">
-            <span>Delete Staff</span>
-          </Button>
+        {role === "head_doctor" && (
+            <Button
+              variant="filled"
+              className="bg-[#FFA000]"
+              onClick={() =>
+                deleteStaff(staff.staff?.loginCredential?.username)
+              }
+            >
+              <span>Delete Doctor</span>
+            </Button>
+          )}
           <Button
             variant="text"
             color="red"
