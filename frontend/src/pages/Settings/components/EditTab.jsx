@@ -9,6 +9,7 @@ import { useState } from "react";
 import PracticeEdit from "./PracticeEdit";
 import DoctorEdit from "./DoctorEdit";
 import Sidebar from "../../Sidebar";
+import StaffEdit from "./StaffEdit";
 
 const EditTab = () => {
   const [activeTab, setActiveTab] = useState("Practice Details");
@@ -21,7 +22,7 @@ const EditTab = () => {
     {
       label: "Your Details",
       value: "Your Details",
-      desc: <DoctorEdit />,
+      desc: <StaffEdit />,
     },
   ];
 
@@ -50,9 +51,9 @@ const EditTab = () => {
         <div className="basis-full bg-[#F1F5FC] overflow-hidden">
           <div className="bg-white  m-5 pr-5">
             <div className="w-full flex flex-row pt-5">
-              <div className="text-[#02685A] text-3xl font-bold p-0 ml-10 w-1/5 flex flex-col justify-center items-center">
+              {/* <div className="text-[#02685A] text-3xl font-bold p-0 ml-10 w-1/5 flex flex-col justify-center items-center">
                 <p>Edit Details</p>
-              </div>
+              </div> */}
               <div className="flex-grow flex justify-center items-center ">
                 <Tabs value={activeTab} className="w-9/12 mx-2">
                   <TabsHeader

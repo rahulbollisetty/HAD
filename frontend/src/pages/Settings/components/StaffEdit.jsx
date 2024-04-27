@@ -115,7 +115,7 @@ const StaffEdit = () => {
               </div>
               <div className="flex-1">
                 <span className="font-semibold flex ml-auto mr-20 text-[#7B7878]">
-                  Date of Birth(DD/MM/YYYY)
+                  Date of Birth
                   <p className="ml-6 text-black font-medium">
                     {userDetails.dob}
                   </p>

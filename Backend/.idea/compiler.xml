@@ -9,12 +9,14 @@
         <outputRelativeToContentRoot value="true" />
         <module name="API-Gateway" />
         <module name="ConsentService" />
-        <module name="ABDM_Backend" />
         <module name="DiscoveryServer" />
         <module name="AccountService" />
         <module name="PatientService" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="ABDM_Backend" target="21" />
+    </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">

@@ -4,7 +4,7 @@
 
 @layer components {
     .active {
-      @apply bg-[#c6fff282] border-r-[6px] text-[#02685A] [border-right-style:solid] border-[#02685a];
+      @apply bg-[#00ce9e56] border-r-[6px] text-[#02685A] [border-right-style:solid] border-[#02685a];
     }
     .inactive{
         @apply text-gray-600;

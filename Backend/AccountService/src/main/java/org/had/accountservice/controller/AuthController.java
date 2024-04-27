@@ -198,8 +198,12 @@ public class AuthController {
 
     @PostMapping(value = "registerFacility", produces = MediaType.APPLICATION_JSON_VALUE)
     public String registerFacility(@RequestBody JsonNode jsonNode) {
-        String res = authService.registerFacility(jsonNode);
-        return res;
+        return authService.registerFacility(jsonNode);
+    }
+
+    @PostMapping(value = "editFacility", produces = MediaType.APPLICATION_JSON_VALUE)
+    public String editFacility(@RequestBody JsonNode jsonNode) {
+        return authService.editFacility(jsonNode);
     }
 
     @PostMapping(value = "/editDetails", produces = MediaType.APPLICATION_JSON_VALUE)

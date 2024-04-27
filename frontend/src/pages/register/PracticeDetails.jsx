@@ -151,6 +151,7 @@ function PracticeDetails() {
                   {...register("specialization", { required: "Required" })}
                 />
               </div>
+             
             </div>
 
             <div className="flex my-6 mx-32">

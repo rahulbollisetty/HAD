@@ -56,7 +56,7 @@ function App() {
           <Route path="unauthorized" element={<Unauthorized />} />
 
           <Route path="settings/head_doctor" element={<EditTab />} />
-
+          <Route path="/settings" element={<SettingsScreen />} />
           <Route path="/staffList" element={<DoctorStaffScreen />} />
 
           {/* we want to protect these routes */}
@@ -64,7 +64,7 @@ function App() {
             <Route element={<RequireAuth allowedRoles={["DOCTOR"]} />}>
               <Route path="register/faculty" element={<AddDoctorForm />} />
               <Route path="register/HPR" element={<PracticeDetails />} />
-              <Route path="/settings" element={<SettingsScreen />} />
+              
               <Route path="/calendar" element={<CalendarScreen />} />
               <Route path="/" element={<AllPatientList />} />
 

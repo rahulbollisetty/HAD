@@ -210,4 +210,49 @@ public class AuthService {
             staffDetailsRepository.save(staffDetails);
         }
     }
+
+    public String editFacility(JsonNode jsonNode) {
+        HospitalDetails hospitalDetails = hospitalDetailsRepository.findAll().getFirst();
+
+        String district = jsonNode.get("district").asText();
+        String[] districtParts = district.split("-");
+        String districtName = districtParts[0];
+        String districtCode = districtParts[1];
+        hospitalDetails.setDistrict(districtName);
+        hospitalDetails.setDistrict_code(Integer.valueOf(districtCode));
+
+        String state = jsonNode.get("state").asText();
+        String[] stateParts = state.split("-");
+        String stateName = stateParts[0];
+        String stateCode = stateParts[1];
+        hospitalDetails.setState_code(Integer.valueOf(stateCode));
+        hospitalDetails.setState(stateName);
+
+        String facilityName = jsonNode.get("clinicName").asText();
+        String facilityId = jsonNode.get("clinicId").asText();
+        String bridgeId = jsonNode.get("bridgeId").asText();
+        hospitalDetails.setPincode(jsonNode.get("pincode").asInt());
+        hospitalDetails.setAddress(jsonNode.get("addressLine").asText());
+        hospitalDetails.setHospital_name(facilityName);
+        hospitalDetails.setHospital_id(facilityId);
+        hospitalDetails.setSpecialization(jsonNode.get("specialization").asText());
+        hospitalDetailsRepository.save(hospitalDetails);
+
+        var values = new HashMap<String, String>() {{
+            put("facilityName", facilityName);
+            put("facilityId", facilityId);
+            put("bridgeId", bridgeId);
+        }};
+
+        String requestBody;
+        var objectMapper = new ObjectMapper();
+        try {
+            requestBody = objectMapper.writeValueAsString(values);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+        return webClient.post().uri("http://127.0.0.1:9008/abdm/hpr/registerFacility").contentType(MediaType.APPLICATION_JSON).body(BodyInserters.fromValue(requestBody)).retrieve().onStatus(HttpStatusCode::isError, clientResponse -> {
+            return clientResponse.bodyToMono(String.class).flatMap(errorBody -> Mono.error(new MyWebClientException(errorBody, clientResponse.statusCode().value())));
+        }).bodyToMono(String.class).block();
+    }
 }
