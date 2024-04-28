@@ -42,6 +42,7 @@ const DoctorList = () => {
               <AddDoctorForm />
             </>
           )}
+          <AddDoctorForm />
         </div>
       </div>
       <div className="flex flex-row m-4 justify-between items-center">
