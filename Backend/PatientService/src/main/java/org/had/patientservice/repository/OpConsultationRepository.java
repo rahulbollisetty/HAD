@@ -7,8 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
 public interface OpConsultationRepository extends JpaRepository<OpConsultation, Integer> {
-    @Override
-    Optional<OpConsultation> findById(Integer integer);
+    Optional<OpConsultation> findById(Integer id);
 
     Optional<OpConsultation> findByAppointmentDetails(AppointmentDetails appointmentDetails);
 }
