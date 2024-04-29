@@ -13,5 +13,7 @@ public interface StaffDetailsRepository extends JpaRepository<StaffDetails, Inte
 
     Optional<StaffDetails> findByLoginCredential(UserCredential user);
 
+    Optional<StaffDetails> findById(Integer id);
+
 //    Optional<StaffDetails> findByUsername(String username);
 }

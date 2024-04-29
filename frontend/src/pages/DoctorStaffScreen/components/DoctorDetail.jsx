@@ -21,9 +21,10 @@ const DoctorDetail = (doctor) => {
     setRole(decoded?.role.toLowerCase());
   }, []);
   const axiosPrivate = useAxiosPrivate();
-  const deleteDoctor = async (username) => {
+  const deleteDoctor = async (doctorId) => {
     const requestBody = {
-      username: username,
+      doctorId: doctorId,
+      role : "doctor"
     };
     try {
       const response = await axiosPrivate.post(
@@ -164,14 +165,14 @@ const DoctorDetail = (doctor) => {
               variant="filled"
               className="bg-[#FFA000]"
               onClick={() =>
-                deleteDoctor(doctor.doctor?.loginCredential?.username)
+                deleteDoctor(doctor.doctor?.doctor_Id)
               }
             >
               <span>Delete Doctor</span>
             </Button>
           )}
           {/* <Button variant="filled" className="bg-[#FFA000]"
-          onClick = {() => deleteDoctor(doctor.doctor?.loginCredential?.username)}
+          onClick = {() => deleteDoctor(doctor.doctor?.doctor_Id)}
           >
             <span>Delete Doctor</span>
           </Button> */}

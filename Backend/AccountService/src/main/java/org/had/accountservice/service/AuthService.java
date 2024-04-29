@@ -24,6 +24,7 @@ import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
+import java.sql.Ref;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -55,11 +56,15 @@ public class AuthService {
 
     @Autowired
     private HospitalDetailsRepository hospitalDetailsRepository;
+
     @Autowired
     private UserCredentialRepository userCredentialRepository;
+
     @Autowired
     private StaffDetailsRepository staffDetailsRepository;
 
+    @Autowired
+    private RefreshTokenRepository refreshTokenRepository;
 
     public String generateToken(String username, String role) {
         return jwtService.generateToken(username, role);
@@ -262,26 +267,28 @@ public class AuthService {
     }
 
     public void deleteFaculty(JsonNode jsonNode) {
-        String username = jsonNode.get("username").asText();
-        UserCredential userCredential = null;
-        String role = "";
-        if(userCredentialRepository.findByUsername(username).isPresent()) {
-            userCredential = userCredentialRepository.findByUsername(username).get();
-            role = userCredential.getRole();
-        }
+        String role = jsonNode.get("role").asText();
         switch(role) {
-            case "STAFF":
-                Optional<StaffDetails> staffDetails = staffDetailsRepository.findByLoginCredential(userCredential);
-                staffDetails.ifPresent(details -> staffDetailsRepository.delete(details));
-                userCredentialRepository.delete(userCredential);
+            case "staff":
+                Integer staffId = jsonNode.get("staffId").asInt();
+                Optional<StaffDetails> staffDetailsOptional = staffDetailsRepository.findById(staffId);
+                staffDetailsOptional.ifPresent(staffDetails -> {
+                    UserCredential staffUserCredentials = staffDetails.getLoginCredential();
+                    refreshTokenRepository.deleteByUser(staffUserCredentials);
+                    staffDetailsRepository.delete(staffDetails);
+                    userCredentialRepository.delete(staffUserCredentials);
+                });
                 break;
-            case "DOCTOR":
-                Optional<DoctorDetails> doctorDetails = doctorDetailsRepository.findByLoginCredential(userCredential);
-                doctorDetails.ifPresent(details -> doctorDetailsRepository.delete(details));
-                userCredentialRepository.delete(userCredential);
+            case "doctor":
+                Integer doctorId = jsonNode.get("doctorId").asInt();
+                Optional<DoctorDetails> doctorDetailsOptional = doctorDetailsRepository.findById(doctorId);
+                doctorDetailsOptional.ifPresent(doctorDetails -> {
+                    UserCredential doctorUserCredential = doctorDetails.getLoginCredential();
+                    refreshTokenRepository.deleteByUser(doctorUserCredential);
+                    doctorDetailsRepository.delete(doctorDetails);
+                    userCredentialRepository.delete(doctorUserCredential);
+                });
                 break;
-
         }
-
     }
 }
