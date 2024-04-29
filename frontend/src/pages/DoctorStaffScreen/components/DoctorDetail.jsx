@@ -129,27 +129,27 @@ const DoctorDetail = (doctor) => {
               </div>
             </div>
             <hr className="h-[3px] bg-[#7B7878] mx-2 mt-6 opacity-50	" />
-            <div className="grid grid-cols-3 place-items-center gap-3  text-[#7B7878] font-semibold text-l  p-5">
+            <div className="grid grid-cols-3  gap-3  text-[#7B7878] font-semibold text-l  p-5">
               <div className="flex flex-col  item-center">
-                <p className=" font-semibold ">Address Line</p>
-                <p className="text-black text-center font-medium ">
+                <p className=" font-semibold text-center">Address Line</p>
+                <p className="text-black text-left font-medium ">
                   {doctor.doctor.address}
                 </p>
               </div>
               <div className="flex flex-col item-center">
-                <p className=" font-semibold ">State</p>
+                <p className=" font-semibold text-center">State</p>
                 <p className="text-black text-center font-medium">
                   {doctor.doctor.state}
                 </p>
               </div>
               <div className="flex flex-col item-center">
-                <p className=" font-semibold ">Pincode</p>
+                <p className=" font-semibold text-center">Pincode</p>
                 <p className="text-black text-center font-medium">
                   {doctor.doctor.pincode}
                 </p>
               </div>
-              <div className="flex flex-col col-span-1 item-center px-0">
-                <p className=" pb-2 font-semibold">District</p>
+              <div className="flex flex-col col-span-1 px-0">
+                <p className=" pb-2 font-semibold text-center">District</p>
                 <p className="text-black text-center font-medium">
                   {doctor.doctor.district}
                 </p>

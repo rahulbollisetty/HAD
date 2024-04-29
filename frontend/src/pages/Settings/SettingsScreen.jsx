@@ -1,4 +1,4 @@
-import Sidebar from "../Sidebar";
+import BaseScreen from "../BaseScreen";
 import React, { useState, useEffect } from "react";
 import EditTab from "./components/EditTab";
 import StaffEdit from "./components/StaffEdit";
@@ -39,13 +39,8 @@ const SettingsScreen = () => {
     getUserDetails();
   }, [auth]);
   return (
-    <div className="flex flex-row w-full">
-      <div className="w-fit">
-        <Sidebar/>
-      </div>
-      <div className="flex flex-col w-full">
-        <TopBar />
-        <div className="basis-full bg-[#F1F5FC] overflow-hidden">
+ 
+
           <div className="flex flex-col h-full">
             {/* <div className="h-[64px] w-full pb-16 bg-white"></div> */}
             <div className="bg-white grow m-3">
@@ -59,9 +54,6 @@ const SettingsScreen = () => {
               </div>
             </div>
           </div>
-        </div>
-      </div>
-    </div>
   );
 };
 export default SettingsScreen;

@@ -1,4 +1,4 @@
-import Sidebar from "../Sidebar";
+import BaseScreen from "../BaseScreen";
 import React, { useState } from "react";
 import Calendar from "./Calendar";
 import moment from "moment";
@@ -8,13 +8,12 @@ import { useEffect } from "react";
 import useAuth from "../../hooks/useAuth";
 import { jwtDecode } from "jwt-decode";
 import { useNavigate } from "react-router-dom";
-import TopBar from "../TopBar";
 
 const CalendarScreen = () => {
   const axiosPrivate = useAxiosPrivate();
   const [AllDoctorList, setAllDoctorList] = useState([]);
   const [appointmentDetails, setAppointmentDetails] = useState([]);
-  const [currDoctorName, setCurrDoctorName] = useState("");
+  const [currDoctorId, setCurrDoctorId] = useState();
   const [event, setEvent] = useState([]);
   const [role, setRole] = useState("");
   const { auth } = useAuth();
@@ -31,6 +30,17 @@ const CalendarScreen = () => {
       );
       console.log(resp.data)
       setAppointmentDetails(resp.data);
+      const newEvents = resp.data.map((app) => ({
+      start: moment(app.date + "T" + app.time).toDate(),
+      end: moment(add15Minutes(app.date + "T" + app.time)).toDate(),
+      title: app.notes+" (Dr. "+app.doctor_name+")",
+      appointment_id: app.appointment_id,
+      status: app.status,
+      patientId: app.patientId?.mrn,
+      doctorId:app.doctor_id,
+      appStatus:app.status
+    }));
+    setEvent(newEvents);
     };
     getAllAppointments();
 
@@ -42,13 +52,13 @@ const CalendarScreen = () => {
     };
     getAllDoctorList();
     setRole(decoded?.role);
-    if(decoded?.role === "DOCTOR" || decoded?.role === "HEAD_DOCTOR")
-      setCurrDoctorName(decoded?.name);
+    // if(decoded?.role === "DOCTOR" || decoded?.role === "HEAD_DOCTOR")
+    //   setCurrDoctorName(decoded?.name);
   }, []);
 
   useEffect(() => {
     handleEvent();
-  }, [currDoctorName]);
+  }, [currDoctorId]);
 
   const add15Minutes = (datetimeString) => {
     const dateTime = moment(datetimeString);
@@ -58,44 +68,58 @@ const CalendarScreen = () => {
 
   const handleEvent = () => {
     const doctorAppointments = appointmentDetails.filter(
-      (appointment) => appointment.doctor_name == currDoctorName
+      (appointment) => appointment.doctor_id === currDoctorId
     );
+    console.log(doctorAppointments)
     const newEvents = doctorAppointments.map((app) => ({
       start: moment(app.date + "T" + app.time).toDate(),
       end: moment(add15Minutes(app.date + "T" + app.time)).toDate(),
-      title: app.notes,
+      title:  app.notes+" (Dr. "+app.doctor_name+")",
       appointment_id: app.appointment_id,
       status: app.status,
       patientId: app.patientId?.mrn,
+      doctorId:app.doctor_id,
+      appStatus:app.status
     }));
     setEvent(newEvents);
   };
 
-  const handleDoctorChange = (index) => {
-    const selectedDoctorName = AllDoctorList[index].doctor_name;
-    setCurrDoctorName(selectedDoctorName);
+  const handleDoctorChange = (id) => {
+    setCurrDoctorId(id);
+    handleEvent();
   };
+  
 
   const handleEventClick = (event) => {
-    navigate(
-      `/patientScreen/${event.patientId}/appointment/${event.appointment_id}`
-    );
+    navigate(`/patientScreen/${event.patientId}`,{ state: { appointmentId: event.appointment_id,appointmentStatus:event.appStatus } });
+    navigate(0);
+  };
+
+  const eventStyleGetter = (event) => {
+    const colorMap = {};
+    AllDoctorList.forEach((doctor, index) => {
+      const hue = (360 / AllDoctorList.length) * index;
+      colorMap[doctor.doctor_Id] = `hsl(${hue}, 50%, 50%)`;
+    });
+    const backgroundColor = colorMap[event.doctorId] || '#FFD700'; // Default color
+    console.log(backgroundColor)
+    return {
+      style: {
+        backgroundColor,
+      },
+    };
   };
 
   return (
-    <div className="flex flex-row w-full">
-      <div className="w-fit">
-        <Sidebar active_tab={"Calendar"} />
-      </div>
-      <div className="flex flex-col w-full bg-[#F1F5FC]">
-        <TopBar />
-        <div className="flex flex-col w-full mt-4 bg-white">
+     
+        <div className="flex flex-col w-full m-4 bg-white">
           <div className="w-full h-[4.5rem] flex justify-between">
             <div className="flex items-center">
-              {role !== "DOCTOR" && (
+              {role == "DOCTOR" && (
                 <select
                   className="bg-[#006666] rounded-[10px] text-white appearance-none font-semibold text-m"
                   name="doctor"
+                  value={currDoctorId}
                   onChange={(e) => handleDoctorChange(e.target.value)}
                   defaultValue=""
                 >
@@ -106,7 +130,7 @@ const CalendarScreen = () => {
                     <option
                       key={index}
                       className="font-light text-s option-hover"
-                      value={index}
+                      value={doctor.doctor_Id}
                     >
                       {doctor.first_Name} {doctor.last_Name}
                     </option>
@@ -116,16 +140,16 @@ const CalendarScreen = () => {
             </div>
           </div>
 
-          <div className="w-full h-full object-contain ">
+          <div className="w-full">
             <Calendar
               events={event}
               defaultView={"week"}
+              eventPropGetter={eventStyleGetter}
               onSelectEvent={handleEventClick}
+              style={{height: 800}}
             />
           </div>
         </div>
-      </div>
-    </div>
   );
 };
 export default CalendarScreen;

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import AddRecords from "./AddRecords";
 import ConsentTable from "./ConsentTable";
 import PastRecords from "./PastRecords";
@@ -41,9 +41,15 @@ function a11yProps(index) {
     "aria-controls": `simple-tabpanel-${index}`,
   };
 }
-
 export default function DoctorTab(id) {
-
+  console.log(id)
+useEffect(() => {
+  if(id.appointmentId && id.appointmentStatus){
+    setActiveTab(2);
+    setappointmentId(id.appointmentId);
+    setappointmentStatus(id.appointmentStatus);
+  }
+}, []);
   const [activeTab, setActiveTab] = useState(0);
   const [appointmentId, setappointmentId] = useState('');
   const [appointmentStatus, setappointmentStatus] = useState(false);

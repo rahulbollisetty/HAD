@@ -8,7 +8,7 @@ import {
 import { useState, useEffect } from "react";
 import PracticeEdit from "./PracticeEdit";
 import DoctorEdit from "./DoctorEdit";
-import Sidebar from "../../Sidebar";
+import BaseScreen from "../../BaseScreen";
 import StaffEdit from "./StaffEdit";
 import { jwtDecode } from "jwt-decode";
 import useAuth from "../../../hooks/useAuth";
@@ -37,7 +37,7 @@ const EditTab = () => {
   return (
     <div className="flex flex-row w-full">
       <div className="w-fit">
-        <Sidebar  />
+        <BaseScreen  />
       </div>
       <div className="flex flex-col w-full">
         <div className="w-full h-[4.5rem] flex flex-row-reverse p-2">

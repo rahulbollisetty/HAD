@@ -72,5 +72,6 @@ public class DoctorDetails {
 
     @OneToOne(targetEntity = UserCredential.class, cascade = CascadeType.ALL)
     @JoinColumn(name = "login_id", referencedColumnName = "UserCred_id", unique = true)
+    @JsonIgnore
     private UserCredential loginCredential;
 }

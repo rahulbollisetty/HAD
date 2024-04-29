@@ -12,8 +12,6 @@ import {
 import AddAppointmentForm from "../forms/AddAppointmentForm";
 
 function PastRecords({ patientId, sendDataToParent }) {
-
-  
   const [AppointmentDetailsList, setAppointmentDetailsList] = useState([]);
   const axiosPrivate = useAxiosPrivate();
 
@@ -40,7 +38,7 @@ function PastRecords({ patientId, sendDataToParent }) {
         <AddAppointmentForm patientId={patientId} />
       </div>
       <div className="h-[1px] bg-[#827F7F82]"></div>
-      <div className="sm:rounded-lg 2xl:max-h-[500px] 4xl:max-h-[800px] lg:max-h-[50px] flex flex-col overflow-auto">
+      <div className="sm:rounded-lg 2xl:max-h-[600px] 4xl:max-h-[800px] lg:max-h-[50px] flex flex-col overflow-auto">
         <table className="w-full text-sm text-left rtl:text-right text-gray-500">
           <thead className="text-xs text-gray-700 uppercase h-[4.5rem] bg-gray-50 bg-[#F5F6F8] text-[#7B7878] sticky top-0">
             <tr className="text-sm">
@@ -63,30 +61,50 @@ function PastRecords({ patientId, sendDataToParent }) {
             </tr>
           </thead>
           <tbody className="text-sm text-[#444]">
-            {AppointmentDetailsList.map((item, index) => (
-              <tr className="bg-white border " key={item.appointment_id}>
-                <th
-                  scope="row"
-                  className="px-6 py-4 font-medium text-[#444] whitespace-nowrap"
-                >
-                  {item.doctor_name}
-                </th>
-                <td className="px-6 py-4">{item.date}</td>
-                <td className="px-6 py-4">{item.time}</td>
-                <td className="px-6 py-4">{item.status}</td>
-                <td className="px-6 py-4">{item.notes}</td>
-                <td className="px-6 py-4 text-right">
-                  <button
-                    className="inline-flex justify-center items-center gap-[10px] rounded-lg
-                                        border border-[#787887] bg-[#F5FEF2] text-[20px] text-[#02685A] font-semibold p-2.5"
-                                        onClick={()=>{sendDataToParent(item.appointment_id, item.status === "Completed")}}
+            {AppointmentDetailsList.length === 0 ? (
+              <>
+                <tr>
+                  <td
+                    colSpan={5}
+                    className="text-center text-zinc-600 bg-gray-200 p-6 rounded-bottom-lg font-bold text-[20px]"
                   >
-                    <div>View</div>
-                    <FaCaretRight className="h-[25px] w-[25px]" />
-                  </button>
-                </td>
-              </tr>
-            ))}
+                    No records to display
+                  </td>
+                </tr>
+              </>
+            ) : (
+              <>
+                {AppointmentDetailsList.map((item, index) => (
+                  <tr className="bg-white border " key={item.appointment_id}>
+                    <th
+                      scope="row"
+                      className="px-6 py-4 font-medium text-[#444] whitespace-nowrap"
+                    >
+                      {item.doctor_name}
+                    </th>
+                    <td className="px-6 py-4">{item.date}</td>
+                    <td className="px-6 py-4">{item.time}</td>
+                    <td className="px-6 py-4">{item.status}</td>
+                    <td className="px-6 py-4">{item.notes}</td>
+                    <td className="px-6 py-4 text-right">
+                      <button
+                        className="inline-flex justify-center items-center gap-[10px] rounded-lg
+                                        border border-[#787887] bg-[#F5FEF2] text-[20px] text-[#02685A] font-semibold p-2.5"
+                        onClick={() => {
+                          sendDataToParent(
+                            item.appointment_id,
+                            item.status === "Completed"
+                          );
+                        }}
+                      >
+                        <div>View</div>
+                        <FaCaretRight className="h-[25px] w-[25px]" />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </>
+            )}
           </tbody>
         </table>
       </div>
