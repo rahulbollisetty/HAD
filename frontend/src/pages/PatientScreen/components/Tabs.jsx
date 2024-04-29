@@ -47,7 +47,7 @@ useEffect(() => {
   if(id.appointmentId && id.appointmentStatus){
     setActiveTab(2);
     setappointmentId(id.appointmentId);
-    setappointmentStatus(id.appointmentStatus);
+    setappointmentStatus(id.appointmentStatus==="Completed");
   }
 }, []);
   const [activeTab, setActiveTab] = useState(0);
