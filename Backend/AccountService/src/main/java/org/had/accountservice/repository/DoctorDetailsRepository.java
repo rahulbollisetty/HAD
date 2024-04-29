@@ -15,5 +15,4 @@ public interface DoctorDetailsRepository extends JpaRepository<DoctorDetails, In
 
     Optional<DoctorDetails> findById(Integer id);
 
-    void delete(Optional<StaffDetails> staffDetails);
 }

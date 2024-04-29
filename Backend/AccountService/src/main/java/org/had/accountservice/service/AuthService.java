@@ -274,7 +274,8 @@ public class AuthService {
                 Optional<StaffDetails> staffDetailsOptional = staffDetailsRepository.findById(staffId);
                 staffDetailsOptional.ifPresent(staffDetails -> {
                     UserCredential staffUserCredentials = staffDetails.getLoginCredential();
-                    refreshTokenRepository.deleteByUser(staffUserCredentials);
+                    if(refreshTokenRepository.existsByUser(staffUserCredentials))
+                        refreshTokenRepository.deleteByUser(staffUserCredentials);
                     staffDetailsRepository.delete(staffDetails);
                     userCredentialRepository.delete(staffUserCredentials);
                 });
@@ -284,7 +285,8 @@ public class AuthService {
                 Optional<DoctorDetails> doctorDetailsOptional = doctorDetailsRepository.findById(doctorId);
                 doctorDetailsOptional.ifPresent(doctorDetails -> {
                     UserCredential doctorUserCredential = doctorDetails.getLoginCredential();
-                    refreshTokenRepository.deleteByUser(doctorUserCredential);
+                    if (refreshTokenRepository.existsByUser(doctorUserCredential))
+                        refreshTokenRepository.deleteByUser(doctorUserCredential);
                     doctorDetailsRepository.delete(doctorDetails);
                     userCredentialRepository.delete(doctorUserCredential);
                 });
