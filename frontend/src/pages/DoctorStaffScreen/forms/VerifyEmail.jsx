@@ -3,6 +3,7 @@ import useAxiosPrivate from "../../../hooks/useAxiosPrivate";
 import { toast } from "react-toastify";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import Loading from "../../../utilComponents/Loading";
 
 export default function VerifyEmail() {
   const axiosPrivate = useAxiosPrivate();
@@ -30,6 +31,7 @@ export default function VerifyEmail() {
           resp.data == "Verification Token Expired"
         ) {
           toast.error(resp.data);
+          navigate("/login")
         } else {
           toast.success(resp.data);
           if (role === "HEAD_DOCTOR") role = role.slice(5);
@@ -45,5 +47,5 @@ export default function VerifyEmail() {
     verifyToken();
   }, []);
 
-  return <div>Wait till the token gets verified</div>;
+  return <Loading />;
 }

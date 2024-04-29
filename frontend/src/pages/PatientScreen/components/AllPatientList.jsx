@@ -3,14 +3,11 @@ import { FaCaretRight } from "react-icons/fa";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useAxiosPrivate from "../../../hooks/useAxiosPrivate";
-import { Link } from "react-router-dom";
 
 import AddPatientForm from "../forms/AddPatientForm";
-import BaseScreen from "../../BaseScreen";
-import TopBar from "../../TopBar";
+
 import { jwtDecode } from "jwt-decode";
 import useAuth from "../../../hooks/useAuth";
-import { PatientScreen } from "../PatientScreen";
 
 const AllPatientList = (props) => {
   const axiosPrivate = useAxiosPrivate();
@@ -58,7 +55,11 @@ const AllPatientList = (props) => {
                   <MdSearch className="h-[25px] w-[25px]" />
                 </div>
               </div>
-              <AddPatientForm />
+              {role === "STAFF" && (
+                <>
+                  <AddPatientForm />
+                </>
+              )}
             </div>
           </div>
           <div className="bg-[#827F7F82]  h-[0.5px] mx-8 my-4"></div>

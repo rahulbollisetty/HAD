@@ -28,7 +28,7 @@ import DoctorEdit from "./pages/Settings/components/DoctorEdit";
 import EditTab from "./pages/Settings/components/EditTab";
 import StaffEdit from "./pages/Settings/components/StaffEdit";
 import { Settings } from "@mui/icons-material";
-import BaseScreen from './pages/BaseScreen';
+import BaseScreen from "./pages/BaseScreen";
 import AllPatientList from "./pages/PatientScreen/components/AllPatientList";
 function App() {
   return (
@@ -60,14 +60,26 @@ function App() {
 
           {/* we want to protect these routes */}
           <Route element={<PersistLogin />}>
-            <Route element={<RequireAuth allowedRoles={["DOCTOR"]}/>}>
+            <Route element={<RequireAuth allowedRoles={["DOCTOR","STAFF"]} />}>
               <Route path="register/faculty" element={<AddDoctorForm />} />
+              <Route
+                path="/"
+                element={<BaseScreen active_tab={"All Patient"} />}
+              />
               <Route path="register/HPR" element={<PracticeDetails />} />
-              
-          <Route path="/settings" element={<BaseScreen active_tab={"Settings"}/>} />
-          <Route path="/stafflist" element={<BaseScreen active_tab={"Doctor List"} />} />
-              <Route path="/calendar" element={<BaseScreen active_tab={"Calendar"} />} />
-              <Route path="/" element={<BaseScreen active_tab={"All Patient"} />} />
+
+              <Route
+                path="/settings"
+                element={<BaseScreen active_tab={"Settings"} />}
+              />
+              <Route
+                path="/stafflist"
+                element={<BaseScreen active_tab={"Doctor List"} />}
+              />
+              <Route
+                path="/calendar"
+                element={<BaseScreen active_tab={"Calendar"} />}
+              />
 
               {/* <Route path="/calendar" element={<BaseScreen active_tab={"Calendar"} />} /> */}
 
@@ -75,9 +87,6 @@ function App() {
                 path="/patientScreen/:id"
                 element={<BaseScreen active_tab={"All Patient"} />}
               />
-
-             
-             
             </Route>
 
             {/* <Route element={<RequireAuth allowedRoles={[ROLES.Editor]} />}>
