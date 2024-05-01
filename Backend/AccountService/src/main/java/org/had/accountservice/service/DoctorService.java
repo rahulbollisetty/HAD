@@ -43,10 +43,10 @@ public class DoctorService {
     @Value("${abdm.url}")
     private String abdmUrl;
 
-    public String getDoctorDetails(String hprId, String password){
+    public String getDoctorDetails(String otp, String txnId){
         var values = new HashMap<String, String>() {{
-            put("hprId",hprId);
-            put("password",password);
+            put("otp",otp);
+            put("txnId",txnId);
         }};
 
         String requestBody = null;
@@ -58,6 +58,30 @@ public class DoctorService {
         }
 
         return webClient.post().uri(abdmUrl+"/abdm/hpr/getdoctordetails")
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(BodyInserters.fromValue(requestBody))
+                .retrieve()
+                .onStatus(HttpStatusCode::isError, clientResponse -> {
+                    return clientResponse.bodyToMono(String.class)
+                            .flatMap(errorBody -> Mono.error(new MyWebClientException(errorBody, clientResponse.statusCode().value())));
+                })
+                .bodyToMono(String.class).block();
+    }
+
+    public String generateAadharOTPHPR(String hprId){
+        var values = new HashMap<String, String>() {{
+            put("hprId",hprId);
+        }};
+
+        String requestBody = null;
+        var objectMapper = new ObjectMapper();
+        try {
+            requestBody = objectMapper.writeValueAsString(values);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+
+        return webClient.post().uri(abdmUrl+"/abdm/hpr/generateAadharOTPHPR")
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(BodyInserters.fromValue(requestBody))
                 .retrieve()
