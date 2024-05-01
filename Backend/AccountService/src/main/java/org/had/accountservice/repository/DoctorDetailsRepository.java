@@ -6,6 +6,7 @@ import org.had.accountservice.entity.UserCredential;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import javax.print.Doc;
 import java.util.Optional;
 
 @Repository
@@ -14,5 +15,7 @@ public interface DoctorDetailsRepository extends JpaRepository<DoctorDetails, In
     Optional<DoctorDetails> findByLoginCredential(UserCredential user);
 
     Optional<DoctorDetails> findById(Integer id);
+
+    Optional<DoctorDetails> findByEmail(String email);
 
 }

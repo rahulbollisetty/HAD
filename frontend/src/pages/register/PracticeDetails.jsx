@@ -26,43 +26,43 @@ function PracticeDetails() {
           "http://127.0.0.1:9005/patient/getLgdStatesList"
         );
         setStates(response.data);
-        console.log(response.data);
+        // console.log(response.data);
       } catch (error) {
-        console.error("Error fetching data:", error);
+        // console.error("Error fetching data:", error);
       }
     };
-    console.log(getValues());
+    // console.log(getValues());
 
     getStates();
   }, []);
 
   const onSubmit = async () => {
-    console.log(getValues());
+    // console.log(getValues());
 
     try {
       const resp = await axiosPrivate.post(
         "http://127.0.0.1:9005/auth/registerFacility",
         getValues()
       );
-      console.log(resp);
+      // console.log(resp);
       if (resp.status === 200) {
         toast.success(resp.data.status);
         // navigate("/login");
       }
     } catch (error) {
-      console.log(error);
+      // console.log(error);
       toast.error(error.response.data);
     }
   };
   const handleDistrict = (event) => {
-    console.log(event);
+    // console.log(event);
     const selectedState = states[event].districts;
-    console.log(selectedState);
+    // console.log(selectedState);
     setdistrict(selectedState);
-    console.log(states);
+    // console.log(states);
     setValue("state", `${states[event].name}-${states[event].code}`);
   };
-  console.log(states);
+  // console.log(states);
   return (
     <div className="bg-white h-screen">
       <div className="bg-white  mx-10 my-4 h-screen mb-12 ">

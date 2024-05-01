@@ -24,7 +24,7 @@ function AddPatientForm() {
   } = useForm();
 
   const handleDataFromAbhaVerify = (data) => {
-    console.log(data);
+    // console.log(data);
     setValue("name", data.auth.patient.name || "");
     setValue("gender", data.auth.patient.gender);
     setValue("mobileNumber", data.auth.patient.identifiers[0].value || "");
@@ -37,12 +37,12 @@ function AddPatientForm() {
     let month = String(data.auth.patient.monthOfBirth).padStart(2, "0");
     let day = String(data.auth.patient.dayOfBirth).padStart(2, "0");
     const dob = `${data.auth.patient.yearOfBirth}-${month}-${day}`;
-    console.log(dob);
+    // console.log(dob);
     setValue("dob", dob || "");
   };
 
   const handleDataFromAbhaRegister = (data) => {
-    console.log(data);
+    // console.log(data);
     setValue("name", data.name || "");
     setValue("gender", data.gender);
     setValue("dob", data.dob || "");
@@ -68,7 +68,7 @@ function AddPatientForm() {
         );
         setStates(response.data);
       } catch (error) {
-        console.error("Error fetching data:", error);
+        // console.error("Error fetching data:", error);
       }
     }
   };
@@ -338,10 +338,10 @@ function AddPatientForm() {
                   "http://127.0.0.1:9005/patient/savePatient",
                   getValues()
                 );
-                console.log(resp);
+                // console.log(resp);
                 toast.success(resp.data);
               } catch (error) {
-                console.log(error);
+                // console.log(error);
                 toast.error(error.response.data);
               }
               setOpen(!openDialog);

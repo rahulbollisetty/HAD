@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 import useAuth from "../../../hooks/useAuth";
 import { jwtDecode } from "jwt-decode";
 import { axiosPrivate } from "../../../api/axios";
+import { toast } from "react-toastify";
 
 const StaffDetail = (staff) => {
   const { auth } = useAuth();
@@ -23,18 +24,21 @@ const StaffDetail = (staff) => {
   const deleteStaff = async (staff_Id) => {
     const requestBody = {
       staffId: staff_Id,
-      role : "staff"
+      role: "staff",
     };
     try {
       const response = await axiosPrivate.post(
         `http://127.0.0.1:9005/auth/deleteFaculty`,
         requestBody
       );
-      console.log(response.data);
+      // console.log(response.data);
+      toast.success(response.data);
     } catch (err) {
-      console.log(err);
+      // console.log(err);
+      toast.error(err);
       if (!err?.response) {
-        console.error("No Server Response");
+        // console.error("No Server Response");
+        toast.error("No Server Response");
       }
     }
   };
@@ -126,32 +130,38 @@ const StaffDetail = (staff) => {
             <div className="grid grid-cols-3 place-items-center gap-3  text-[#7B7878] font-semibold text-l  p-5">
               <div className="flex flex-col  item-center">
                 <p className=" font-semibold ">Address Line*</p>
-                <p className="text-black text-center font-medium">{staff.staff.address}</p>
+                <p className="text-black text-center font-medium">
+                  {staff.staff.address}
+                </p>
               </div>
               <div className="flex flex-col item-center">
                 <p className=" font-semibold ">State</p>
-                <p className="text-black text-center font-medium">{staff.staff.state}</p>
+                <p className="text-black text-center font-medium">
+                  {staff.staff.state}
+                </p>
               </div>
               <div className="flex flex-col item-center">
                 <p className=" font-semibold ">District</p>
-                <p className="text-black text-center font-medium">{staff.staff.district}</p>
+                <p className="text-black text-center font-medium">
+                  {staff.staff.district}
+                </p>
               </div>
               <div className="flex flex-col col-span-1 item-center px-0">
                 <p className=" pb-2 font-semibold">Pincode</p>
-                <p className="text-black text-center font-medium">{staff.staff.pincode}</p>
+                <p className="text-black text-center font-medium">
+                  {staff.staff.pincode}
+                </p>
               </div>
             </div>
           </div>
           <hr className="h-[3px] bg-[#7B7878] mx-2 mt-6 opacity-50	" />
         </DialogBody>
         <DialogFooter>
-        {role === "head_doctor" && (
+          {role === "head_doctor" && (
             <Button
               variant="filled"
               className="bg-[#FFA000]"
-              onClick={() =>
-                deleteStaff(staff.staff?.staff_Id)
-              }
+              onClick={() => deleteStaff(staff.staff?.staff_Id)}
             >
               <span>Delete Staff</span>
             </Button>

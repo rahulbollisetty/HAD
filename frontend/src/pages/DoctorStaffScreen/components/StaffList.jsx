@@ -20,11 +20,11 @@ const StaffList = () => {
         const response = await axiosPrivate.get(
           `http://127.0.0.1:9005/auth/getAllStaffList`
         );
-        console.log(response.data);
+        // console.log(response.data);
         setAllStaffList(response.data);
       } catch (err) {
         if (!err?.response) {
-          console.error("No Server Response");
+          // console.error("No Server Response");
         }
       }
     };

@@ -52,7 +52,7 @@ function AbhaVerify({sendDataToParent}) {
                 onClick={handleSubmit1(async () => {
                   const data = {
                     patientSBXId: getValues1("patientSBXId"),
-                    requesterId: "IN2210000258",
+                    requesterId: "IN2210000258", // change this with jwt hospital Id
                     requesterType: "HIP",
                   };
 
@@ -74,18 +74,18 @@ function AbhaVerify({sendDataToParent}) {
                         abortController.abort();
                       },
                       onclose(resp) {
-                        console.log(resp);
+                        // console.log(resp);
                         abortController.abort();
                       },
                       onerror(error) {
-                        console.log(error);
+                        // console.log(error);
                         abortController.abort();
                         throw new Error(error);
                       },
                       signal: abortController.signal,
                     });
                   } catch (err) {
-                    console.log(err);
+                    // console.log(err);
                   }
                 })}
               >
@@ -177,18 +177,18 @@ function AbhaVerify({sendDataToParent}) {
                       abortController.abort();
                     },
                     onclose(resp) {
-                      console.log(resp);
+                      // console.log(resp);
                       abortController.abort();
                     },
                     onerror(error) {
-                      console.log(error);
+                      // console.log(error);
                       abortController.abort();
                       throw new Error(error);
                     },
                     signal: abortController.signal,
                   });
                 } catch (err) {
-                  console.log(err);
+                  // console.log(err);
                   //   toast.error(err);
                 }
               })}

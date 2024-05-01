@@ -22,10 +22,10 @@ function ImageUploader(appointment_id) {
           "Content-Type": "multipart/form-data",
         },
       });
-      console.log(resp);
-      console.log("File uploaded successfully");
+      // console.log(resp);
+      // console.log("File uploaded successfully");
     } catch (error) {
-      console.error("Error uploading file:", error);
+      // console.error("Error uploading file:", error);
     }
   };
 

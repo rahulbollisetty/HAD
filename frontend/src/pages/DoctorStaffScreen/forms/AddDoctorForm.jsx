@@ -24,19 +24,19 @@ const AddDoctorForm = () => {
   const axiosPrivate = useAxiosPrivate();
 
   const onSubmit = async () => {
-    console.log(getValues())
+    // console.log(getValues())
     try {
       const resp = await axiosPrivate.post(
         "http://127.0.0.1:9005/auth/sendEmail",
         getValues()
       );
-      console.log(resp);
+      // console.log(resp);
       if (resp.status === 200) {
         toast.success(resp.data.status);
         // navigate("/login");
       }
     } catch (error) {
-      console.log(error);
+      // console.log(error);
       toast.error(error.response.data);
     }
   };

@@ -85,7 +85,7 @@ function AddConsentForm({ patientDetails, sendDataToParent }) {
         body: JSON.stringify(formattedData),
         onmessage(response) {
           var status = JSON.parse(response.data).statusCodeValue;
-          if (status >= 400) console.error(JSON.parse(response.data).body);
+          if (status >= 400) toast.error(response.data)
           else if (status === 200) {
             sendDataToParent(true);
             toast.success(JSON.parse(response.data).body);
@@ -94,18 +94,18 @@ function AddConsentForm({ patientDetails, sendDataToParent }) {
           abortController.abort();
         },
         onclose(resp) {
-          console.log(resp);
+          // console.log(resp);
           abortController.abort();
         },
         onerror(error) {
-          console.log(error);
+          // console.log(error);
           abortController.abort();
           throw new Error(error);
         },
         signal: abortController.signal,
       });
     } catch (err) {
-      console.log(err);
+      // console.log(err);
       //   toast.error(err);
     }
   };

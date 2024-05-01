@@ -1,10 +1,13 @@
 import { useEffect, useState } from "react";
-import DoctorEdit from "./DoctorEdit";
 import { Button } from "@material-tailwind/react";
 import useAxiosPrivate from "../../../hooks/useAxiosPrivate";
 import { useForm } from "react-hook-form";
+import useAuth from "../../../hooks/useAuth";
+import { jwtDecode } from "jwt-decode";
+import ChangePasswordDialog from "./ChangePasswordDialog";
+import { toast } from "react-toastify";
 
-const StaffEdit = () => {
+const StaffEdit = (userDetails) => {
   const {
     register,
     handleSubmit,
@@ -14,74 +17,53 @@ const StaffEdit = () => {
     formState: { errors },
   } = useForm();
   const axiosPrivate = useAxiosPrivate();
-  const [userDetails, setUserDetails] = useState({});
   const [states, setStates] = useState([]);
+  const { auth } = useAuth();
   const [role, setRole] = useState("");
-  const [username, setUsername] = useState("");
+  const decoded = auth?.accessToken ? jwtDecode(auth.accessToken) : undefined;
   const [district, setdistrict] = useState([]);
   useEffect(() => {
-    const username = localStorage.getItem("username");
-    setUsername(username);
-    const role = localStorage.getItem("role");
-    setRole(localStorage.getItem("role"));
-    const requestBody = {
-      username: username,
-    };
-    const getUserDetails = async () => {
-      try {
-        const response = await axiosPrivate.post(
-          `http://127.0.0.1:9005/auth/get-${role.toLocaleLowerCase()}-details-by-username`,
-          requestBody
-        );
-        console.log(response.data);
-        setUserDetails(response.data);
-      } catch (err) {
-        if (!err?.response) {
-          console.error("No Server Response");
-        }
-      }
-    };
-    getUserDetails();
-
     const getStates = async () => {
       try {
         const response = await axiosPrivate.post(
           "http://127.0.0.1:9005/patient/getLgdStatesList"
         );
         setStates(response.data);
-        console.log(response.data);
+        // console.log(response.data);
       } catch (error) {
-        console.error("Error fetching data:", error);
+        // console.error("Error fetching data:", error);
       }
     };
     console.log(getValues());
-
+    setRole(decoded?.role);
     getStates();
   }, []);
 
   const handleDistrict = (event) => {
-    console.log(event);
+    // console.log(event);
     const selectedState = states[event].districts;
-    console.log(selectedState);
+    // console.log(selectedState);
     setdistrict(selectedState);
-    console.log(states);
+    // console.log(states);
     setValue("state", `${states[event].name}-${states[event].code}`);
   };
 
   const onSubmit = async () => {
-    setValue("role", role.toLowerCase());
-    setValue("username", username);
-    console.log(getValues());
+    setValue("role", decoded?.role.toLowerCase());
+    setValue("username", decoded?.sub);
+    // console.log(getValues());
     try {
       const response = await axiosPrivate.post(
         `http://127.0.0.1:9005/auth/editDetails`,
         getValues()
       );
-      console.log(response.data);
-      setUserDetails(response.data);
+      toast.success(response.data);
+      // console.log(response.data);
+      // setUserDetails(response.data);
     } catch (err) {
       if (!err?.response) {
-        console.error("No Server Response");
+        // console.error("No Server Response");
+        toast.error("No Server Response");
       }
     }
   };
@@ -101,7 +83,8 @@ const StaffEdit = () => {
                 <span className="font-semibold flex ml-auto mr-20 text-[#7B7878]">
                   Name*
                   <p className="ml-6 text-black font-medium">
-                    {userDetails.first_Name} {userDetails.last_Name}
+                    {userDetails.userDetails.first_Name}{" "}
+                    {userDetails.userDetails.last_Name}
                   </p>
                 </span>
               </div>
@@ -109,7 +92,7 @@ const StaffEdit = () => {
                 <span className="font-semibold flex mr-20 text-[#7B7878]">
                   Registration Number*
                   <p className="ml-6 text-black font-medium">
-                    {userDetails.registration_number}
+                    {userDetails.userDetails.registration_number}
                   </p>
                 </span>
               </div>
@@ -117,7 +100,7 @@ const StaffEdit = () => {
                 <span className="font-semibold flex ml-auto mr-20 text-[#7B7878]">
                   Date of Birth
                   <p className="ml-6 text-black font-medium">
-                    {userDetails.dob}
+                    {userDetails.userDetails.dob}
                   </p>
                 </span>
               </div>
@@ -129,7 +112,7 @@ const StaffEdit = () => {
                 <span className="font-semibold flex ml-auto mr-20 text-[#7B7878]">
                   Gender
                   <p className="ml-6 text-black font-medium">
-                    {userDetails.gender}
+                    {userDetails.userDetails.gender}
                   </p>
                 </span>
               </div>
@@ -154,14 +137,14 @@ const StaffEdit = () => {
                   {...register("mobileNumber", { required: true })}
                 />
               </div>
-              {/* <div className="flex flex-col">
+              <div className="flex flex-col">
                 <p className="text-xl pb-2 font-medium">Email Address</p>
                 <input
                   className="rounded-md w-full"
                   type="text"
                   {...register("email", { required: true })}
                 />
-              </div> */}
+              </div>
               <div className="flex flex-col"></div>
             </div>
             <hr className="h-[3px] bg-[#7B7878] mx-2 mt-6 opacity-50	" />
@@ -230,10 +213,36 @@ const StaffEdit = () => {
               />
             </div>
             <hr className="h-[3px] bg-[#7B7878] mx-2 mt-6 opacity-50	" />
-            <div className="flex flex-row-reverse  gap-5 text-[#7B7878] font-medium text-xl mr-10 p-5">
-              <Button variant="filled" className="bg-[#FFA000]" type="submit">
+            <div className="flex flex-row  gap-5 text-[#7B7878] font-medium text-xl m-10 p-5">
+              <div className="items-start font-medium text-white justify-center px-4 py-2 bg-[#FFA000] rounded cursor-pointer">
+                {role === "STAFF" ? (
+                  <>
+                    {/* Change it accordingly for staffID */}
+                    <ChangePasswordDialog
+                      id={userDetails.userDetails.staff_Id}
+                      role={role}
+                    />
+                    Hello
+                  </>
+                ) : (
+                  <>
+                    <ChangePasswordDialog
+                      id={userDetails.userDetails.doctor_Id}
+                      role={role}
+                    />
+                  </>
+                )}
+              </div>
+              <Button
+                variant="filled"
+                className="bg-[#FFA000] ml-auto"
+                type="submit"
+              >
                 <span>Save</span>
               </Button>
+              {/* <Button variant="filled" className="ml-auto bg-[#FFA000]" type="submit">
+                <span>Save</span>
+              </Button> */}
             </div>
           </form>
         </div>

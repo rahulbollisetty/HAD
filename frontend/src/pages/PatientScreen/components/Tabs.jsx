@@ -57,13 +57,13 @@ export default function DoctorTab(id) {
   const [appointmentId, setappointmentId] = useState("");
   const [appointmentStatus, setappointmentStatus] = useState(false);
   const handleDataFromPastRecords = (data, status) => {
-    console.log(data, status);
+    // console.log(data, status);
     setActiveTab(2);
     setappointmentId(data);
     setappointmentStatus(status);
   };
   const handleDataFromAddRecords = (data) => {
-    console.log(data);
+    // console.log(data);
     setActiveTab(0);
     toast.info(data);
   };

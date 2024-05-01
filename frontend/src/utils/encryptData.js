@@ -28,7 +28,7 @@ const encryptData = (dataToEncrypt) => {
 
     return encryptedDataString;
   } catch (error) {
-    console.error("Encryption error:", error);
+    // console.error("Encryption error:", error);
     return null;
   }
 };

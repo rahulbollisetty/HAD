@@ -24,7 +24,6 @@ import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
-import java.sql.Ref;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -65,6 +64,9 @@ public class AuthService {
 
     @Autowired
     private RefreshTokenRepository refreshTokenRepository;
+
+    @Autowired
+    private ForgotPasswordRepository forgotPasswordRepository;
 
     public String generateToken(String username, String role) {
         return jwtService.generateToken(username, role);
@@ -109,7 +111,6 @@ public class AuthService {
         }
         return "Email Sent";
     }
-
 
     public String registerFacility(JsonNode jsonNode) {
         String address = jsonNode.get("address").asText();
@@ -197,10 +198,21 @@ public class AuthService {
         if (doctorDetailsRepository.findByLoginCredential(userCredential).isPresent()) {
             DoctorDetails doctorDetails = doctorDetailsRepository.findByLoginCredential(userCredential).get();
             doctorDetails.setAddress(jsonNode.get("addressLine").asText());
-            doctorDetails.setDistrict(jsonNode.get("district").asText());
-            doctorDetails.setState(jsonNode.get("state").asText());
+            String district = jsonNode.get("district").asText();
+            String state = jsonNode.get("state").asText();
+            String[] districtParts = district.split("-");
+            String districtName = districtParts[0];
+            String districtCode = districtParts[1];
+            String[] stateParts = state.split("-");
+            String stateName = stateParts[0];
+            String stateCode = stateParts[1];
+            doctorDetails.setDistrict(districtName);
+            doctorDetails.setState(stateName);
+            doctorDetails.setDistrict_Code(Integer.valueOf(districtCode));
+            doctorDetails.setState_Code(Integer.valueOf(stateCode));
             doctorDetails.setPincode(jsonNode.get("pincode").asInt());
             doctorDetails.setMobile(jsonNode.get("mobileNumber").asText());
+            doctorDetails.setEmail(jsonNode.get("email").asText());
             doctorDetailsRepository.save(doctorDetails);
         }
     }
@@ -209,10 +221,17 @@ public class AuthService {
         if (staffDetailsRepository.findByLoginCredential(userCredential).isPresent()) {
             StaffDetails staffDetails = staffDetailsRepository.findByLoginCredential(userCredential).get();
             staffDetails.setAddress(jsonNode.get("addressLine").asText());
-            staffDetails.setDistrict(jsonNode.get("district").asText());
-            staffDetails.setState(jsonNode.get("state").asText());
+            String district = jsonNode.get("district").asText();
+            String state = jsonNode.get("state").asText();
+            String[] districtParts = district.split("-");
+            String districtName = districtParts[0];
+            String[] stateParts = state.split("-");
+            String stateName = stateParts[0];
+            staffDetails.setDistrict(districtName);
+            staffDetails.setState(stateName);
             staffDetails.setPincode(jsonNode.get("pincode").asText());
             staffDetails.setMobile(jsonNode.get("mobileNumber").asText());
+            staffDetails.setEmail(jsonNode.get("email").asText());
             staffDetailsRepository.save(staffDetails);
         }
     }
@@ -292,5 +311,115 @@ public class AuthService {
                 });
                 break;
         }
+    }
+
+    public void changePassword(JsonNode jsonNode) {
+        String role = jsonNode.get("id").get("role").asText();
+        String id = jsonNode.get("id").get("id").asText();
+        String oldPassword = jsonNode.get("oldPassword").asText();
+        String newPassword = jsonNode.get("newPassword").asText();
+
+        if (role.equals("STAFF")) {
+            Optional<StaffDetails> staffDetails = staffDetailsRepository.findById(Integer.valueOf(id));
+            UserCredential userCredential = staffDetails.get().getLoginCredential();
+            RefreshToken refreshToken = refreshTokenRepository.findByUser(userCredential).get();
+            refreshTokenRepository.delete(refreshToken);
+            if (staffDetails.isPresent()) {
+                String password = userCredential.getPassword();
+                if (passwordEncoder.matches(oldPassword, password)) {
+                    String newEncryptedPassword = passwordEncoder.encode(newPassword);
+                    userCredential.setPassword(newEncryptedPassword);
+                    userCredentialRepository.save(userCredential);
+                }
+            }
+        } else {
+            Optional<DoctorDetails> doctorDetails = doctorDetailsRepository.findById(Integer.valueOf(id));
+            UserCredential userCredential = doctorDetails.get().getLoginCredential();
+            RefreshToken refreshToken = refreshTokenRepository.findByUser(userCredential).get();
+            refreshTokenRepository.delete(refreshToken);
+            if (doctorDetails.isPresent()) {
+                String password = userCredential.getPassword();
+                if (passwordEncoder.matches(oldPassword, password)) {
+                    String newEncryptedPassword = passwordEncoder.encode(newPassword);
+                    userCredential.setPassword(newEncryptedPassword);
+                    userCredentialRepository.save(userCredential);
+                }
+            }
+        }
+    }
+
+    public String forgotPassword(JsonNode jsonNode) {
+        String email = jsonNode.get("email").asText();
+        String token = UUID.randomUUID().toString();
+        if(doctorDetailsRepository.findByEmail(email).isPresent()) {
+            DoctorDetails doctorDetails = doctorDetailsRepository.findByEmail(email).get();
+            UserCredential userCredential = doctorDetails.getLoginCredential();
+            Integer id = userCredential.getUserCred_id();
+            String role = "DOCTOR";
+            ForgotPassword forgotPassword = new ForgotPassword(token, role, email, id);
+            forgotPassword.setEmail(email);
+            forgotPassword.setToken(token);
+            forgotPassword.setRole(role);
+            forgotPassword.setFacultyId(id);
+            forgotPasswordRepository.save(forgotPassword);
+            return sendForgotPasswordEmail(id, token, email);
+        } else if (staffDetailsRepository.findByEmail(email).isPresent()) {
+            StaffDetails staffDetails = staffDetailsRepository.findByEmail(email).get();
+            UserCredential userCredential = staffDetails.getLoginCredential();
+            Integer id = userCredential.getUserCred_id();
+            String role = "STAFF";
+            ForgotPassword forgotPassword = new ForgotPassword(token, role, email, id);
+            forgotPassword.setEmail(email);
+            forgotPassword.setRole(role);
+            forgotPassword.setFacultyId(id);
+            forgotPassword.setToken(token);
+            forgotPasswordRepository.save(forgotPassword);
+            return sendForgotPasswordEmail(id, token, email);
+        }
+            return "Email not registered";
+    }
+
+    private String sendForgotPasswordEmail(Integer id, String token, String email) {
+        String subject = "Forgot Password";
+        String url = "http://localhost:5173/auth/forgotPassword" + "?token=" + token + "&randomId=" + id;
+        String htmlBody = "<html><body>" + "<p>This Email id contains a one time link to reset your password at Medisync website. Please do not share this link with anyone. Link will be active for 10 minutes.</p>" +  url + "<p><b>This link will valid for only 10 minutes</b></p>" + "</body></html>";
+        MimeMessage message = javaMailSender.createMimeMessage();
+        try {
+            MimeMessageHelper helper = new MimeMessageHelper(message, true);
+            helper.setFrom("noreply@example.com");
+            helper.setTo(email);
+            helper.setSubject(subject);
+            helper.setText(htmlBody, true);
+            javaMailSender.send(message);
+        } catch (MessagingException e) {
+            throw new RuntimeException(e);
+        }
+        return "Email Sent";
+    }
+
+    public String verifyForgotPasswordToken(JsonNode jsonNode) {
+        String token = jsonNode.get("token").asText();
+        if(forgotPasswordRepository.findByToken(token).isPresent()) {
+            Calendar calendar = Calendar.getInstance();
+            ForgotPassword forgotPassword = forgotPasswordRepository.findByToken(token).get();
+            if (forgotPassword.getExpiration().getTime() - calendar.getTime().getTime() <= 0) {
+                forgotPasswordRepository.delete(forgotPassword);
+                return "Verification Token Expired";
+            }
+            forgotPasswordRepository.delete(forgotPassword);
+            return "User Token Verified";
+        }
+        else {
+            return "Token Invalid";
+        }
+    }
+
+    public String resetForgotPassword(JsonNode jsonNode) {
+        String password = passwordEncoder.encode(jsonNode.get("password").asText());
+        Integer id = jsonNode.get("id").asInt();
+        UserCredential userCredential = userCredentialRepository.findById(id).get();
+        userCredential.setPassword(password);
+        userCredentialRepository.save(userCredential);
+        return "Password Reset Successful";
     }
 }

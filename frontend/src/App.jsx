@@ -30,6 +30,7 @@ import StaffEdit from "./pages/Settings/components/StaffEdit";
 import { Settings } from "@mui/icons-material";
 import BaseScreen from "./pages/BaseScreen";
 import AllPatientList from "./pages/PatientScreen/components/AllPatientList";
+import ForgotPassword from "./pages/Login/ForgotPassword";
 function App() {
   return (
     <div>
@@ -53,8 +54,10 @@ function App() {
           <Route path="register/doctor" element={<Register />} />
           <Route path="register/staff" element={<StaffDetails />} />
           <Route path="register/" element={<VerifyEmail />} />
+          <Route path="auth/forgotPassword" element={<ForgotPassword />} />
           {/* <Route path="linkpagae" element={<LinkPage />} /> */}
           <Route path="unauthorized" element={<LinkHPR />} />
+          <Route path="forgotPassword" element={<ForgotPassword />} />
 
           <Route path="settings/head_doctor" element={<EditTab />} />
 

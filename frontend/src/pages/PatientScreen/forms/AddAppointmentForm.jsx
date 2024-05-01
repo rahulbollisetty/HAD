@@ -31,7 +31,7 @@ function AddAppointmentForm({patientId}) {
       const resp = await axiosPrivate.get(
         "http://127.0.0.1:9005/doctor/getAllDoctorList"
       );
-      console.log(resp);
+      // console.log(resp);
       setAllDoctorList(resp.data);
     };
     getAllDoctorList();
@@ -50,15 +50,15 @@ function AddAppointmentForm({patientId}) {
     setValue("doctorRegNumber",doc_reg_no);
 
     let data = getValues();
-    console.log(data);
+    // console.log(data);
     try {
       const response = await axiosPrivate.post("http://127.0.0.1:9005/patient/appointment/createAppointment", data);
-      console.log("POST response:", response);
+      // console.log("POST response:", response);
       setOpen(!open);
       toast.success(response.data);
       reset();
     } catch (error) {
-      console.error("Error submitting appointment:", error);
+      // console.error("Error submitting appointment:", error);
     }
   };
 

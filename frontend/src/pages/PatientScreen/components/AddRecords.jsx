@@ -21,17 +21,17 @@ function AddRecords({ patientId, appointment_id, sendDataToParent, status }) {
   useEffect(() => {
     if (!appointment_id)
       sendDataToParent("Select an appointment to view records");
-    console.log("patient", patientId.patientId, "app", appointment_id);
+    // console.log("patient", patientId.patientId, "app", appointment_id);
     try {
       const fetchData = async () => {
         const path = `http://127.0.0.1:9005/patient/appointment/getPatientVitals?id=${appointment_id}`;
         const resp = await axiosPrivate.get(path);
-        console.log(resp.data, "hello");
+        // console.log(resp.data, "hello");
         setVitals(resp.data);
       };
       fetchData();
     } catch (error) {
-      console.log(error);
+      // console.log(error);
     }
 
     const getOpData = async () => {
@@ -44,11 +44,12 @@ function AddRecords({ patientId, appointment_id, sendDataToParent, status }) {
         setfileMediaType(data.fileMediaType);
         setobservations(data.observation);
       } catch (error) {
-        console.error("Error fetching data:", error);
+        // console.error("Error fetching data:", error);
+        toast.error("Error Fetching op data", error);
       }
     };
 
-    if(status)getOpData();
+    if (status) getOpData();
 
     const getPrescription = async () => {
       const path = `http://127.0.0.1:9005/patient/appointment/getPrescription`;
@@ -56,7 +57,7 @@ function AddRecords({ patientId, appointment_id, sendDataToParent, status }) {
         appointment_id: appointment_id,
       };
       const resp = await axiosPrivate.post(path, requestBody);
-      console.log(resp.data, "Prescription data");
+      // console.log(resp.data, "Prescription data");
       setPrescription(resp.data);
     };
     getPrescription();
@@ -131,17 +132,18 @@ function AddRecords({ patientId, appointment_id, sendDataToParent, status }) {
         const formData = new FormData();
         formData.append("file", file);
         formData.append("requestBody", JSON.stringify(requestBody));
-        console.log(requestBody);
+        // console.log(requestBody);
         const resp = await axiosPrivate.post(path, formData, {
           headers: {
             "Content-Type": "multipart/form-data",
           },
         });
-        console.log(resp.data, "Care Context Response");
+        // console.log(resp.data, "Care Context Response");
       };
       completeAppointment();
     } catch (error) {
-      console.log(error);
+      // console.log(error);
+      toast.error(error);
     }
   };
 
@@ -581,7 +583,7 @@ function AddRecords({ patientId, appointment_id, sendDataToParent, status }) {
                             src={`data:image/jpeg;base64,${fileBase64Data}`}
                           />
                         ) : (
-                            <PdfViewer file={fileBase64Data} />
+                          <PdfViewer file={fileBase64Data} />
                         )}
                       </DialogBody>
                       <DialogFooter>

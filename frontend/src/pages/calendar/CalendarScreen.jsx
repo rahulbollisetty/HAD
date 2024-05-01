@@ -26,7 +26,7 @@ const CalendarScreen = () => {
       const resp = await axiosPrivate.get(
         "http://127.0.0.1:9005/patient/appointment/getAllAppointments"
       );
-      console.log(resp.data);
+      // console.log(resp.data);
       setAppointmentDetails(resp.data);
       const newEvents = resp.data.map((app) => ({
         start: moment(app.date + "T" + app.time).toDate(),
@@ -48,7 +48,7 @@ const CalendarScreen = () => {
       );
       if(decoded?.role === "DOCTOR" || decoded?.role === "HEAD_DOCTOR"){
         const doctor = resp.data.find(doc => doc.registration_number == decoded.registrationNumber)
-        console.log(doctor.doctor_Id)
+        // console.log(doctor.doctor_Id)
         setCurrDoctorId(`${doctor.doctor_Id}`);
       }
       setAllDoctorList(resp.data);
@@ -73,7 +73,7 @@ const CalendarScreen = () => {
     const doctorAppointments = appointmentDetails.filter(
       (appointment) => appointment.doctor_id === currDoctorId
     );
-    console.log(doctorAppointments);
+    // console.log(doctorAppointments);
     const newEvents = doctorAppointments.map((app) => ({
       start: moment(app.date + "T" + app.time).toDate(),
       end: moment(add15Minutes(app.date + "T" + app.time)).toDate(),
@@ -107,7 +107,7 @@ const CalendarScreen = () => {
       colorMap[doctor.doctor_Id] = `hsl(${hue}, 50%, 50%)`;
     });
     const backgroundColor = colorMap[event.doctorId] || "#FFD700"; // Default color
-    console.log(backgroundColor);
+    // console.log(backgroundColor);
     return {
       style: {
         backgroundColor,

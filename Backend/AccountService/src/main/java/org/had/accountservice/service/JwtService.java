@@ -111,6 +111,7 @@ public class JwtService {
                     .claim("name",name)
                     .claim("registrationNumber",doctorDetails.getRegistration_number())
                     .claim("hprId",doctorDetails.getHpr_Id())
+//                    .claim("hospitalId".)
                     .issuedAt(new Date(System.currentTimeMillis()))
                     .expiration(new Date(System.currentTimeMillis()+1000*5*60))
                     .signWith(getSignKey()).compact();

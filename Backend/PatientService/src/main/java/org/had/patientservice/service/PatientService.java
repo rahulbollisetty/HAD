@@ -139,7 +139,7 @@ public class PatientService {
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
-        return webClient.post().uri(abdmUrl+"/abdm/patient/mobileOTPVerify")
+        String responseBody = webClient.post().uri(abdmUrl+"/abdm/patient/mobileOTPVerify")
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(BodyInserters.fromValue(requestBody))
                 .retrieve()
@@ -148,6 +148,8 @@ public class PatientService {
                             .flatMap(errorBody -> Mono.error(new MyWebClientException(errorBody, clientResponse.statusCode().value())));
                 })
                 .bodyToMono(String.class).block();
+
+        return responseBody;
     }
 
     public String createHealthId(String txnId) {

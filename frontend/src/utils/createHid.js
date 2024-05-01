@@ -7,7 +7,7 @@ const createHid = async (data) => {
        
     }
     catch(err){
-        console.log(err);
+        // console.log(err);
     }
 }
 

@@ -209,5 +209,24 @@ public class AuthController {
         return ResponseEntity.ok(staffDetailsList);
     }
 
+    @PostMapping(value = "/changePassword", produces = MediaType.APPLICATION_JSON_VALUE)
+    public String changePassword(@RequestBody JsonNode jsonNode) {
+        authService.changePassword(jsonNode);
+        return "Password Changed Successfully";
+    }
 
+    @PostMapping(value = "/forgotPassword", produces = MediaType.APPLICATION_JSON_VALUE)
+    public String forgotPassword(@RequestBody JsonNode jsonNode) {
+        return authService.forgotPassword(jsonNode);
+
+    }
+    @PostMapping(value = "/verifyForgotPasswordToken", produces = MediaType.APPLICATION_JSON_VALUE)
+    public String verifyForgotPasswordToken(@RequestBody JsonNode jsonNode) {
+        return authService.verifyForgotPasswordToken(jsonNode);
+    }
+
+    @PostMapping(value = "resetForgotPassword", produces = MediaType.APPLICATION_JSON_VALUE)
+    public String resetForgotPassword(@RequestBody JsonNode jsonNode) {
+        return authService.resetForgotPassword(jsonNode);
+    }
 }

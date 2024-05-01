@@ -11,8 +11,8 @@ const useFetchEventSource = () => {
     const { auth } = useAuth();
 
   const originalRequest = async (url, config) => {
-    console.log("config");
-    console.log(config);
+    // console.log("config");
+    // console.log(config);
     url = `${BASE_URL}${url}`;
     await fetchEventSource(url, config);
   };

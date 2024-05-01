@@ -32,9 +32,14 @@ public class StaffDetails {
     @NotNull
     private String gender;
 
+    @NotNull
     private String mobile;
 
+    @NotNull
     private String state;
+
+    @NotNull
+    private String email;
 
     @NotNull
     private String district;

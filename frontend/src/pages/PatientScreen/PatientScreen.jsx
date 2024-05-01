@@ -5,7 +5,7 @@ import { useParams } from "react-router-dom";
 
 export const PatientScreen = (tab) => {
   const id = tab.id;
-console.log(tab)
+// console.log(tab)
   return (
     <div className="flex flex-col">
       <Profile patientId={id} />

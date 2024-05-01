@@ -27,13 +27,15 @@ const DoctorDetail = (patient) => {
         `http://127.0.0.1:9005/patient/deletePatient`,
         requestBody
       );
-      console.log(response.data);
+      // console.log(response.data);
       toast.success(response.data);
       navigate("/");
     } catch (err) {
-      console.log(err);
+      // console.log(err);
+      toast.error(err);
       if (!err?.response) {
-        console.error("No Server Response");
+        // console.error("No Server Response");
+        toast.error("No Server Response");
       }
     }
   };

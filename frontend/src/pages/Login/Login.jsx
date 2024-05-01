@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 import useAuth from "../../hooks/useAuth";
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
+import { GiHospital } from "react-icons/gi";
 
 const Login = () => {
   const { setAuth, persist, setPersist } = useAuth();
@@ -26,7 +27,7 @@ const Login = () => {
         headers: { "Content-Type": "application/json" },
         withCredentials: true,
       });
-      console.log(JSON.stringify(response?.data));
+      // console.log(JSON.stringify(response?.data));
       const accessToken = response?.data?.token;
       setAuth({ accessToken });
       navigate(from, { replace: true });
@@ -54,8 +55,8 @@ const Login = () => {
   return (
     <div className="bg-[#02685A]  w-fill h-screen flex items-center justify-center">
       <div className="bg-white w-4/5 h-[70%] rounded-[10px]">
-        <div className="bg-black w-[150px] h-[150px] rounded-[50%] ml-[50px] mt-[40px] text-white flex items-center justify-center text-3xl">
-          Logo
+        <div className="bg-black w-[150px] h-[150px] rounded-[50%] ml-[50px] mt-[40px] text-white flex items-center justify-center text-[100px]">
+          <GiHospital />
         </div>
         <div className="bg-black w-full h-[493px] flex">
           <div className="bg-white pl-[25%] w-[60%] flex-col">
@@ -95,7 +96,7 @@ const Login = () => {
                   Remember Me
                 </span>
               </div>
-              <a href={""} className="text-[#308EDC]">
+              <a href={"/forgotPassword"} className="text-[#308EDC]">
                 Forget Password?
               </a>
               <button

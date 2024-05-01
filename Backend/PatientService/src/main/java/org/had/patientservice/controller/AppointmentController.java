@@ -44,6 +44,12 @@ public class AppointmentController {
     }
 
     @PreAuthorize("hasAnyAuthority('DOCTOR','STAFF')")
+    @GetMapping(value = "/getAppointmentForDoctor", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getAppointmentForDoctor(@RequestParam String id, String name){
+        return appointmentService.getAppointmentForDoctor(Integer.parseInt(id), name);
+    }
+
+    @PreAuthorize("hasAnyAuthority('DOCTOR','STAFF')")
     @GetMapping(value = "/getPatientVitals", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getPatientVitals(@RequestParam String id) {
         return appointmentService.getPatientVitals(id);
@@ -127,6 +133,7 @@ public class AppointmentController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+
 
 //    @GetMapping("/generate-pdf")
 //    public String generatePdf(@RequestParam String id) throws Exception {

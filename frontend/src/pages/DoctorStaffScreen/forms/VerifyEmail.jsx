@@ -4,6 +4,7 @@ import { toast } from "react-toastify";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Loading from "../../../utilComponents/Loading";
+import { useParams } from "react-router-dom";
 
 export default function VerifyEmail() {
   const axiosPrivate = useAxiosPrivate();
@@ -25,7 +26,7 @@ export default function VerifyEmail() {
           "http://127.0.0.1:9005/auth/verifyEmail",
           requestBody
         );
-        console.log(resp);
+        // console.log(resp);
         if (
           resp.data == "Invalid Token" ||
           resp.data == "Verification Token Expired"
@@ -40,7 +41,7 @@ export default function VerifyEmail() {
           );
         }
       } catch (error) {
-        console.log(error);
+        // console.log(error);
         toast.error(error.response.data);
       }
     };
