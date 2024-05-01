@@ -15,10 +15,11 @@ public class HprApi {
     @Autowired
     private ABDMService abdmService;
     @PostMapping(value = "/getdoctordetails",produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getDoctorDetails(@RequestBody JsonNode doctorHPR) throws JsonProcessingException {
+    public String getDoctorDetails(@RequestBody JsonNode jsonNode) throws JsonProcessingException {
         abdmService.setToken();
-        String details = abdmService.getDoctorDetails(doctorHPR.get("hprId").asText(), doctorHPR.get("password").asText());
-        return  ResponseEntity.ok(details);
+        String otp = jsonNode.get("otp").asText();
+        String txnId = jsonNode.get("txnId").asText();
+        return abdmService.getDoctorDetails(otp, txnId);
     }
 
     @PostMapping(value = "/getLgdStatesList",produces = MediaType.APPLICATION_JSON_VALUE)
@@ -33,5 +34,12 @@ public class HprApi {
         abdmService.setToken();
         System.out.println("Helloo");
         return abdmService.registerFacility(jsonNode);
+    }
+
+    @PostMapping(value = "/generateAadharOTPHPR", produces = MediaType.APPLICATION_JSON_VALUE)
+    public String generateAadharOTPHPR(@RequestBody JsonNode jsonNode) throws JsonProcessingException {
+        abdmService.setToken();
+        String hprId = jsonNode.get("hprId").asText();
+        return abdmService.generateAadharOTPHPR(hprId);
     }
 }

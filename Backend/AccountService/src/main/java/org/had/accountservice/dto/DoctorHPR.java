@@ -13,6 +13,6 @@ public class DoctorHPR {
     @NotNull(message = "hprId should not be empty, check field name")
     private String hprId;
 
-    @NotNull(message = "password should not be empty, check field name")
-    private String password;
+//    @NotNull(message = "password should not be empty, check field name")
+//    private String password;
 }

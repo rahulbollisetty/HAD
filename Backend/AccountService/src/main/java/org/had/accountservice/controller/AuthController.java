@@ -7,7 +7,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.had.accountservice.config.UserCredentialUserDetails;
 import org.had.accountservice.dto.AuthRequest;
 import org.had.accountservice.dto.DoctorDetailsDTO;
-import org.had.accountservice.dto.DoctorHPR;
 import org.had.accountservice.dto.StaffDetailsDTO;
 import org.had.accountservice.entity.DoctorDetails;
 import org.had.accountservice.entity.RefreshToken;
@@ -104,8 +103,16 @@ public class AuthController {
     }
 
     @PostMapping(value = "/get-doctor-details", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getDoctorDetails(@Valid @RequestBody DoctorHPR doctorHPR) {
-        String details = doctorService.getDoctorDetails(doctorHPR.getHprId(), doctorHPR.getPassword());
+    public String getDoctorDetails(@RequestBody JsonNode jsonNode) {
+        String otp = jsonNode.get("otp").asText();
+        String txnId = jsonNode.get("txnId").asText();
+        return doctorService.getDoctorDetails(otp, txnId);
+    }
+
+    @PostMapping(value = "/generateAadharOTPHPR", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> generateAadharOTPHPR(@RequestBody JsonNode jsonNode) {
+        String hprId = jsonNode.get("hprId").asText();
+        String details = doctorService.generateAadharOTPHPR(hprId);
         return ResponseEntity.ok(details);
     }
 
