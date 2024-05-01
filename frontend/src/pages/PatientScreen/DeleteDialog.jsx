@@ -7,12 +7,16 @@ import {
 } from "@material-tailwind/react";
 import { useEffect, useState } from "react";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
+import { useNavigate } from "react-router-dom";
+import { MdDelete } from "react-icons/md";
+import { toast } from "react-toastify";
 
 const DoctorDetail = (patient) => {
   const [role, setRole] = useState("");
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(!open);
   const axiosPrivate = useAxiosPrivate();
+  const navigate = useNavigate();
 
   const deletePatient = async (patientId) => {
     try {
@@ -24,6 +28,8 @@ const DoctorDetail = (patient) => {
         requestBody
       );
       console.log(response.data);
+      toast.success(response.data);
+      navigate("/");
     } catch (err) {
       console.log(err);
       if (!err?.response) {
@@ -36,22 +42,24 @@ const DoctorDetail = (patient) => {
     <div>
       <button
         onClick={handleOpen}
-        className="inline-flex justify-center items-center gap-[10px] rounded-lg
-                                            border border-[#787887] bg-[#F5FEF2] text-[20px] text-[#02685A] font-semibold p-2.5"
+        className="inline-flex justify-center items-center gap-[10px] text-[#b82d2d]"
       >
         {/* <MdAdd className="h-[35px] w-[35px] m-auto" /> */}
-        <div className="relative w-fit font-semibold m-auto text-[20px]">
-          Delete Patient
+        <div className="text-[30px]">
+          <MdDelete />
         </div>
       </button>
 
       <Dialog open={open} onClose={handleOpen} size="xl">
-        <DialogHeader>Doctor Details</DialogHeader>
+        <DialogHeader>Delete Patient</DialogHeader>
         <div className="h-[1px] bg-[#827F7F82]"></div>
 
-        <DialogBody>
-          This are very health information think twice before deleting the
-          records!!
+        <DialogBody className="text-red-400">
+          <p className="font-semibold text-lg text-center">
+            This is very important health information. Any official proceeding
+            to delete this data should seek confirmation from the patient. Once
+            the data is deleted, it cannot be retrieved.
+          </p>
           <hr className="h-[3px] bg-[#7B7878] mx-2 mt-6 opacity-50	" />
         </DialogBody>
         <DialogFooter>

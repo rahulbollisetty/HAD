@@ -24,9 +24,9 @@ function Profile({ patientId }) {
       }
     };
     getPatientDetails();
-    setRole(jwtDecode?.role);
-  }, []);
-
+    console.log(decoded?.role)
+    setRole(decoded?.role);
+  }, [decoded]);
   return (
     <div>
       <div className="w-full">
@@ -98,8 +98,8 @@ function Profile({ patientId }) {
                       <DeleteDialog patient = {PatientDetails}/>
                     </>
                   ))}
-                  <DeleteDialog patient = {PatientDetails}/>
               </div>
+              <DeleteDialog patient = {PatientDetails}/>
             </div>
           </div>
         </div>

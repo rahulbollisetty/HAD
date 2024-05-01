@@ -3,28 +3,25 @@ package org.had.patientservice.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.netflix.discovery.converters.Auto;
-import org.had.accountservice.entity.DoctorDetails;
 import org.had.accountservice.exception.MyWebClientException;
 import org.had.patientservice.dto.PatientDetailsDto;
 import org.had.patientservice.entity.*;
 import org.had.patientservice.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyEmitter;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import reactor.core.publisher.Mono;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -392,56 +389,79 @@ public class PatientService {
     }
 
     public ResponseEntity<?> deletePatient(Integer patientId) {
-        if(patientDetailsRepository.findById(patientId).isPresent()) {
-            PatientDetails patientDetails = patientDetailsRepository.findById(patientId).get();
+        Optional<PatientDetails> patientOptional = patientDetailsRepository.findById(patientId);
+        if (patientOptional.isPresent()) {
+            PatientDetails patientDetails = patientOptional.get();
             List<AppointmentDetails> appointmentDetails = appointmentRepository.findAllByPatientId(patientDetails);
-            System.out.println("1");
-            if(appointmentDetails != null ) {
-                for(AppointmentDetails appointment : appointmentDetails) {
-                    OpConsultation opConsultation = opConsultationRepository.findByAppointmentDetails(appointment).get();
-                    Integer opConsulatationId = opConsultation.getOp_id();
-                    System.out.println("2");
-                    List<PatientVitals> patientVitalsList = patientVitalsRepository.findByOpId(opConsulatationId);
-                    PatientVitals vitals = patientVitalsList.getFirst();
-                    patientVitalsRepository.delete(vitals);
-                    System.out.println("3");
-                    List<PrescriptionDetails> prescriptionDetailsList = prescriptionDetailsRepository.findByOpConsultation(opConsulatationId);
+            for (AppointmentDetails appointment : appointmentDetails) {
+                Optional<OpConsultation> opConsultationOptional = opConsultationRepository.findByAppointmentDetails(appointment);
+                if(opConsultationOptional.isPresent()) {
+                    OpConsultation opConsultation = opConsultationOptional.get();
+                    Integer opId = opConsultation.getOp_id();
+                    List<PrescriptionDetails> prescriptionDetailsList = prescriptionDetailsRepository.findByOpConsultation(opId);
                     if(prescriptionDetailsList != null) {
                         for(PrescriptionDetails prescriptionDetails : prescriptionDetailsList)
                             prescriptionDetailsRepository.delete(prescriptionDetails);
-                        System.out.println("4");
+                        System.out.println("hello");
                     }
-                    appointmentRepository.delete(appointment);
+                    List<PatientVitals> patientVitalsList = patientVitalsRepository.findByOpId(opId);
+                    PatientVitals vitals = patientVitalsList.getFirst();
+                    patientVitalsRepository.delete(vitals);
                     opConsultationRepository.delete(opConsultation);
                 }
+                appointmentRepository.delete(appointment);
             }
             patientDetailsRepository.delete(patientDetails);
+            return ResponseEntity.ok().body("Patient and their records deleted successfully");
+        } else {
+            return ResponseEntity.badRequest().body("No patient found with id: " + patientId);
         }
-        else
-            return ResponseEntity.badRequest().body("No patient found");
-        return ResponseEntity.ok().body("Patient and their records deleted successfully");
     }
 
+    public ResponseEntity<?> deleteAppointment(Integer appointmentId) {
+        Optional<AppointmentDetails> appointmentOptional = appointmentRepository.findById(appointmentId);
+        if (appointmentOptional.isPresent()) {
+            AppointmentDetails appointmentDetails = appointmentOptional.get();
+            System.out.println("Appointment found: " + appointmentDetails);
 
-    public ResponseEntity<?> deleteAppointement(Integer appointmentId) {
-        AppointmentDetails appointmentDetails = appointmentRepository.findById(appointmentId).get();
-        if(appointmentDetails != null) {
-            OpConsultation opConsultation = opConsultationRepository.findByAppointmentDetails(appointmentDetails).get();
-            Integer opConsulatationId = opConsultation.getOp_id();
-            List<PatientVitals> patientVitalsList = patientVitalsRepository.findByOpId(opConsulatationId);
-            PatientVitals vitals = patientVitalsList.getFirst();
-            patientVitalsRepository.delete(vitals);
-            List<PrescriptionDetails> prescriptionDetailsList = prescriptionDetailsRepository.findByOpConsultation(opConsulatationId);
-            if(prescriptionDetailsList != null) {
-                for(PrescriptionDetails prescriptionDetails : prescriptionDetailsList)
-                    prescriptionDetailsRepository.delete(prescriptionDetails);
+            Optional<OpConsultation> opConsultationOptional = opConsultationRepository.findByAppointmentDetails(appointmentDetails);
+            if (opConsultationOptional.isPresent()) {
+                OpConsultation opConsultation = opConsultationOptional.get();
+                Integer opConsultationId = opConsultation.getOp_id();
+                System.out.println("OpConsultation found: " + opConsultation);
+
+                List<PatientVitals> patientVitalsList = patientVitalsRepository.findByOpId(opConsultationId);
+                if (!patientVitalsList.isEmpty()) {
+                    PatientVitals vitals = patientVitalsList.get(0);
+                    patientVitalsRepository.delete(vitals);
+                    System.out.println("Deleted patientVitals: " + vitals);
+                } else {
+                    System.out.println("No patientVitals found for OpConsultationId: " + opConsultationId);
+                }
+
+                List<PrescriptionDetails> prescriptionDetailsList = prescriptionDetailsRepository.findByOpConsultation(opConsultationId);
+                if (!prescriptionDetailsList.isEmpty()) {
+                    prescriptionDetailsRepository.deleteAll(prescriptionDetailsList);
+                    System.out.println("Deleted prescriptionDetailsList: " + prescriptionDetailsList);
+                } else {
+                    System.out.println("No prescriptionDetails found for OpConsultationId: " + opConsultationId);
+                }
+
+                opConsultationRepository.delete(opConsultation);
+                System.out.println("Deleted opConsultation: " + opConsultation);
+            } else {
+                System.out.println("No OpConsultation found for AppointmentId: " + appointmentId);
             }
+
             appointmentRepository.delete(appointmentDetails);
-            opConsultationRepository.delete(opConsultation);
-        }
-        else
+            System.out.println("Deleted appointmentDetails: " + appointmentDetails);
+
+            return ResponseEntity.ok().body("Appointment deleted Successfully");
+        } else {
+            System.out.println("No appointment found for appointmentId: " + appointmentId);
             return ResponseEntity.badRequest().body("No appointment found");
-        return ResponseEntity.ok().body("Appointment deleted Successfully");
+        }
     }
+
 }
 

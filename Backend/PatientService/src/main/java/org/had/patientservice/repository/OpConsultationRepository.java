@@ -10,4 +10,6 @@ public interface OpConsultationRepository extends JpaRepository<OpConsultation, 
     Optional<OpConsultation> findById(Integer id);
 
     Optional<OpConsultation> findByAppointmentDetails(AppointmentDetails appointmentDetails);
+
+
 }

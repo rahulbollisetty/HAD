@@ -10,10 +10,10 @@ import {
   DialogFooter,
 } from "@material-tailwind/react";
 import AddAppointmentForm from "../forms/AddAppointmentForm";
+import { MdDelete } from "react-icons/md";
+import { toast } from "react-toastify";
 
 function PastRecords({ patientId, sendDataToParent }) {
-
-  
   const [AppointmentDetailsList, setAppointmentDetailsList] = useState([]);
   const axiosPrivate = useAxiosPrivate();
 
@@ -30,6 +30,22 @@ function PastRecords({ patientId, sendDataToParent }) {
     };
     getAppointmentDetails();
   }, []);
+
+  const deleteAppointment = async (appointment_id) => {
+    const requestBody = {
+      appointmentId: parseInt(appointment_id),
+    };
+    try {
+      const resp = await axiosPrivate.post(
+        `http://127.0.0.1:9005/patient/deleteAppointment`,
+        requestBody,
+      );
+      console.log(resp.data);
+      toast.success(resp.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   return (
     <div className="border mx-3 my-4 border-[#006666] rounded-md border-l-4">
@@ -60,6 +76,8 @@ function PastRecords({ patientId, sendDataToParent }) {
               <th scope="col" className="px-6 py-3">
                 Details
               </th>
+              <th scope="col" className="px-6 py-3"></th>
+              <th scope="col" className="px-6 py-3"></th>
             </tr>
           </thead>
           <tbody className="text-sm text-[#444]">
@@ -75,14 +93,33 @@ function PastRecords({ patientId, sendDataToParent }) {
                 <td className="px-6 py-4">{item.time}</td>
                 <td className="px-6 py-4">{item.status}</td>
                 <td className="px-6 py-4">{item.notes}</td>
-                <td className="px-6 py-4 text-right">
+                <td className="px-6 py-4 ">
                   <button
                     className="inline-flex justify-center items-center gap-[10px] rounded-lg
                                         border border-[#787887] bg-[#F5FEF2] text-[20px] text-[#02685A] font-semibold p-2.5"
-                                        onClick={()=>{sendDataToParent(item.appointment_id, item.status === "Completed")}}
+                    onClick={() => {
+                      sendDataToParent(
+                        item.appointment_id,
+                        item.status === "Completed"
+                      );
+                    }}
                   >
                     <div>View</div>
                     <FaCaretRight className="h-[25px] w-[25px]" />
+                  </button>
+                </td>
+                <td className="px-6 py-4">
+                  <button
+                    className="inline-flex justify-center items-center gap-[10px] text-[30px]
+                                        text-[#b82d2d] "
+                    onClick={() => {
+                      deleteAppointment(item.appointment_id);
+                    }}
+                  >
+                    <div>
+                      <MdDelete />
+                      
+                    </div>
                   </button>
                 </td>
               </tr>
