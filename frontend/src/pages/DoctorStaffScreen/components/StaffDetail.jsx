@@ -20,9 +20,10 @@ const StaffDetail = (staff) => {
   }, []);
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(!open);
-  const deleteStaff = async (username) => {
+  const deleteStaff = async (staff_Id) => {
     const requestBody = {
-      username: username,
+      staffId: staff_Id,
+      role : "staff"
     };
     try {
       const response = await axiosPrivate.post(
@@ -122,7 +123,7 @@ const StaffDetail = (staff) => {
               </div>
             </div>
             <hr className="h-[3px] bg-[#7B7878] mx-2 mt-6 opacity-50	" />
-            <div className="grid grid-cols-3 place-items-center gap-3  text-[#7B7878] font-medium font-semibold text-l  p-5">
+            <div className="grid grid-cols-3 place-items-center gap-3  text-[#7B7878] font-semibold text-l  p-5">
               <div className="flex flex-col  item-center">
                 <p className=" font-semibold ">Address Line*</p>
                 <p className="text-black text-center font-medium">{staff.staff.address}</p>
@@ -149,12 +150,21 @@ const StaffDetail = (staff) => {
               variant="filled"
               className="bg-[#FFA000]"
               onClick={() =>
-                deleteStaff(staff.staff?.loginCredential?.username)
+                deleteStaff(staff.staff?.staff_Id)
+              }
+            >
+              <span>Delete Staff</span>
+            </Button>
+          )}
+          {/* <Button
+              variant="filled"
+              className="bg-[#FFA000]"
+              onClick={() =>
+                deleteStaff(staff.staff?.staff_Id)
               }
             >
               <span>Delete Doctor</span>
-            </Button>
-          )}
+            </Button> */}
           <Button
             variant="text"
             color="red"

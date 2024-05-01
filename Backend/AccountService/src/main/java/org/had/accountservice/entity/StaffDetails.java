@@ -1,5 +1,6 @@
 package org.had.accountservice.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -45,6 +46,7 @@ public class StaffDetails {
 
 
     @OneToOne(targetEntity = UserCredential.class, cascade = CascadeType.ALL)
+    @JsonIgnore
     @JoinColumn(name = "login_id", referencedColumnName = "UserCred_id", unique = true)
     private UserCredential loginCredential;
 }

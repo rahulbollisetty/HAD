@@ -58,6 +58,7 @@ const DoctorList = () => {
           </div>
         </div>
       </div>
+      <div className="bg-[#827F7F82]  h-[0.5px] mx-8 my-4"></div>
       <div className="basis-[85%]">
         <div className="m-4 shadow-lg sm:rounded-lg 2xl:max-h-[500px] 4xl:max-h-[800px] lg:max-h-[500px] md:max-h-[450px] flex flex-col overflow-auto">
           <table className="w-full text-sm text-left rtl:text-right text-gray-500 ">

@@ -11,7 +11,6 @@ import RequireAuth from "./routes/RequireAuth";
 import PersistLogin from "./PersistLogin";
 import { ToastContainer, Bounce } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import AllPatientList from "./pages/PatientScreen/components/AllPatientList";
 
 import { DoctorStaffScreen } from "./pages/DoctorStaffScreen/DoctorStaffScreen";
 
@@ -29,7 +28,8 @@ import DoctorEdit from "./pages/Settings/components/DoctorEdit";
 import EditTab from "./pages/Settings/components/EditTab";
 import StaffEdit from "./pages/Settings/components/StaffEdit";
 import { Settings } from "@mui/icons-material";
-
+import BaseScreen from "./pages/BaseScreen";
+import AllPatientList from "./pages/PatientScreen/components/AllPatientList";
 function App() {
   return (
     <div>
@@ -57,26 +57,35 @@ function App() {
           <Route path="unauthorized" element={<Unauthorized />} />
 
           <Route path="settings/head_doctor" element={<EditTab />} />
-          <Route path="/settings" element={<SettingsScreen />} />
-          <Route path="/staffList" element={<DoctorStaffScreen />} />
 
           {/* we want to protect these routes */}
           <Route element={<PersistLogin />}>
-            <Route element={<RequireAuth allowedRoles={["DOCTOR"]}/>}>
+            <Route element={<RequireAuth allowedRoles={["DOCTOR","STAFF"]} />}>
               <Route path="register/faculty" element={<AddDoctorForm />} />
+              <Route
+                path="/"
+                element={<BaseScreen active_tab={"All Patient"} />}
+              />
               <Route path="register/HPR" element={<PracticeDetails />} />
-              
-              <Route path="/calendar" element={<CalendarScreen />} />
-              <Route path="/" element={<AllPatientList />} />
+
+              <Route
+                path="/settings"
+                element={<BaseScreen active_tab={"Settings"} />}
+              />
+              <Route
+                path="/stafflist"
+                element={<BaseScreen active_tab={"Doctor List"} />}
+              />
+              <Route
+                path="/calendar"
+                element={<BaseScreen active_tab={"Calendar"} />}
+              />
+
+              {/* <Route path="/calendar" element={<BaseScreen active_tab={"Calendar"} />} /> */}
 
               <Route
                 path="/patientScreen/:id"
-                element={<PatientScreen tab={"Past Records"} />}
-              />
-              <Route path="/" element={<AllPatientList />} />
-              <Route
-                path="/patientScreen/:id/appointment/:appid"
-                element={<PatientScreen />}
+                element={<BaseScreen active_tab={"All Patient"} />}
               />
             </Route>
 
