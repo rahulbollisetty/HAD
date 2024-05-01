@@ -46,6 +46,7 @@ public class AppointmentService {
     @Autowired
     private PrescriptionDetailsRepository prescriptionDetailsRepository;
 
+
     @Autowired
     private WebClient webClient;
 

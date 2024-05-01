@@ -46,16 +46,21 @@ const CalendarScreen = () => {
       const resp = await axiosPrivate.get(
         "http://127.0.0.1:9005/doctor/getAllDoctorList"
       );
+      if(decoded?.role === "DOCTOR" || decoded?.role === "HEAD_DOCTOR"){
+        const doctor = resp.data.find(doc => doc.registration_number == decoded.registrationNumber)
+        console.log(doctor.doctor_Id)
+        setCurrDoctorId(`${doctor.doctor_Id}`);
+      }
       setAllDoctorList(resp.data);
     };
     getAllDoctorList();
     setRole(decoded?.role);
-    // if(decoded?.role === "DOCTOR" || decoded?.role === "HEAD_DOCTOR")
-    //   setCurrDoctorName(decoded?.name);
+    
   }, []);
 
   useEffect(() => {
     handleEvent();
+
   }, [currDoctorId]);
 
   const add15Minutes = (datetimeString) => {
@@ -88,13 +93,11 @@ const CalendarScreen = () => {
   };
 
   const handleEventClick = (event) => {
-    navigate(`/patientScreen/${event.patientId}`, {
-      state: {
-        appointmentId: event.appointment_id,
-        appointmentStatus: event.appStatus,
-      },
-    });
-    navigate(0);
+    if(role === "DOCTOR"){
+
+      navigate(`/patientScreen/${event.patientId}`,{ state: { appointmentId: event.appointment_id,appointmentStatus:event.appStatus } });
+      navigate(0);
+    }
   };
 
   const eventStyleGetter = (event) => {
@@ -113,44 +116,45 @@ const CalendarScreen = () => {
   };
 
   return (
-    <div className="flex flex-col w-full m-4 bg-white">
-      <div className="w-full h-[4.5rem] flex justify-between">
-        <div className="flex items-center">
-          {role == "DOCTOR" && (
-            <select
-              className="bg-[#006666] rounded-[10px] text-white appearance-none font-semibold text-m"
-              name="doctor"
-              value={currDoctorId}
-              onChange={(e) => handleDoctorChange(e.target.value)}
-              defaultValue=""
-            >
-              <option disabled value="">
-                Select doctor
-              </option>
-              {AllDoctorList.map((doctor, index) => (
-                <option
-                  key={index}
-                  className="font-light text-s option-hover"
-                  value={doctor.doctor_Id}
+     
+        <div className="flex flex-col w-full m-1 bg-white">
+          <div className="w-full h-[4.5rem] flex justify-between">
+            <div className="flex items-center">
+              {role === "STAFF" && (
+                <select
+                  className="bg-[#006666] rounded-[10px] text-white appearance-none font-semibold text-m"
+                  name="doctor"
+                  value={currDoctorId}
+                  onChange={(e) => handleDoctorChange(e.target.value)}
+                  defaultValue=""
                 >
-                  {doctor.first_Name} {doctor.last_Name}
-                </option>
-              ))}
-            </select>
-          )}
-        </div>
-      </div>
+                  <option disabled value="">
+                    Select doctor
+                  </option>
+                  {AllDoctorList.map((doctor, index) => (
+                    <option
+                      key={index}
+                      className="font-light text-s option-hover"
+                      value={doctor.doctor_Id}
+                    >
+                      {doctor.first_Name} {doctor.last_Name}
+                    </option>
+                  ))}
+                </select>
+              )}
+            </div>
+          </div>
 
-      <div className="w-full">
-        <Calendar
-          events={event}
-          defaultView={"week"}
-          eventPropGetter={eventStyleGetter}
-          onSelectEvent={handleEventClick}
-          style={{ height: 800 }}
-        />
-      </div>
-    </div>
+          <div className="w-full p-2">
+            <Calendar
+              events={event}
+              defaultView={"week"}
+              eventPropGetter={eventStyleGetter}
+              onSelectEvent={handleEventClick}
+              style={{height: 800}}
+            />
+          </div>
+        </div>
   );
 };
 

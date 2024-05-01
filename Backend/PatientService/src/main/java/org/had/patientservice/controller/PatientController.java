@@ -153,4 +153,18 @@ public class PatientController {
         return ResponseEntity.ok(patientDetails);
     }
 
+    @PreAuthorize("hasAnyAuthority('DOCTOR','STAFF')")
+    @PostMapping(value = "/deletePatient", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> deletePatient(@RequestBody JsonNode jsonNode){
+        Integer patientId = jsonNode.get("patientId").asInt();
+        return patientService.deletePatient(patientId);
+    }
+
+    @PreAuthorize("hasAnyAuthority('DOCTOR','STAFF')")
+    @PostMapping(value = "/deleteAppointment", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> deleteAppointement(@RequestBody JsonNode jsonNode){
+        Integer appointmentId = jsonNode.get("appointmentId").asInt();
+        return patientService.deleteAppointment(appointmentId);
+    }
+
 }
