@@ -153,7 +153,6 @@ public class AuthService {
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
-        System.out.println("hwello");
         return webClient.post().uri("http://127.0.0.1:9008/abdm/hpr/registerFacility").contentType(MediaType.APPLICATION_JSON).body(BodyInserters.fromValue(requestBody)).retrieve().onStatus(HttpStatusCode::isError, clientResponse -> {
             return clientResponse.bodyToMono(String.class).flatMap(errorBody -> Mono.error(new MyWebClientException(errorBody, clientResponse.statusCode().value())));
         }).bodyToMono(String.class).block();

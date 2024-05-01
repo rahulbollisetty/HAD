@@ -25,6 +25,7 @@ import { PatientScreen } from "./PatientScreen/PatientScreen";
 import { DoctorStaffScreen } from "./DoctorStaffScreen/DoctorStaffScreen";
 import CalendarScreen from "./calendar/CalendarScreen";
 import SettingsScreen from "./Settings/SettingsScreen";
+import { toast } from "react-toastify";
 // import { jwtDecode } from "jwt-decode";
 // import useAuth from "../hooks/useAuth";
 
@@ -70,9 +71,11 @@ const BaseScreen = ({ active_tab }) => {
 
   const navigate = useNavigate();
   const logout = useLogout();
+
   const signOut = async () => {
     await logout();
-    navigate("/");
+    navigate("/login");
+    toast.success("Logged Out")
   };
 
   const data = [
@@ -211,7 +214,7 @@ const BaseScreen = ({ active_tab }) => {
                 </div>
               </div>
             </div>
-            <div className="h-1/12 m-[10px]">
+            <button className="h-1/12 m-[10px]">
               <div className="inline-flex gap-[15px] px-[25px] py-[10px] text-white w-fit relative left-[15px] top-1/3 bg-[#006666] rounded-[10px] overflow-hidden shadow-[-2px_-1px_3px_#00000040]">
                 <MdExitToApp className="h-[25px] w-[25px] m-auto" />
                 <div
@@ -221,7 +224,7 @@ const BaseScreen = ({ active_tab }) => {
                   Logout
                 </div>
               </div>
-            </div>
+            </button>
           </div>
         </div>
         <div className="basis-full bg-[#F1F5FC] overflow-hidden">

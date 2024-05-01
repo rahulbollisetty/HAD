@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/auth")
@@ -58,6 +59,9 @@ public class AuthController {
             UserCredentialUserDetails credential = (UserCredentialUserDetails) authenticate.getPrincipal();
             String role = authService.getAuthoritiesAsString(credential.getAuthorities());
             String token = authService.generateToken(authRequest.getUsername(), role);
+            // implementing single login
+            refreshTokenService.handleRefreshtoken(credential.getId());
+
             RefreshToken refreshToken = refreshTokenService.createRefreshToken(credential.getId());
             ResponseCookie jwtRefreshCookie = jwtService.generateRefreshJwtCookie(refreshToken.getToken());
 
@@ -174,6 +178,19 @@ public class AuthController {
                             "Refresh token is not in database!", HttpStatus.FORBIDDEN.value()));
         }
 
+        return ResponseEntity.badRequest().body("Refresh Token is empty!");
+    }
+
+    @PostMapping(value = "/isLogged", produces=MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> isLogged(HttpServletRequest request) {
+        String refreshToken = jwtService.getJwtRefreshFromCookies(request);
+        if ((refreshToken != null) && (refreshToken.length() > 0)) {
+            Optional<RefreshToken> token = refreshTokenService.findByToken(refreshToken);
+            if(token.isPresent()){
+                return ResponseEntity.ok("user is logged in");
+            }
+            else return ResponseEntity.badRequest().body("Refresh token is not in database!");
+        }
         return ResponseEntity.badRequest().body("Refresh Token is empty!");
     }
 

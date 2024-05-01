@@ -112,7 +112,7 @@ public class JwtService {
                     .claim("registrationNumber",doctorDetails.getRegistration_number())
                     .claim("hprId",doctorDetails.getHpr_Id())
                     .issuedAt(new Date(System.currentTimeMillis()))
-                    .expiration(new Date(System.currentTimeMillis()+1000*5*60))
+                    .expiration(new Date(System.currentTimeMillis()+1000*15*60))
                     .signWith(getSignKey()).compact();
         } else{
             StaffDetails staffDetails = staffDetailsRepository.findByLoginCredential(userCredentialRepository.findByUsername(username).get()).get();

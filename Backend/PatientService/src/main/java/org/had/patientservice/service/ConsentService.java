@@ -7,10 +7,14 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import lombok.extern.slf4j.Slf4j;
 import org.checkerframework.checker.units.qual.A;
 import org.had.accountservice.exception.MyWebClientException;
+import org.had.patientservice.entity.AppointmentDetails;
 import org.had.patientservice.entity.CareContexts;
 import org.had.patientservice.entity.ConsentDetails;
+import org.had.patientservice.entity.PatientDetails;
+import org.had.patientservice.repository.AppointmentRepository;
 import org.had.patientservice.repository.CareContextsRepository;
 import org.had.patientservice.repository.ConsentDetailRepository;
+import org.had.patientservice.repository.PatientDetailsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatusCode;
@@ -23,6 +27,8 @@ import reactor.core.publisher.Mono;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Slf4j
 @Service
@@ -49,11 +55,19 @@ public class ConsentService {
     @Value("${abdm.url}")
     private String abdmUrl;
 
+    private static final String careContetRegexPattern = "hospital\\d+\\.\\d{4}-\\d{2}-\\d{2}\\.\\d+";
+
+    private static final Pattern pattern = Pattern.compile(careContetRegexPattern);
+
+    @Autowired
+    private AppointmentRepository appointmentRepository;
+    @Autowired
+    private PatientDetailsRepository patientDetailsRepository;
+
+
     @Transactional
     public void consentOnNotifyHIP(JsonNode jsonNode){
         log.info("consentOnNotifyHIP: " + jsonNode.toString());
-
-
         String status = jsonNode.get("notification").get("status").asText();
         if(status.equals("GRANTED")) {
             JsonNode consent_details = jsonNode.get("notification").get("consentDetail");
@@ -126,8 +140,22 @@ public class ConsentService {
         List<JsonNode> jsonNodeList = new ArrayList<>();
 
         ConsentDetails consentDetails = consentDetailRepository.findByConsentId(consentId).get();
+        Optional<PatientDetails> patientDetails = patientDetailsRepository.findByAbhaAddress(consentDetails.getPatientId());
+
         Set<CareContexts> careContextsList = careContextsRepository.findByConsentDetails(consentDetails);
         for (CareContexts careContexts : careContextsList) {
+            if(! pattern.matcher(careContexts.getCareContextReference()).matches() ){
+                continue;
+            }
+            else{
+                String[] parts = careContexts.getCareContextReference().split("\\.");
+                String appointmentId = parts[2];
+                AppointmentDetails appointmentDetails = appointmentRepository.findById(Integer.parseInt(appointmentId)).orElse(null);
+                if(appointmentDetails == null){
+                    continue;
+                }
+            }
+
             String fhirContent = fhirService.connvertCareContextToJsonString(careContexts);
             String encryptedContent = fideliusService.encrypt(fhirContent,senderNonce,requesterNonce,senderPrivateKey,requesterPublicKey);
             JsonNode node = objectMapper.createObjectNode()

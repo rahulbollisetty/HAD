@@ -29,8 +29,11 @@ import EditTab from "./pages/Settings/components/EditTab";
 import StaffEdit from "./pages/Settings/components/StaffEdit";
 import { Settings } from "@mui/icons-material";
 import BaseScreen from "./pages/BaseScreen";
-import AllPatientList from "./pages/PatientScreen/components/AllPatientList";
+
+
 function App() {
+
+
   return (
     <div>
       <ToastContainer
@@ -49,11 +52,12 @@ function App() {
       <Routes>
         <Route path="/" element={<Layout />}>
           {/* public routes */}
+          
           <Route path="login" element={<Login />} />
           <Route path="register/doctor" element={<Register />} />
           <Route path="register/staff" element={<StaffDetails />} />
           <Route path="register/" element={<VerifyEmail />} />
-          {/* <Route path="linkpagae" element={<LinkPage />} /> */}
+
           <Route path="unauthorized" element={<Unauthorized />} />
 
           <Route path="settings/head_doctor" element={<EditTab />} />

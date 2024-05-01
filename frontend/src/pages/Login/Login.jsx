@@ -3,16 +3,16 @@ import { useForm } from "react-hook-form";
 import useAuth from "../../hooks/useAuth";
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
+import { toast } from "react-toastify";
+import useRefreshToken from "../../hooks/useRefreshToken";
 
 const Login = () => {
-  const { setAuth, persist, setPersist } = useAuth();
-
+  const {setAuth, persist, setPersist, isLogged, setLogged } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const from = location.state?.from?.pathname || "/";
-
   const [errMsg, setErrMsg] = useState("");
-
+  const refresh = useRefreshToken();
   const {
     register,
     handleSubmit,
@@ -26,18 +26,22 @@ const Login = () => {
         headers: { "Content-Type": "application/json" },
         withCredentials: true,
       });
-      console.log(JSON.stringify(response?.data));
       const accessToken = response?.data?.token;
       setAuth({ accessToken });
+      localStorage.setItem("isLogged",true);
       navigate(from, { replace: true });
+      toast.success("Logged In")
     } catch (err) {
       if (!err?.response) {
         setErrMsg("No Server Response");
-      } else if (err.response?.status === 400) {
-        setErrMsg("Missing Username or Password");
-      } else if (err.response?.status === 401) {
+      }else if (err.response?.status === 403) {
         setErrMsg("Unauthorized");
-      } else {
+        toast.error("Wrong Credentials");
+      }
+      else if (err.response?.status === 503 || err.response?.status === 500){
+        toast.error("Internal Server Error");
+      } 
+      else {
         setErrMsg("Login Failed");
       }
     }
@@ -51,6 +55,13 @@ const Login = () => {
     localStorage.setItem("persist", persist);
   }, [persist]);
 
+  useEffect(() => {
+    if(localStorage.getItem("isLogged")==="true"){
+      refresh()
+      navigate(from, { replace: true });
+      toast.info("Already Logged in !!")
+    }
+  }, []);
   return (
     <div className="bg-[#02685A]  w-fill h-screen flex items-center justify-center">
       <div className="bg-white w-4/5 h-[70%] rounded-[10px]">

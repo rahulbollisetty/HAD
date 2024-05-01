@@ -533,8 +533,6 @@ public class ConsentService {
          } catch (IOException e) {
              System.out.println("Error writing JsonNodeList to file: " + e.getMessage());
          }
-
-
          encryptionDecryptionService.encryptFile(Path.of(fileName),consentRequest.getIdentifier_value(),consentRequest.getPatient_id().toString());
          List<ConsentArtefact> consentArtefactList = consentArtefactRepository.findAllByConsentRequest(consentRequest);
          if(!consentArtefactList.isEmpty()){

@@ -38,7 +38,7 @@ public class SecurityConfig {
         http.csrf((csrf) -> csrf.disable()).cors(cors -> cors.disable())
                 .cors(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorize -> authorize
-                                .requestMatchers("/auth/**").permitAll()
+                                .requestMatchers("/auth/login","/auth/registerDoctor","/auth/registerFacility","/auth/registerFacility","/auth/refreshtoken").permitAll()
                                 .anyRequest().authenticated()
 //                        .requestMatchers("/user").hasAnyAuthority("ROLE_USER", "ROLE_ADMIN")
 //                        .requestMatchers("/admin").hasAuthority("ROLE_ADMIN")

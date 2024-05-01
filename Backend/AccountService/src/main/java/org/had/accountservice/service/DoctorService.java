@@ -121,7 +121,6 @@ public class DoctorService {
 
     public DoctorDetails getDoctorDetailsByUsername(String username) {
         System.out.println(username);
-        System.out.println("Jebjfbhd");
         return doctorDetailsRepository.findByLoginCredential(userCredentialRepository.findByUsername(username).get()).get();
     }
 
