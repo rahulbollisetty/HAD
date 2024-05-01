@@ -23,7 +23,7 @@ public class AppointmentDetails {
 
     private String doctorRegNumber;
 
-    private String doctor_name;
+    private String doctorName;
 
     @ManyToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "patientId", referencedColumnName = "mrn")

@@ -5,28 +5,25 @@ import DeleteDialog from "../DeleteDialog";
 import { jwtDecode } from "jwt-decode";
 import useAuth from "../../../hooks/useAuth";
 function Profile({ patientId }) {
-  console.log(patientId);
 
   const [PatientDetails, setPatientDetails] = useState({});
   const axiosPrivate = useAxiosPrivate();
   const { auth } = useAuth();
-  const decoded = auth?.accessToken ? auth.accessToken : undefined;
+  const decoded = auth?.accessToken ? jwtDecode(auth.accessToken) : undefined;
   const [role, setRole] = useState("");
   useEffect(() => {
     const getPatientDetails = async () => {
       try {
         const path = `http://127.0.0.1:9005/patient/getPatientDetails?id=${patientId}`;
         const resp = await axiosPrivate.get(path);
-        console.log(resp.data);
         setPatientDetails(resp.data);
       } catch (error) {
-        console.log(error);
+        // console.log(error);
       }
     };
     getPatientDetails();
-    console.log(decoded?.role)
     setRole(decoded?.role);
-  }, [decoded]);
+  }, []);
   return (
     <div>
       <div className="w-full">
@@ -92,14 +89,12 @@ function Profile({ patientId }) {
                     <div>Delete</div>
                     <FaCaretRight className="h-[25px] w-[25px]" />
                   </button> */}
-                {role === "HEAD_DOCTOR" ||
-                  (role === "DOCTOR" && (
-                    <>
-                      <DeleteDialog patient = {PatientDetails}/>
-                    </>
-                  ))}
+                {(role === "HEAD_DOCTOR" || role === "STAFF") && (
+                  <>
+                    <DeleteDialog patient={PatientDetails} />
+                  </>
+                )}
               </div>
-              <DeleteDialog patient = {PatientDetails}/>
             </div>
           </div>
         </div>

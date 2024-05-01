@@ -57,9 +57,10 @@ function AbhaRegister({ sendDataToParent }) {
         body: JSON.stringify(data),
         onmessage(response) {
           var status = JSON.parse(response.data).statusCodeValue;
-          if (status >= 400) console.error(JSON.parse(response.data).body);
-          else if (status === 200) {
-            console.log(JSON.parse(response.data).body.auth.accessToken);
+          if (status >= 400) {
+            // console.error(JSON.parse(response.data).body);
+          } else if (status === 200) {
+            // console.log(JSON.parse(response.data).body.auth.accessToken);
             const linkToken = JSON.parse(response.data).body.auth.accessToken;
             setProfileData({ ...profileData, accessToken: linkToken });
             const modifiedData = {
@@ -72,18 +73,18 @@ function AbhaRegister({ sendDataToParent }) {
           abortController.abort();
         },
         onclose(resp) {
-          console.log(resp);
+          // console.log(resp);
           abortController.abort();
         },
         onerror(error) {
-          console.log(error);
+          // console.log(error);
           abortController.abort();
           throw new Error(error);
         },
         signal: abortController.signal,
       });
     } catch (err) {
-      console.log(err);
+      // console.log(err);
       //   toast.error(err);
     }
   };
@@ -131,14 +132,14 @@ function AbhaRegister({ sendDataToParent }) {
           setAbhaAddressshow(true);
           toast.info("Select the Abha Address");
         } catch (error) {
-          console.log(error);
+          // console.log(error);
           toast.error("Unable to fetch Health Id seggestions");
         }
       } catch (error) {
-        console.log(error);
+        // console.log(error);
       }
     } catch (error) {
-      console.log(error);
+      // console.log(error);
       toast.error("Could Not Create Health Id, try again");
     }
   };
@@ -172,13 +173,13 @@ function AbhaRegister({ sendDataToParent }) {
                     "/patient/aadhaarOTPInit",
                     data
                   );
-                  console.log(resp);
+                  // console.log(resp);
                   setTxn(resp.data.txnId);
                   setShowOtpInput(true);
                   setShowMobileInput(true);
                   toast.success("OTP sent to " + resp.data.mobileNumber);
                 } catch (err) {
-                  console.log(err);
+                  // console.log(err);
                   if (err?.response?.data) {
                     if (err?.response?.data?.details)
                       toast.error(err.response.data.details[0].message);
@@ -276,7 +277,7 @@ function AbhaRegister({ sendDataToParent }) {
                 }
                 try {
                   const resp = await axiosPrivate.post(path, data);
-                  console.log(resp);
+                  // console.log(resp);
                   if (isMobileLinked) {
                     setTxn(resp.data.txnId);
                     setMobileLinked(false);
@@ -301,7 +302,7 @@ function AbhaRegister({ sendDataToParent }) {
                           "/patient/checkAndMobileOTPInit",
                           data
                         );
-                        console.log(resp);
+                        // console.log(resp);
                         setTxn(resp.data.txnId);
                         if (!resp.data?.mobileLinked) {
                           toast.info(
@@ -317,12 +318,12 @@ function AbhaRegister({ sendDataToParent }) {
                           createHealthId();
                         }
                       } catch (error) {
-                        console.log(error);
+                        // console.log(error);
                       }
                     }
                   }
                 } catch (err) {
-                  console.log(err);
+                  // console.log(err);
                 }
               })}
             >
@@ -389,10 +390,10 @@ function AbhaRegister({ sendDataToParent }) {
                   "http://127.0.0.1:9005/patient/createPHRAddress",
                   data
                 );
-                console.log(resp);
+                // console.log(resp);
                 toast.success("ABHA Address created: " + resp.data.phrAdress);
               } catch (err) {
-                console.log(err);
+                // console.log(err);
               }
               setProfileData({
                 ...profileData,
@@ -413,7 +414,7 @@ function AbhaRegister({ sendDataToParent }) {
                   onmessage(response) {
                     var status = JSON.parse(response.data).statusCodeValue;
                     if (status >= 400)
-                      console.error(JSON.parse(response.data).body);
+                      // console.error(JSON.parse(response.data).body);
                     // toast.error(JSON.parse(response.data).body);
                     else if (status == 200) {
                       // toast.success("Verification Initiated");
@@ -424,18 +425,18 @@ function AbhaRegister({ sendDataToParent }) {
                     abortController.abort();
                   },
                   onclose(resp) {
-                    console.log(resp);
+                    // console.log(resp);
                     abortController.abort();
                   },
                   onerror(error) {
-                    console.log(error);
+                    // console.log(error);
                     abortController.abort();
                     throw new Error(error);
                   },
                   signal: abortController.signal,
                 });
               } catch (err) {
-                console.log(err);
+                // console.log(err);
               }
             })}
           >

@@ -23,17 +23,17 @@ export default function StaffDetails() {
         "http://127.0.0.1:9005/auth/registerStaff",
         getValues()
       );
-      console.log(resp);
+      // console.log(resp);
       if (resp.status === 200) {
         navigate("/login");
         toast.success(resp.data.status);
       }
     } catch (error) {
-      console.log(error);
+      // console.log(error);
       toast.error(error.response.data);
     }
   };
-  console.log(getValues());
+  // console.log(getValues());
 
   return (
     <div className="bg-white">

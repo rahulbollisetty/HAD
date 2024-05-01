@@ -10,6 +10,7 @@ import { useEffect, useState } from "react";
 import useAuth from "../../../hooks/useAuth";
 import { jwtDecode } from "jwt-decode";
 import useAxiosPrivate from "../../../hooks/useAxiosPrivate";
+import { toast } from "react-toastify";
 
 const DoctorDetail = (doctor) => {
   const { auth } = useAuth();
@@ -24,18 +25,21 @@ const DoctorDetail = (doctor) => {
   const deleteDoctor = async (doctorId) => {
     const requestBody = {
       doctorId: doctorId,
-      role : "doctor"
+      role: "doctor",
     };
     try {
       const response = await axiosPrivate.post(
         `http://127.0.0.1:9005/auth/deleteFaculty`,
         requestBody
       );
-      console.log(response.data);
+      toast.success("response.data");
+      // console.log(response.data);
     } catch (err) {
-      console.log(err);
+      // console.log(err);
+      toast.error(err);
       if (!err?.response) {
-        console.error("No Server Response");
+        // console.error("No Server Response");
+        toast.error("No Server Response");
       }
     }
   };
@@ -164,9 +168,7 @@ const DoctorDetail = (doctor) => {
             <Button
               variant="filled"
               className="bg-[#FFA000]"
-              onClick={() =>
-                deleteDoctor(doctor.doctor?.doctor_Id)
-              }
+              onClick={() => deleteDoctor(doctor.doctor?.doctor_Id)}
             >
               <span>Delete Doctor</span>
             </Button>

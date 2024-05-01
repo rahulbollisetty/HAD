@@ -18,24 +18,31 @@ import useAuth from "../../../hooks/useAuth";
 function PastRecords({ patientId, sendDataToParent }) {
   const [AppointmentDetailsList, setAppointmentDetailsList] = useState([]);
   const axiosPrivate = useAxiosPrivate();
-  const [role, setRole] = useState();
+  const [role, setRole] = useState("");
   const { auth } = useAuth();
 
   const decoded = auth?.accessToken ? jwtDecode(auth.accessToken) : undefined;
 
   useEffect(() => {
+    setRole(decoded?.role);
     const getAppointmentDetails = async () => {
       try {
-        const path = `http://127.0.0.1:9005/patient/appointment/getAppointmentDetails?id=${patientId.patientId}`;
+        let path;
+        if (decoded?.role === "DOCTOR") {
+          const name = decoded?.name;
+          path = `http://127.0.0.1:9005/patient/appointment/getAppointmentForDoctor?id=${patientId.patientId}&name=${name}`;
+        } else {
+          path = `http://127.0.0.1:9005/patient/appointment/getAppointmentDetails?id=${patientId.patientId}`;
+        }
         const resp = await axiosPrivate.get(path);
-        console.log(resp.data);
+        // console.log(resp.data);
         setAppointmentDetailsList(resp.data);
       } catch (error) {
-        console.log(error);
+        // console.log(error);
       }
     };
     getAppointmentDetails();
-    setRole(decoded?.role)
+    // console.log(decoded);
   }, []);
 
   const deleteAppointment = async (appointment_id) => {
@@ -45,12 +52,12 @@ function PastRecords({ patientId, sendDataToParent }) {
     try {
       const resp = await axiosPrivate.post(
         `http://127.0.0.1:9005/patient/deleteAppointment`,
-        requestBody,
+        requestBody
       );
-      console.log(resp.data);
+      // console.log(resp.data);
       toast.success(resp.data);
     } catch (error) {
-      console.error(error);
+      // console.error(error);
     }
   };
 
@@ -60,10 +67,12 @@ function PastRecords({ patientId, sendDataToParent }) {
         <p className="font-semibold relative text-2xl ml-4 mt-4 mb-4 text-[#444444]">
           All Appointment Details
         </p>
-        {role === "STAFF" && 
-        
-        <AddAppointmentForm patientId={patientId} />
-        }
+        {role === "STAFF" ||
+          (role === "HEAD_DOCTOR" && (
+            <>
+              <AddAppointmentForm patientId={patientId} />
+            </>
+          ))}
       </div>
       <div className="h-[1px] bg-[#827F7F82]"></div>
       <div className="sm:rounded-lg 2xl:max-h-[580px] 4xl:max-h-[800px] lg:max-h-[50px] flex flex-col overflow-auto">
@@ -119,10 +128,14 @@ function PastRecords({ patientId, sendDataToParent }) {
                     <td className="px-6 py-4">{item.notes}</td>
                     <td className="px-6 py-4">
                       <button
-                        className={role==="STAFF" ?`inline-flex justify-center items-center gap-[10px] rounded-lg
-                         text-[20px] text-white font-semibold p-2.5 bg-gray-500 cursor-not-allowed` :`inline-flex justify-center items-center gap-[10px] rounded-lg
-                                        border border-[#787887] bg-[#F5FEF2] text-[20px] text-[#02685A] font-semibold p-2.5`}
-                                        disabled={role==="STAFF"}
+                        className={
+                          role === "STAFF"
+                            ? `inline-flex justify-center items-center gap-[10px] rounded-lg
+                         text-[20px] text-white font-semibold p-2.5 bg-gray-500 cursor-not-allowed`
+                            : `inline-flex justify-center items-center gap-[10px] rounded-lg
+                                        border border-[#787887] bg-[#F5FEF2] text-[20px] text-[#02685A] font-semibold p-2.5`
+                        }
+                        disabled={role === "STAFF"}
                         onClick={() => {
                           sendDataToParent(
                             item.appointment_id,
@@ -134,6 +147,22 @@ function PastRecords({ patientId, sendDataToParent }) {
                         <FaCaretRight className="h-[25px] w-[25px]" />
                       </button>
                     </td>
+                    {role === "HEAD_DOCTOR" ||
+                      (role === "STAFF" && (
+                        <td className="px-6 py-4">
+                          <button
+                            className="inline-flex justify-center items-center gap-[10px] text-[30px]
+                                        text-[#b82d2d] "
+                            onClick={() => {
+                              deleteAppointment(item.appointment_id);
+                            }}
+                          >
+                            <div>
+                              <MdDelete />
+                            </div>
+                          </button>
+                        </td>
+                      ))}
                   </tr>
                 ))}
               </>

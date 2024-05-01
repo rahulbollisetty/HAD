@@ -26,9 +26,10 @@ const AllPatientList = (props) => {
       const resp = await axiosPrivate.get(
         "http://127.0.0.1:9005/patient/getPatientList"
       );
-      console.log(resp);
+      // console.log(resp);
       setAllPatientList(resp.data);
     };
+    // console.log(decoded)
     getAllPatientList();
     setRole(decoded?.role);
   }, []);
@@ -55,7 +56,7 @@ const AllPatientList = (props) => {
                   <MdSearch className="h-[25px] w-[25px]" />
                 </div>
               </div>
-              {role === "STAFF" && (
+              {role === "DOCTOR"  && (
                 <>
                   <AddPatientForm />
                 </>

@@ -140,6 +140,7 @@ public class DoctorService {
         doctorDetails.setIsHeadDoctor(doctorDetailsDTO.getIsHeadDoctor());
         doctorDetails.setAddress(doctorDetailsDTO.getAddress());
         doctorDetails.setLoginCredential(userCredential);
+        doctorDetails.setEmail(doctorDetailsDTO.getEmail());
         return doctorDetails;
     }
 

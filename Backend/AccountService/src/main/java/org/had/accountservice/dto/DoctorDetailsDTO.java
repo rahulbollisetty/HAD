@@ -63,5 +63,8 @@ public class DoctorDetailsDTO {
     @NotNull
     private Boolean isHeadDoctor;
 
+    @NotNull
+    private String email;
+
 }
 

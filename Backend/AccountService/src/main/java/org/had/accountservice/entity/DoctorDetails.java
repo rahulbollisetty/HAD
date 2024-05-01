@@ -35,6 +35,9 @@ public class DoctorDetails {
     private String last_Name;
 
     @NotNull
+    private String email;
+
+    @NotNull
     private String dob;
 
     @NotNull

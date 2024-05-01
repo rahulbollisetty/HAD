@@ -19,7 +19,7 @@ function LinkHPR() {
   const [success, setSuccess] = useState(false);
   const [isLoading, setLoading] = useState(false);
   const [doctorDetails, setDoctorDetails] = useState({});
-  const [txnId, setTxnId] = useState();
+  const [txnId, setTxnId] = useState("");
 
   // useEffect(() => {
   //   const windowValues = window.location.search;
@@ -42,8 +42,8 @@ function LinkHPR() {
         "http://127.0.0.1:9005/auth/generateAadharOTPHPR",
         requestBody
       );
-      console.log(resp);
-      setTxnId(resp?.txnId);
+      // console.log(resp);
+      setTxnId(resp?.data?.txnId);
       if (resp.status === 200) {
         toast.success("OTP Sent");
         setDoctorDetails(resp.data);

@@ -65,7 +65,7 @@ public class AppointmentService {
     public void createNewAppointment(AppointmentDto appointmentDto) {
         AppointmentDetails appointmentDetails = new AppointmentDetails();
         appointmentDetails.setDoctor_id(appointmentDto.getDoctor_id());
-        appointmentDetails.setDoctor_name(appointmentDto.getDoctor_name());
+        appointmentDetails.setDoctorName(appointmentDto.getDoctor_name());
         appointmentDetails.setDoctorRegNumber(appointmentDto.getDoctorRegNumber());
 
         PatientDetails patientDetails = patientDetailsRepository.findById(appointmentDto.getPatient_id())
@@ -227,11 +227,9 @@ public class AppointmentService {
             return "No file uploaded";
         }
         try {
-            // Specify the directory where you want to save the file on the server
             String currentDirectory = System.getProperty("user.dir");
             String uploadDir = currentDirectory + "/files/";
 
-            // Create the directory if it doesn't exist
             File directory = new File(uploadDir);
             if (!directory.exists()) {
                 directory.mkdirs();
@@ -240,16 +238,14 @@ public class AppointmentService {
             String originalFileName = file.getOriginalFilename();
             String fileExtension = originalFileName.substring(originalFileName.lastIndexOf('.'));
 
-            // Replace whitespaces with hyphens in the original file name
             String cleanedFileName = originalFileName.replaceAll("\\s+", "-");
             String newFileName = cleanedFileName.replace(fileExtension, "") + "_" + fileName + fileExtension;
 
             File destFile = new File(directory, newFileName);
             file.transferTo(destFile);
 
-            // Store the destination path in your entity
 
-            return destFile.getAbsolutePath(); // Return the destination path
+            return destFile.getAbsolutePath();
         } catch (IOException e) {
             e.printStackTrace();
             return "Failed to upload file";
@@ -257,44 +253,7 @@ public class AppointmentService {
     }
 
 
-    public ResponseEntity<?> getImagesFromFolder(String folderName) {
 
-        List<FileSystemResource> imageList = new ArrayList<>();
-        try {
-            // Specify the directory where the files are stored on the server
-            String currentDirectory = System.getProperty("user.dir");
-            String uploadDir = currentDirectory + "/files/";
-
-            // Create a File object representing the folder
-            File folder = new File(uploadDir + folderName);
-
-            // Check if the folder exists
-            if (folder.exists() && folder.isDirectory()) {
-                // Get the list of files in the folder
-                File[] files = folder.listFiles();
-                if (files != null) {
-                    // Iterate over the files and add image files to the imageList
-                    for (File file : files) {
-                        if (file.isFile() && isImageFile(file)) {
-                            imageList.add(new FileSystemResource(file));
-                        }
-                    }
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        System.out.println(imageList);
-        if (!imageList.isEmpty()) {
-            // Return the list of image files as the response
-            return ResponseEntity.ok()
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .body(imageList);
-        } else {
-            // If no image files were found, return a 404 Not Found response
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        }
-    }
 
     public OpConsultation getOpConsultation(String Id) {
         AppointmentDetails appointmentDetails = appointmentRepository.findById(Integer.valueOf(Id)).get();
@@ -315,5 +274,18 @@ public class AppointmentService {
 
     public List<AppointmentDetails> getAllAppointments() {
         return appointmentRepository.findAll();
+    }
+
+    public ResponseEntity<?> getAppointmentForDoctor(int id, String name) {
+        if (patientDetailsRepository.findById(id).isPresent()) {
+            PatientDetails patientDetails = patientDetailsRepository.findById(id).get();
+            if (appointmentRepository.findByPatientIdAndDoctorName(patientDetails, name).isEmpty()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No Appointment found for this patient");
+            }
+            List<AppointmentDetails> appointmentDetails = appointmentRepository.findByPatientIdAndDoctorName(patientDetails, name);
+
+            return ResponseEntity.ok(appointmentDetails);
+        }
+        return ResponseEntity.badRequest().body("Patient Not found");
     }
 }

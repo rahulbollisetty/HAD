@@ -2,6 +2,7 @@ import { Button } from "@material-tailwind/react";
 import { useForm } from "react-hook-form";
 import useAxiosPrivate from "../../../hooks/useAxiosPrivate";
 import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 const PracticeEdit = () => {
   const {
     register,
@@ -23,37 +24,38 @@ const PracticeEdit = () => {
           "http://127.0.0.1:9005/patient/getLgdStatesList"
         );
         setStates(response.data);
-        console.log(response.data);
+        // console.log(response.data);
       } catch (error) {
-        console.error("Error fetching data:", error);
+        // console.error("Error fetching data:", error);
       }
     };
-    console.log(getValues());
+    // console.log(getValues());
 
     getStates();
   }, []);
 
   const handleDistrict = (event) => {
-    console.log(event);
+    // console.log(event);
     const selectedState = states[event].districts;
-    console.log(selectedState);
+    // console.log(selectedState);
     setdistrict(selectedState);
-    console.log(states);
+    // console.log(states);
     setValue("state", `${states[event].name}-${states[event].code}`);
   };
   const onSubmit = async () => {
-    console.log("Helloo");
-    console.log(getValues());
+    // console.log(getValues());
     try {
       const response = await axiosPrivate.post(
         `http://127.0.0.1:9005/auth/editDetails`,
         getValues()
       );
-      console.log(response.data);
+      // console.log(response.data);
       // setUserDetails(response.data);
+      toast.success("response.data")
     } catch (err) {
       if (!err?.response) {
-        console.error("No Server Response");
+        // console.error("No Server Response");
+        toast.error("No Server Response")
       }
     }
   };

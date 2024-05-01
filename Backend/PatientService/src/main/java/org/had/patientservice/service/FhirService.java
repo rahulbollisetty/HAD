@@ -105,7 +105,7 @@ public class FhirService {
 
         //SETTING AUTHOR REFERENCE
         Reference practitionerReference = new Reference("Practitioner/"+"practitioner-"+appointmentDetails.getDoctor_id());
-        practitionerReference.setDisplay("Dr. "+appointmentDetails.getDoctor_name());
+        practitionerReference.setDisplay("Dr. "+appointmentDetails.getDoctorName());
         composition.setAuthor(Collections.singletonList(practitionerReference));
 
         // Set Custodian - Organization which maintains the composition
@@ -127,7 +127,7 @@ public class FhirService {
         };
 
         //SETTING TITLE
-        composition.setTitle("OP Consultation On: "+appointmentDetails.getDate()+" By Dr. "+appointmentDetails.getDoctor_name() +" for "+patientDetails.getName());
+        composition.setTitle("OP Consultation On: "+appointmentDetails.getDate()+" By Dr. "+appointmentDetails.getDoctorName() +" for "+patientDetails.getName());
 
         //SETTING SECTION
         Composition.SectionComponent sectionComponent = new Composition.SectionComponent();
@@ -180,7 +180,7 @@ public class FhirService {
 
         // Setting Name
         HumanName name = new HumanName();
-        name.setText("Dr. "+appointmentDetails.getDoctor_name());
+        name.setText("Dr. "+appointmentDetails.getDoctorName());
         practitioner.addName(name);
 
         //SETTING IDENTIFIER

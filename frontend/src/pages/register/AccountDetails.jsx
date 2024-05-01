@@ -21,7 +21,7 @@ function AccountDetails({ data }) {
   const navigate = useNavigate();
 
   useEffect(() => {
-    console.log(data)
+    // console.log(data);
     const windowValues = window.location.search;
     const requestParams = new URLSearchParams(windowValues);
     const isHeadDoctor = "true" === requestParams.get("isHeadDoctor");
@@ -42,19 +42,19 @@ function AccountDetails({ data }) {
   const axiosPrivate = useAxiosPrivate();
   const onSubmit = async () => {
     try {
-      const resp = await axiosPrivate.post(
+      // console.log(getValues())
+      const resp = await axios.post(
         "http://127.0.0.1:9005/auth/registerDoctor",
         getValues()
       );
-      console.log(resp);
+      // console.log(resp);
       if (resp.status === 200) {
         toast.success(resp.data.status);
-        if(isHeadDoctor)
-          navigate("/register/HPR")
+        if (isHeadDoctor) navigate("/register/HPR");
         navigate("/login");
       }
     } catch (error) {
-      console.log(error);
+      // console.log(error);
       toast.error(error.response.data);
     }
   };
@@ -167,12 +167,24 @@ function AccountDetails({ data }) {
                 </div>
                 <div className="flex-1">
                   <p className="text-sm font-semibold ">
-                    getValues Registration Number*
+                    Registration Number*
                   </p>
                   <input
                     className="mt-3 rounded-md w-full"
                     type="text"
                     {...register("registration_number", {
+                      required: "Required",
+                    })}
+                  />
+                </div>
+                <div className="flex-1">
+                  <p className="text-sm font-semibold ">
+                    Email*
+                  </p>
+                  <input
+                    className="mt-3 rounded-md w-full"
+                    type="text"
+                    {...register("email", {
                       required: "Required",
                     })}
                   />

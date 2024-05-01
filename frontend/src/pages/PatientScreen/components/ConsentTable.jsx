@@ -47,13 +47,13 @@ function ConsentTable({ patientId }) {
     try {
       const path = `http://127.0.0.1:9005/consent/getConsentData?consentId=${consentId}`;
       const resp = await axiosPrivate.get(path);
-      console.log(resp);
+      // console.log(resp);
       if (resp.status === 200) {
         setLoading(null);
         setConsentData(resp.data);
       }
     } catch (error) {
-      console.log(error);
+      // console.log(error);
     }
   };
 
@@ -90,10 +90,10 @@ function ConsentTable({ patientId }) {
       try {
         const path = `http://127.0.0.1:9005/patient/getPatientDetails?id=${patientId.patientId}`;
         const resp = await axiosPrivate.get(path);
-        console.log(resp.data);
+        // console.log(resp.data);
         setPatientDetails(resp.data);
       } catch (error) {
-        console.log(error);
+        // console.log(error);
       }
     };
     getPatientDetails();
@@ -104,7 +104,7 @@ function ConsentTable({ patientId }) {
         const resp = await axiosPrivate.get(path);
         setConsentList(resp.data);
       } catch (error) {
-        console.log(error.response.data);
+        // console.log(error.response.data);
       }
     };
     getAllConsentsList();
@@ -117,7 +117,7 @@ function ConsentTable({ patientId }) {
         const resp = await axiosPrivate.get(path);
         setConsentList(resp.data);
       } catch (error) {
-        console.log(error.response.data);
+        // console.log(error.response.data);
       }
     }
   };
