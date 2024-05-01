@@ -19,6 +19,7 @@ function LinkHPR() {
   const [success, setSuccess] = useState(false);
   const [isLoading, setLoading] = useState(false);
   const [doctorDetails, setDoctorDetails] = useState({});
+  const [txnId, setTxnId] = useState();
 
   // useEffect(() => {
   //   const windowValues = window.location.search;
@@ -31,20 +32,42 @@ function LinkHPR() {
   //   }));
   // }, []);
 
+  const generateOTP = async () => {
+    const requestBody = {
+      hprId : getValues("hprId"),
+    }
+    requestBody.hprId += "@hpr.abdm"
+    try {
+      const resp = await axios.post(
+        "http://127.0.0.1:9005/auth/generateAadharOTPHPR",
+        requestBody
+      );
+      console.log(resp);
+      setTxnId(resp?.txnId);
+      if (resp.status === 200) {
+        toast.success("OTP Sent");
+        setDoctorDetails(resp.data);
+      }
+    } catch (error) {
+      setLoading(false);
+      setSuccess(false);
+      toast.error(error.response.data.details[0].message);
+    }
+  }
+
   const onSubmit = async () => {
     setLoading(true);
     const RequestBody = {
-      hprId: getValues("hprId"),
-      password: getValues("password"),
+      txnId: txnId,
+      otp : getValues("otp"),
     };
-    RequestBody.hprId += "@hpr.abdm";
-
+    
     try {
       const resp = await axios.post(
         "http://127.0.0.1:9005/auth/get-doctor-details",
         RequestBody
       );
-      console.log(resp);
+
       if (resp.status === 200) {
         setLoading(false);
         toast.success("Details Fetched Successfully");
@@ -129,29 +152,35 @@ function LinkHPR() {
                         Enter your Healthcare Professional ID/Username *
                       </p>
                       <div className="flex w-full">
-                        <label className="flex-1  cursor-pointer">
+                        <label className="flex-1 cursor-pointer">
+                          {" "}
+                          {/* Set width to 2/3 */}
                           <input
                             className="w-full h-10 rounded-l-md"
                             type="text"
                             {...register("hprId", { required: true })}
                           />
                         </label>
-                        <p className="flex-2.84 bg-slate-200 rounded-r-md border border-[#787887] font-semibold py-1 text-lg px-20">
+                        <p className="flex-2.2 bg-slate-200 rounded-r-md border border-[#787887] bg-[#02685A] text-white font-semibold py-1 text-lg px-20">
                           @hpr.abdm
                         </p>
+                        <button className="flex-2.2 bg-red-900 ml-20 rounded-md text-white px-6" onClick={generateOTP}>
+                          Generate OTP
+                        </button>
                       </div>
+
                       <p className="errorMsg">{errors.hprId?.message}</p>
                     </div>
                     <div className="my-12 bg-white px-10 text-black">
                       <p className="text-sm font-semibold text-[#787887]">
-                        Password
+                        Enter OTP
                       </p>
                       <div>
                         <label>
                           <input
                             className="w-full h-10 my-3 rounded-md"
                             type="password"
-                            {...register("password", { required: true })}
+                            {...register("otp", { required: true })}
                           />
                         </label>
                       </div>

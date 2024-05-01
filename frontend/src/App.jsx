@@ -54,7 +54,7 @@ function App() {
           <Route path="register/staff" element={<StaffDetails />} />
           <Route path="register/" element={<VerifyEmail />} />
           {/* <Route path="linkpagae" element={<LinkPage />} /> */}
-          <Route path="unauthorized" element={<Unauthorized />} />
+          <Route path="unauthorized" element={<LinkHPR />} />
 
           <Route path="settings/head_doctor" element={<EditTab />} />
 

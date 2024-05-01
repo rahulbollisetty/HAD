@@ -53,20 +53,42 @@ public class ABDMService {
         return LocalDate.now();
     }
 
-    public String getDoctorDetails(String hprid, String password) throws JsonProcessingException {
-
+    public String generateAadharOTPHPR(String hprId) throws JsonProcessingException {
         var values = new HashMap<String, String>() {{
             put("idType", "hpr_id");
-            put ("domainName", "@hpr.abdm");
-            put("hprId",hprid);
-            put("password",password);
+            put("domainName", "@hpr.abdm");
+            put("authMethod", "AADHAAR_OTP");
+            put("hprId", hprId);
         }};
 
         var objectMapper = new ObjectMapper();
         String requestBody = objectMapper
                 .writeValueAsString(values);
 
-        String responseBody = webClient.post().uri("https://hpridsbx.abdm.gov.in/api/v1/auth/authPassword")
+        return webClient.post().uri("https://hpridsbx.abdm.gov.in/api/v1/auth/init")
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization","Bearer "+token)
+                .body(BodyInserters.fromValue(requestBody))
+                .retrieve()
+                .onStatus(HttpStatusCode::isError,clientResponse -> {
+                    return clientResponse.bodyToMono(String.class)
+                            .flatMap(errorBody -> Mono.error(new MyWebClientException(errorBody, clientResponse.statusCode().value())));
+                })
+                .bodyToMono(String.class).block();
+    }
+
+    public String getDoctorDetails(String otp, String txnId) throws JsonProcessingException {
+
+        var values = new HashMap<String, String>() {{
+           put("otp", otp);
+           put("txnId", txnId);
+        }};
+
+        var objectMapper = new ObjectMapper();
+        String requestBody = objectMapper
+                .writeValueAsString(values);
+
+        String responseBody = webClient.post().uri("https://hpridsbx.abdm.gov.in/api/v1/auth/confirmWithAadhaarOtp")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization","Bearer "+token)
                 .body(BodyInserters.fromValue(requestBody))
