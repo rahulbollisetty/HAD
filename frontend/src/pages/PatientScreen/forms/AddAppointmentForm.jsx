@@ -11,7 +11,7 @@ import {
 } from "@material-tailwind/react";
 import { toast } from "react-toastify";
 
-function AddAppointmentForm({patientId}) {
+function AddAppointmentForm({patientId,sendDataToParent}) {
   const {
     register,
     handleSubmit,
@@ -57,6 +57,7 @@ function AddAppointmentForm({patientId}) {
       setOpen(!open);
       toast.success(response.data);
       reset();
+      sendDataToParent(true);
     } catch (error) {
       // console.error("Error submitting appointment:", error);
     }

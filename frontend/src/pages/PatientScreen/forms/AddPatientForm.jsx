@@ -15,7 +15,7 @@ import { toast } from "react-toastify";
 import useAuth from "../../../hooks/useAuth";
 import { jwtDecode } from "jwt-decode";
 
-function AddPatientForm() {
+function AddPatientForm({sendDataToParent}) {
   const {
     register,
     handleSubmit,
@@ -356,6 +356,7 @@ function AddPatientForm() {
                 );
                 // console.log(resp);
                 toast.success(resp.data);
+                sendDataToParent(true);
               } catch (error) {
                 // console.log(error);
                 toast.error(error.response.data);

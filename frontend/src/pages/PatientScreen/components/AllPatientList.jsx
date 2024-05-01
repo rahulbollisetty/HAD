@@ -34,6 +34,19 @@ const AllPatientList = (props) => {
     setRole(decoded?.role);
   }, []);
 
+  const handleDataFromChild = async (data) => {
+    if (data) {
+      try {
+        const resp = await axiosPrivate.get(
+          "http://127.0.0.1:9005/patient/getPatientList"
+        );
+        setAllPatientList(resp.data);
+      } catch (error) {
+        // console.log(error.response.data);
+      }
+    }
+  };
+
   const navigate = useNavigate();
 
   return (
@@ -58,7 +71,7 @@ const AllPatientList = (props) => {
               </div>
               {(role === "HEAD_DOCTOR" || role === "STAFF") && (
                 <>
-                  <AddPatientForm />
+                  <AddPatientForm  sendDataToParent={handleDataFromChild} />
                 </>
               )}
             </div>

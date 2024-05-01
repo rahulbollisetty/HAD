@@ -47,6 +47,25 @@ function PastRecords({ patientId, sendDataToParent }) {
     // console.log(decoded);
   }, []);
 
+  const handleDataFromChild = async (data) => {
+    if (data) {
+      try {
+        let path;
+        if (decoded?.role === "DOCTOR") {
+          const name = decoded?.name;
+          path = `http://127.0.0.1:9005/patient/appointment/getAppointmentForDoctor?id=${patientId.patientId}&name=${name}`;
+        } else {
+          path = `http://127.0.0.1:9005/patient/appointment/getAppointmentDetails?id=${patientId.patientId}`;
+        }
+        const resp = await axiosPrivate.get(path);
+        // console.log(resp.data);
+        setAppointmentDetailsList(resp.data);
+      } catch (error) {
+        // console.log(error.response.data);
+      }
+    }
+  };
+
   const deleteAppointment = async (appointment_id) => {
     const requestBody = {
       appointmentId: parseInt(appointment_id),
@@ -65,17 +84,20 @@ function PastRecords({ patientId, sendDataToParent }) {
     }
   };
 
+
+
   return (
     <div className="border mx-3 my-4 border-[#006666] rounded-md border-l-4">
       <div className="flex justify-between items-center">
         <p className="font-semibold relative text-2xl ml-4 mt-4 mb-4 text-[#444444]">
           All Appointment Details
         </p>
-        {(role === "DOCTOR" || role === "HEAD_DOCTOR") && (
-          <>
-            <AddAppointmentForm patientId={patientId} />
-          </>
-        )}
+        {role === "STAFF" ||
+          (role === "HEAD_DOCTOR" && (
+            <>
+              <AddAppointmentForm sendDataToParent={handleDataFromChild} patientId={patientId} />
+            </>
+          ))}
       </div>
       <div className="h-[1px] bg-[#827F7F82]"></div>
       <div className="sm:rounded-lg 2xl:max-h-[580px] 4xl:max-h-[800px] lg:max-h-[50px] flex flex-col overflow-auto">
