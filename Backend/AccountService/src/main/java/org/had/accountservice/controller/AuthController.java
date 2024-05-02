@@ -258,7 +258,7 @@ public class AuthController {
         return authService.verifyForgotPasswordToken(jsonNode);
     }
 
-    @PostMapping(value = "/resetForgotPassword", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "resetForgotPassword", produces = MediaType.APPLICATION_JSON_VALUE)
     public String resetForgotPassword(@RequestBody JsonNode jsonNode) {
         return authService.resetForgotPassword(jsonNode);
     }

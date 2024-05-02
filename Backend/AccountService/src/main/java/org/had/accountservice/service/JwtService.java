@@ -37,6 +37,8 @@ public class JwtService {
     @Value("${hospital.id}")
     private String hospitalId;
 
+    @Value("${hospital.name}")
+    private String hospitalName;
 
     @Autowired
     private DoctorDetailsRepository doctorDetailsRepository;
@@ -117,6 +119,7 @@ public class JwtService {
                     .claim("registrationNumber",doctorDetails.getRegistration_number())
                     .claim("hprId",doctorDetails.getHpr_Id())
                     .claim("hospitalId",hospitalId)
+                    .claim("hospitalName",hospitalName)
                     .issuedAt(new Date(System.currentTimeMillis()))
                     .expiration(new Date(System.currentTimeMillis()+1000*15*60))
                     .signWith(getSignKey()).compact();
@@ -129,6 +132,7 @@ public class JwtService {
                     .claim("role",role)
                     .claim("name",name)
                     .claim("hospitalId",hospitalId)
+                    .claim("hospitalName",hospitalName)
                     .issuedAt(new Date(System.currentTimeMillis()))
                     .expiration(new Date(System.currentTimeMillis()+1000*15*60))
                     .signWith(getSignKey()).compact();

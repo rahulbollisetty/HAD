@@ -69,7 +69,7 @@ const AllPatientList = (props) => {
                   <MdSearch className="h-[25px] w-[25px]" />
                 </div>
               </div>
-              {(role === "HEAD_DOCTOR" || role === "STAFF") && (
+              {( role === "STAFF") && (
                 <>
                   <AddPatientForm  sendDataToAllPatientList={handleDataFromChild} />
                 </>

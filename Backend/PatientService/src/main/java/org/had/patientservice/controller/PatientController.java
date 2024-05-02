@@ -54,6 +54,7 @@ public class PatientController {
         String result = patientService.checkAndMobileOTPinit(mobile, txnId);
         return ResponseEntity.ok(result);
     }
+//    @PreAuthorize("hasAnyAuthority('DOCTOR','STAFF')")
 
     @PreAuthorize("hasAnyAuthority('DOCTOR','STAFF')")
     @PostMapping(value = "/mobileOTPVerify",produces = MediaType.APPLICATION_JSON_VALUE)
@@ -105,7 +106,6 @@ public class PatientController {
         return ResponseEntity.ok(result);
     }
 
-    @PreAuthorize("hasAnyAuthority('DOCTOR','STAFF')")
     @PostMapping(value = "/auth/userAuthInit",produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public ResponseEntity<SseEmitter> userAuthInit(@RequestBody JsonNode jsonNode) throws IOException {
         String patientSBXId = jsonNode.get("patientSBXId").asText();
@@ -163,13 +163,13 @@ public class PatientController {
         return patientService.deleteAppointment(jsonNode);
     }
 
-    @PreAuthorize("hasAnyAuthority('DOCTOR','STAFF')")
+    @PreAuthorize("hasAnyAuthority('DOCTOR','HEAD_DOCTOR')")
     @GetMapping(value = "/getAllPatientRegistrationDetailsLogs", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<PatientRegistrationLogDetails> getAllPatientRegistrationDetailsLogs(){
         return patientService.getAllPatientRegistrationDetailsLogs();
     }
 
-    @PreAuthorize("hasAnyAuthority('DOCTOR','STAFF')")
+    @PreAuthorize("hasAnyAuthority('DOCTOR','HEAD_DOCTOR')")
     @GetMapping(value = "/getAllRecordDeletionLogs", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<RecordDeletionLogDetails> getAllRecordDeletionLogs(){
         return patientService.getAllRecordDeletionLogs();

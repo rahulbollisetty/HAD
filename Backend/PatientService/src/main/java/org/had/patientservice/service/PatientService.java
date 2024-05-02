@@ -348,7 +348,7 @@ public class PatientService {
     }
 
     public ResponseEntity<?> savePatient(PatientDetailsDto patientDetailsDto) {
-        if (patientDetailsRepository.existsByAbhaAddress(patientDetailsDto.getAbhaAddress())) {
+        if (patientDetailsRepository.findByAbhaAddress(patientDetailsDto.getAbhaAddress()).isPresent()) {
             return ResponseEntity.badRequest().body("Abha Address already exists, Patient already exists");
         }
 
