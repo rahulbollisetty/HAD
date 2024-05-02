@@ -52,6 +52,7 @@ function PracticeDetails() {
       }
     } catch (error) {
       // console.log(error);
+      navigate("/login");
       // toast.error(error.response);
     }
   };

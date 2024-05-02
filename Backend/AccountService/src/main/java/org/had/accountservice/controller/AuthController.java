@@ -216,13 +216,13 @@ public class AuthController {
         return ResponseEntity.badRequest().body("Refresh Token is empty!");
     }
 
-    @PostMapping(value = "registerFacility", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/registerFacility", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> registerFacility(@RequestBody JsonNode jsonNode) {
         authService.registerFacility(jsonNode);
         return ResponseEntity.ok("Facility added to system");
     }
 
-    @PostMapping(value = "editFacility", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/editFacility", produces = MediaType.APPLICATION_JSON_VALUE)
     public String editFacility(@RequestBody JsonNode jsonNode) {
         return authService.editFacility(jsonNode);
     }
@@ -258,7 +258,7 @@ public class AuthController {
         return authService.verifyForgotPasswordToken(jsonNode);
     }
 
-    @PostMapping(value = "resetForgotPassword", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/resetForgotPassword", produces = MediaType.APPLICATION_JSON_VALUE)
     public String resetForgotPassword(@RequestBody JsonNode jsonNode) {
         return authService.resetForgotPassword(jsonNode);
     }
