@@ -12,6 +12,8 @@ import {
   DialogFooter,
 } from "@material-tailwind/react";
 import { toast } from "react-toastify";
+import useAuth from "../../../hooks/useAuth";
+import { jwtDecode } from "jwt-decode";
 
 function AddPatientForm() {
   const {
@@ -22,6 +24,14 @@ function AddPatientForm() {
     setValue,
     formState: { errors },
   } = useForm();
+  const [role, setrole] = useState("");
+  const [name, setname] = useState("");
+  const { auth } = useAuth();
+  useEffect(() => {
+    const decoded = auth?.accessToken ? jwtDecode(auth.accessToken) : undefined;
+    setname(decoded?.name);
+    setrole(decoded?.role);
+  }, []);
 
   const handleDataFromAbhaVerify = (data) => {
     // console.log(data);
@@ -34,11 +44,14 @@ function AddPatientForm() {
     setValue("abhaAddress", data.auth.patient.id || "");
     setValue("linkToken", data.auth.accessToken || "");
     setValue("abhaNumber", "");
+    setValue("dataFrom", "AbhaVerify");
     let month = String(data.auth.patient.monthOfBirth).padStart(2, "0");
     let day = String(data.auth.patient.dayOfBirth).padStart(2, "0");
     const dob = `${data.auth.patient.yearOfBirth}-${month}-${day}`;
     // console.log(dob);
     setValue("dob", dob || "");
+    setValue("role", role);
+    setValue("facultyName", name);
   };
 
   const handleDataFromAbhaRegister = (data) => {
@@ -53,6 +66,9 @@ function AddPatientForm() {
     setValue("abhaAddress", data.abhaAddress || "");
     setValue("abhaNumber", data.abhaNumber || "");
     setValue("linkToken", data.accessToken || "");
+    setValue("datafrom", "AbhaRegister");
+    setValue("role", role);
+    setValue("facultyName", name);
   };
 
   const axiosPrivate = useAxiosPrivate();

@@ -2,6 +2,7 @@ package org.had.patientservice.service;
 
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.had.accountservice.exception.MyWebClientException;
 import org.had.patientservice.dto.PatientDetailsDto;
@@ -19,10 +20,9 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import reactor.core.publisher.Mono;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.*;
 
 @Service
 public class PatientService {
@@ -53,6 +53,12 @@ public class PatientService {
 
     @Autowired
     private PrescriptionDetailsRepository prescriptionDetailsRepository;
+
+    @Autowired
+    private PatientRegistrationLogDetailsRepository patientRegistrationLogDetailsRepository;
+
+    @Autowired
+    private RecordDeletionLogDetailsRepository recordDeletionLogDetailsRepository;
 
     public String requestAadharOtp(String aadhar) {
         var values = new HashMap<String, String>() {{
@@ -139,7 +145,7 @@ public class PatientService {
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
-        String responseBody = webClient.post().uri(abdmUrl+"/abdm/patient/mobileOTPVerify")
+        return webClient.post().uri(abdmUrl+"/abdm/patient/mobileOTPVerify")
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(BodyInserters.fromValue(requestBody))
                 .retrieve()
@@ -148,8 +154,6 @@ public class PatientService {
                             .flatMap(errorBody -> Mono.error(new MyWebClientException(errorBody, clientResponse.statusCode().value())));
                 })
                 .bodyToMono(String.class).block();
-
-        return responseBody;
     }
 
     public String createHealthId(String txnId) {
@@ -366,8 +370,20 @@ public class PatientService {
         patient.setState(patientDetailsDto.getState());
         patient.setLinkToken(patientDetailsDto.getLinkToken());
         patientDetailsRepository.save(patient);
-        return ResponseEntity.ok().body("Patient Saved");
 
+        String dataFrom = patientDetailsDto.getDataFrom();
+        PatientRegistrationLogDetails patientRegistrationLogDetails = new PatientRegistrationLogDetails();
+        if(dataFrom.equals("AbhaVerify")) {
+            patientRegistrationLogDetails.setRegistrationMethod("DEMOGRAPHICS");
+        }
+        patientRegistrationLogDetails.setPatientName(patientDetailsDto.getName());
+        LocalDateTime currentDateTime = LocalDateTime.now();
+        Date currentDate = Date.from(currentDateTime.atZone(ZoneId.systemDefault()).toInstant());
+        patientRegistrationLogDetails.setGeneratedAt(currentDate);
+        patientRegistrationLogDetails.setGeneratedByName(patientDetailsDto.getFacultyName());
+        patientRegistrationLogDetails.setRole(patientDetailsDto.getRole());
+        patientRegistrationLogDetailsRepository.save(patientRegistrationLogDetails);
+        return ResponseEntity.ok().body("Patient Saved");
     }
 
 
@@ -390,7 +406,8 @@ public class PatientService {
         return patientDetailsRepository.findById(id).get();
     }
 
-    public ResponseEntity<?> deletePatient(Integer patientId) {
+    public ResponseEntity<?> deletePatient(JsonNode jsonNode) {
+        Integer patientId = jsonNode.get("patientId").asInt();
         Optional<PatientDetails> patientOptional = patientDetailsRepository.findById(patientId);
         if (patientOptional.isPresent()) {
             PatientDetails patientDetails = patientOptional.get();
@@ -414,13 +431,23 @@ public class PatientService {
                 appointmentRepository.delete(appointment);
             }
             patientDetailsRepository.delete(patientDetails);
+            RecordDeletionLogDetails recordDeletionLogDetails = new RecordDeletionLogDetails();
+            LocalDateTime currentDateTime = LocalDateTime.now();
+            Date currentDate = Date.from(currentDateTime.atZone(ZoneId.systemDefault()).toInstant());
+            recordDeletionLogDetails.setDeletedOn(currentDate);
+            recordDeletionLogDetails.setDeletedByName(jsonNode.get("name").asText());
+            recordDeletionLogDetails.setDeletedByRole(jsonNode.get("role").asText());
+            recordDeletionLogDetails.setDeletedRecordId(String.valueOf(patientId));
+            recordDeletionLogDetails.setDeletedRecordType("PATIENT_RECORD");
+            recordDeletionLogDetailsRepository.save(recordDeletionLogDetails);
             return ResponseEntity.ok().body("Patient and their records deleted successfully");
         } else {
             return ResponseEntity.badRequest().body("No patient found with id: " + patientId);
         }
     }
 
-    public ResponseEntity<?> deleteAppointment(Integer appointmentId) {
+    public ResponseEntity<?> deleteAppointment(JsonNode jsonNode) {
+        int appointmentId = jsonNode.get("appointmentId").asInt();
         Optional<AppointmentDetails> appointmentOptional = appointmentRepository.findById(appointmentId);
         if (appointmentOptional.isPresent()) {
             AppointmentDetails appointmentDetails = appointmentOptional.get();
@@ -458,6 +485,15 @@ public class PatientService {
             appointmentRepository.delete(appointmentDetails);
             System.out.println("Deleted appointmentDetails: " + appointmentDetails);
 
+            RecordDeletionLogDetails recordDeletionLogDetails = new RecordDeletionLogDetails();
+            LocalDateTime currentDateTime = LocalDateTime.now();
+            Date currentDate = Date.from(currentDateTime.atZone(ZoneId.systemDefault()).toInstant());
+            recordDeletionLogDetails.setDeletedOn(currentDate);
+            recordDeletionLogDetails.setDeletedByName(jsonNode.get("name").asText());
+            recordDeletionLogDetails.setDeletedByRole(jsonNode.get("role").asText());
+            recordDeletionLogDetails.setDeletedRecordId(String.valueOf(appointmentId));
+            recordDeletionLogDetails.setDeletedRecordType("APPOINTMENT");
+            recordDeletionLogDetailsRepository.save(recordDeletionLogDetails);
             return ResponseEntity.ok().body("Appointment deleted Successfully");
         } else {
             System.out.println("No appointment found for appointmentId: " + appointmentId);
@@ -465,5 +501,12 @@ public class PatientService {
         }
     }
 
+    public List<PatientRegistrationLogDetails> getAllPatientRegistrationDetailsLogs() {
+        return patientRegistrationLogDetailsRepository.findAll();
+    }
+
+    public List<RecordDeletionLogDetails> getAllRecordDeletionLogs() {
+        return recordDeletionLogDetailsRepository.findAll();
+    }
 }
 

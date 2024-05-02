@@ -413,9 +413,10 @@ function AbhaRegister({ sendDataToParent }) {
                   body: JSON.stringify(data),
                   onmessage(response) {
                     var status = JSON.parse(response.data).statusCodeValue;
-                    if (status >= 400)
+                    if (status >= 400){
                       // console.error(JSON.parse(response.data).body);
                     // toast.error(JSON.parse(response.data).body);
+                    }
                     else if (status == 200) {
                       // toast.success("Verification Initiated");
                       const txnId = JSON.parse(response.data).body.auth
