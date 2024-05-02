@@ -10,18 +10,24 @@ import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import { useNavigate } from "react-router-dom";
 import { MdDelete } from "react-icons/md";
 import { toast } from "react-toastify";
+import useAuth from "../../hooks/useAuth";
+import { jwtDecode } from "jwt-decode";
 
-const DoctorDetail = (patient) => {
+const DeleteDialog = (patient) => {
   const [role, setRole] = useState("");
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(!open);
   const axiosPrivate = useAxiosPrivate();
   const navigate = useNavigate();
+  const { auth } = useAuth();
+  const decoded = auth?.accessToken ? jwtDecode(auth.accessToken) : undefined;
 
   const deletePatient = async (patientId) => {
     try {
       const requestBody = {
         patientId: parseInt(patientId),
+        role : decoded?.role,
+        name : decoded?.name
       };
       const response = await axiosPrivate.post(
         `http://127.0.0.1:9005/patient/deletePatient`,
@@ -95,4 +101,4 @@ const DoctorDetail = (patient) => {
     </div>
   );
 };
-export default DoctorDetail;
+export default DeleteDialog;

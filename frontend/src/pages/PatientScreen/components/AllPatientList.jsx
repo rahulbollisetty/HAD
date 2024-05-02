@@ -14,7 +14,7 @@ const AllPatientList = (props) => {
   const [search, setSearch] = useState("");
   const [patientId, setPatientId] = useState("");
   const [AllPatientList, setAllPatientList] = useState([]);
-  const [role, setRole] = useState();
+  const [role, setRole] = useState("");
   const { auth } = useAuth();
 
   const decoded = auth?.accessToken ? jwtDecode(auth.accessToken) : undefined;
@@ -56,7 +56,7 @@ const AllPatientList = (props) => {
                   <MdSearch className="h-[25px] w-[25px]" />
                 </div>
               </div>
-              {role === "DOCTOR"  && (
+              {(role === "HEAD_DOCTOR" || role === "DOCTOR") && (
                 <>
                   <AddPatientForm />
                 </>

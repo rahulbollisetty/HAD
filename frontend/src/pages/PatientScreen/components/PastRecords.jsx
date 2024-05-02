@@ -19,12 +19,14 @@ function PastRecords({ patientId, sendDataToParent }) {
   const [AppointmentDetailsList, setAppointmentDetailsList] = useState([]);
   const axiosPrivate = useAxiosPrivate();
   const [role, setRole] = useState("");
+  const [name, setname] = useState("");
   const { auth } = useAuth();
 
   const decoded = auth?.accessToken ? jwtDecode(auth.accessToken) : undefined;
 
   useEffect(() => {
     setRole(decoded?.role);
+    setname(decoded?.name);
     const getAppointmentDetails = async () => {
       try {
         let path;
@@ -48,6 +50,8 @@ function PastRecords({ patientId, sendDataToParent }) {
   const deleteAppointment = async (appointment_id) => {
     const requestBody = {
       appointmentId: parseInt(appointment_id),
+      role: role,
+      name: name,
     };
     try {
       const resp = await axiosPrivate.post(
@@ -67,12 +71,11 @@ function PastRecords({ patientId, sendDataToParent }) {
         <p className="font-semibold relative text-2xl ml-4 mt-4 mb-4 text-[#444444]">
           All Appointment Details
         </p>
-        {role === "STAFF" ||
-          (role === "HEAD_DOCTOR" && (
-            <>
-              <AddAppointmentForm patientId={patientId} />
-            </>
-          ))}
+        {(role === "DOCTOR" || role === "HEAD_DOCTOR") && (
+          <>
+            <AddAppointmentForm patientId={patientId} />
+          </>
+        )}
       </div>
       <div className="h-[1px] bg-[#827F7F82]"></div>
       <div className="sm:rounded-lg 2xl:max-h-[580px] 4xl:max-h-[800px] lg:max-h-[50px] flex flex-col overflow-auto">
@@ -128,7 +131,7 @@ function PastRecords({ patientId, sendDataToParent }) {
                   </button>
                 </td>
                 {role === "HEAD_DOCTOR" ||
-                  (role === "STAFF" && (
+                  (role === "DOCTOR" && (
                     <td className="px-6 py-4">
                       <button
                         className="inline-flex justify-center items-center gap-[10px] text-[30px]

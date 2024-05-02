@@ -8,6 +8,7 @@ import { IoMdSettings } from "react-icons/io";
 import { FaUserInjured } from "react-icons/fa";
 import { BiSolidCalendarPlus } from "react-icons/bi";
 import { FaUserDoctor } from "react-icons/fa6";
+import { TbListDetails } from "react-icons/tb";
 import {
   Tabs,
   TabsHeader,
@@ -25,17 +26,28 @@ import { PatientScreen } from "./PatientScreen/PatientScreen";
 import { DoctorStaffScreen } from "./DoctorStaffScreen/DoctorStaffScreen";
 import CalendarScreen from "./calendar/CalendarScreen";
 import SettingsScreen from "./Settings/SettingsScreen";
+import useAuth from "../hooks/useAuth";
+import { jwtDecode } from "jwt-decode";
+import Unauthorized from "./exceptions/Unauthorized";
+import LogsTab from "./Logs/LogsTab";
 // import { jwtDecode } from "jwt-decode";
 // import useAuth from "../hooks/useAuth";
 
 const BaseScreen = ({ active_tab }) => {
   // const [username, setUsername] = useState("");
   const [activeTab, setActiveTab] = useState(active_tab);
-  const { id,appId } = useParams();
-  
+  const { id, appId } = useParams();
+
   const location = useLocation();
   const currentUrl = location.pathname;
-  const { appointmentId,appointmentStatus } = location.state || {};
+  const { appointmentId, appointmentStatus } = location.state || {};
+  const [role, setRole] = useState();
+  const { auth } = useAuth();
+
+  const decoded = auth?.accessToken ? jwtDecode(auth.accessToken) : undefined;
+  useEffect(() => {
+    setRole(decoded?.role);
+  }, []);
   // console.log(id, currentUrl);
   // const { auth } = useAuth();
   // const decoded = auth?.accessToken ? jwtDecode(auth.accessToken) : undefined;
@@ -111,6 +123,14 @@ const BaseScreen = ({ active_tab }) => {
       ),
       value: "Settings",
     },
+    {
+      label: (
+        <span className="flex font-semibold flex-start">
+          <TbListDetails className="w-8 h-8 mr-2" /> Logs
+        </span>
+      ),
+      value: "Logs",
+    },
   ];
 
   const handleToggleTab = (v) => {
@@ -121,10 +141,14 @@ const BaseScreen = ({ active_tab }) => {
         navigateTo = "stafflist";
         break;
       case "Settings":
-        navigateTo = "settings";id
+        navigateTo = "settings";
+        id;
         break;
       case "Calendar":
         navigateTo = "calendar";
+        break;
+      case "Logs":
+        navigateTo = "logs";
         break;
     }
     navigate(`/${navigateTo}`);
@@ -240,17 +264,42 @@ const BaseScreen = ({ active_tab }) => {
                 <CalendarScreen />
               ) : activeTab === "All Patient" ? (
                 <>
-                {id && <>{currentUrl === `/patientScreen/${id}` && <PatientScreen appId={appointmentId} appStatus={appointmentStatus} id={id}/>}</>}
-                {!id && <><AllPatientList /></>}
+                  {id && (
+                    <>
+                      {currentUrl === `/patientScreen/${id}` && (
+                        <PatientScreen
+                          appId={appointmentId}
+                          appStatus={appointmentStatus}
+                          id={id}
+                        />
+                      )}
+                    </>
+                  )}
+                  {!id && (
+                    <>
+                      <AllPatientList />
+                    </>
+                  )}
                 </>
               ) : activeTab === "Doctor List" ? (
                 <DoctorStaffScreen />
               ) : activeTab === "Settings" ? (
                 <SettingsScreen />
+              ) : activeTab === "Logs" ? (
+                <>
+                  {role === "DOCTOR" ? (
+                    <>
+                      <LogsTab />
+                    </>
+                  ) : (
+                    <>
+                      <Unauthorized />
+                    </>
+                  )}
+                </>
               ) : (
                 <p>Invalid case number</p>
               )}
-              
             </div>
           </div>
         </div>

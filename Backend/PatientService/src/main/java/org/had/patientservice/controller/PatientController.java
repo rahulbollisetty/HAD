@@ -2,15 +2,13 @@ package org.had.patientservice.controller;
 
 
 import com.fasterxml.jackson.databind.JsonNode;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
-import org.had.accountservice.entity.DoctorDetails;
 import org.had.patientservice.dto.PatientDetailsDto;
 import org.had.patientservice.entity.PatientDetails;
+import org.had.patientservice.entity.PatientRegistrationLogDetails;
+import org.had.patientservice.entity.RecordDeletionLogDetails;
 import org.had.patientservice.service.PatientService;
-import org.had.patientservice.service.RabbitMqService;
-import org.had.patientservice.service.SSEService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -156,15 +154,25 @@ public class PatientController {
     @PreAuthorize("hasAnyAuthority('DOCTOR','STAFF')")
     @PostMapping(value = "/deletePatient", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> deletePatient(@RequestBody JsonNode jsonNode){
-        Integer patientId = jsonNode.get("patientId").asInt();
-        return patientService.deletePatient(patientId);
+        return patientService.deletePatient(jsonNode);
     }
 
     @PreAuthorize("hasAnyAuthority('DOCTOR','STAFF')")
     @PostMapping(value = "/deleteAppointment", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> deleteAppointement(@RequestBody JsonNode jsonNode){
-        Integer appointmentId = jsonNode.get("appointmentId").asInt();
-        return patientService.deleteAppointment(appointmentId);
+        return patientService.deleteAppointment(jsonNode);
+    }
+
+    @PreAuthorize("hasAnyAuthority('DOCTOR','STAFF')")
+    @GetMapping(value = "/getAllPatientRegistrationDetailsLogs", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<PatientRegistrationLogDetails> getAllPatientRegistrationDetailsLogs(){
+        return patientService.getAllPatientRegistrationDetailsLogs();
+    }
+
+    @PreAuthorize("hasAnyAuthority('DOCTOR','STAFF')")
+    @GetMapping(value = "/getAllRecordDeletionLogs", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<RecordDeletionLogDetails> getAllRecordDeletionLogs(){
+        return patientService.getAllRecordDeletionLogs();
     }
 
 }

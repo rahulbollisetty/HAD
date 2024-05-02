@@ -37,4 +37,10 @@ public class PatientDetailsDto {
     private String state;
 
     private String linkToken;
+
+    private String dataFrom;
+
+    private String role;
+
+    private String facultyName;
 }

@@ -17,6 +17,7 @@ function Profile({ patientId }) {
         const path = `http://127.0.0.1:9005/patient/getPatientDetails?id=${patientId}`;
         const resp = await axiosPrivate.get(path);
         setPatientDetails(resp.data);
+        console.log(resp.data)
       } catch (error) {
         // console.log(error);
       }
@@ -89,7 +90,7 @@ function Profile({ patientId }) {
                     <div>Delete</div>
                     <FaCaretRight className="h-[25px] w-[25px]" />
                   </button> */}
-                {(role === "HEAD_DOCTOR" || role === "STAFF") && (
+                {(role === "HEAD_DOCTOR" || role === "DOCTOR") && (
                   <>
                     <DeleteDialog patient={PatientDetails} />
                   </>
