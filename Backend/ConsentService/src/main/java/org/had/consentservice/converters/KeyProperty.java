@@ -1,4 +1,4 @@
-package org.had.patientservice.converters;
+package org.had.consentservice.converters;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;

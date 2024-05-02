@@ -12,6 +12,7 @@ public class RouteValidator {
             "/auth/registerDoctor",
             "/auth/registerStaff",
             "/auth/login",
+            "/patient/getLgdStatesList",
             "/data/push",
             "/eureka",
             "/abdm/**"

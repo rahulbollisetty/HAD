@@ -1,4 +1,5 @@
-package org.had.patientservice.converters;
+package org.had.consentservice.converters;
+
 
 import jakarta.persistence.AttributeConverter;
 
@@ -13,7 +14,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 
 import static org.apache.commons.lang.StringUtils.isNotEmpty;
-import static org.had.accountservice.converters.KeyProperty.DATABASE_ENCRYPTION_KEY;
+import static org.had.consentservice.converters.KeyProperty.DATABASE_ENCRYPTION_KEY;
 
 abstract class AbstractCryptoConverter<T> implements AttributeConverter<T, String> {
 
@@ -35,7 +36,7 @@ abstract class AbstractCryptoConverter<T> implements AttributeConverter<T, Strin
                 return encrypt(cipher, attribute);
             } catch (
                     BadPaddingException | IllegalBlockSizeException | InvalidKeyException |
-                     NoSuchPaddingException | NoSuchAlgorithmException | InvalidAlgorithmParameterException e) {
+                    NoSuchPaddingException | NoSuchAlgorithmException | InvalidAlgorithmParameterException e) {
                 throw new RuntimeException(e);
             }
         }

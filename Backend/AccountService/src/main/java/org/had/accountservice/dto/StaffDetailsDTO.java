@@ -18,7 +18,7 @@ public class StaffDetailsDTO {
     private  String last_Name;
 
     @NotNull
-    private Date dob;
+    private String dob;
 
     @NotNull
     private String gender;
@@ -43,4 +43,7 @@ public class StaffDetailsDTO {
 
     @NotNull
     private String password;
+
+    @NotNull
+    private String email;
 }

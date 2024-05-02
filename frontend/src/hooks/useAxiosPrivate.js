@@ -11,6 +11,7 @@ const useAxiosPrivate = () => {
   useEffect(() => {
     const sd = async () => {
         try{
+          console.log("first")
             const newAccessToken = await axios.post(
               "/auth/isLogged",
               {},

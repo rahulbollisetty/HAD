@@ -2,8 +2,10 @@ import { toast } from "react-toastify";
 import { useForm } from "react-hook-form";
 import { FaRegListAlt } from "react-icons/fa";
 import { FaUser } from "react-icons/fa6";
-import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import { useNavigate } from "react-router-dom";
+import axios from "../../api/axios";
+import { useLocation } from "react-router-dom";
+import { useEffect } from "react";
 
 export default function StaffDetails() {
   const {
@@ -16,17 +18,26 @@ export default function StaffDetails() {
   } = useForm();
 
   const navigate = useNavigate();
-  const axiosPrivate = useAxiosPrivate();
+  const location = useLocation();
+  const { token } = location.state || {};
+  console.log(token);
+  useEffect(() => {
+    if (!token) {
+      navigate("/login");
+      toast.error("Invalid Token");
+    }
+  }, []);
+
   const onSubmit = async () => {
     try {
-      const resp = await axiosPrivate.post(
+      const resp = await axios.post(
         "http://127.0.0.1:9005/auth/registerStaff",
         getValues()
       );
-      // console.log(resp);
+      // console.log(resp);abhaNumber
       if (resp.status === 200) {
         navigate("/login");
-        toast.success(resp.data.status);
+        toast.success(resp.data);
       }
     } catch (error) {
       // console.log(error);
@@ -138,6 +149,16 @@ export default function StaffDetails() {
                         value: /^[0-9]+$/,
                         message: "Only Numbers are allowed",
                       },
+                    })}
+                  />
+                </div>
+                <div className="flex-1">
+                  <p className="text-sm font-semibold ">Email*</p>
+                  <input
+                    className="mt-3 rounded-md w-full"
+                    type="text"
+                    {...register("email", {
+                      required: "Required",
                     })}
                   />
                 </div>

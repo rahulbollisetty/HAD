@@ -23,7 +23,7 @@ public class DoctorController {
     @Autowired
     private DoctorService doctorService;
 
-    @PreAuthorize("hasAnyAuthority('DOCTOR','STAFF')")
+    @PreAuthorize("hasAnyAuthority('HEAD_DOCTOR','DOCTOR','STAFF')")
     @GetMapping(value = "/getAllDoctorList",produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getAllDoctorList(){
         List<DoctorDetails> doctorDetailsList = doctorService.getdoctorDetailsList();

@@ -3,6 +3,7 @@ package org.had.patientservice.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import org.had.accountservice.converters.StringCryptoConverter;
 
 import java.sql.Time;
 import java.util.Date;
@@ -21,8 +22,10 @@ public class AppointmentDetails {
 
     private String doctor_id;
 
+    @Convert(converter = StringCryptoConverter.class)
     private String doctorRegNumber;
 
+    @Convert(converter = StringCryptoConverter.class)
     private String doctorName;
 
     @ManyToOne(cascade = CascadeType.REMOVE)
@@ -33,6 +36,7 @@ public class AppointmentDetails {
 
     private String time;
 
+    @Convert(converter = StringCryptoConverter.class)
     private String notes;
 
     @Column(length = 25)

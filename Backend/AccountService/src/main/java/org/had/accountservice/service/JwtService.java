@@ -14,6 +14,7 @@ import org.had.accountservice.repository.DoctorDetailsRepository;
 import org.had.accountservice.repository.StaffDetailsRepository;
 import org.had.accountservice.repository.UserCredentialRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -32,6 +33,10 @@ import java.util.function.Function;
 public class JwtService {
 
     public static final String SECRET = "71430565e99c3c6e3b37526f3c8bf1004582589a3fe7fd35eb2305e03677ea8c";
+
+    @Value("${hospital.id}")
+    private String hospitalId;
+
 
     @Autowired
     private DoctorDetailsRepository doctorDetailsRepository;
@@ -111,7 +116,7 @@ public class JwtService {
                     .claim("name",name)
                     .claim("registrationNumber",doctorDetails.getRegistration_number())
                     .claim("hprId",doctorDetails.getHpr_Id())
-//                    .claim("hospitalId".)
+                    .claim("hospitalId",hospitalId)
                     .issuedAt(new Date(System.currentTimeMillis()))
                     .expiration(new Date(System.currentTimeMillis()+1000*15*60))
                     .signWith(getSignKey()).compact();
@@ -123,8 +128,9 @@ public class JwtService {
                     .subject(username)
                     .claim("role",role)
                     .claim("name",name)
+                    .claim("hospitalId",hospitalId)
                     .issuedAt(new Date(System.currentTimeMillis()))
-                    .expiration(new Date(System.currentTimeMillis()+1000*5*60))
+                    .expiration(new Date(System.currentTimeMillis()+1000*15*60))
                     .signWith(getSignKey()).compact();
         }
     }

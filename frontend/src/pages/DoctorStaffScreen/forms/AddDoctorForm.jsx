@@ -34,6 +34,7 @@ const AddDoctorForm = () => {
       if (resp.status === 200) {
         toast.success(resp.data.status);
         // navigate("/login");
+        setOpen(!open);
       }
     } catch (error) {
       // console.log(error);
@@ -86,7 +87,7 @@ const AddDoctorForm = () => {
                 <option hidden defaultValue={true}>
                   Select Role
                 </option>
-                <option value="HEAD_DOCTOR">Head Doctor</option>
+                {/* <option value="HEAD_DOCTOR">Head Doctor</option> */}
                 <option value="DOCTOR">Doctor</option>
                 <option value="STAFF">Staff</option>
               </select>

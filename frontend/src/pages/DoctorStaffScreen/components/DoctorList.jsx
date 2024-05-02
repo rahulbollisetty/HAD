@@ -32,17 +32,32 @@ const DoctorList = () => {
     getDoctorDetails();
   }, []);
 
+  const handleDataFromChild = async (data) => {
+    if (data) {
+      try {
+        const response = await axiosPrivate.get(
+          `http://127.0.0.1:9005/doctor/getAllDoctorList`
+        );
+        // console.log(response.data);
+        setAllDoctorList(response.data);
+      } catch (err) {
+        if (!err?.response) {
+          // console.error("No Server Response");
+        }
+      }
+    }
+  };
+
   return (
     <div className="flex flex-col h-full">
       <div className="basis-[15%]">
         <div className="text-[1.75rem] p-4 text-[#02685A] font-semibold flex flex-row m-4 justify-between items-center">
           <div className="relative">All Doctors List</div>
-          {role === "head_doctor" && (
+          {role === "HEAD_DOCTOR" && (
             <>
               <AddDoctorForm />
             </>
           )}
-          <AddDoctorForm />
         </div>
       </div>
       <div className="flex flex-row m-4 justify-between items-center">
@@ -106,7 +121,7 @@ const DoctorList = () => {
                     <td className="px-6 py-4">{doctor.mobile}</td>
                     <td className="px-6 py-4">{doctor.address}</td>
                     <td className="px-6 py-4 text-right">
-                      <DoctorDetail doctor={doctor} />
+                      <DoctorDetail sendDataToParent={handleDataFromChild} doctor={doctor} />
                     </td>
                   </tr>
                 ))}

@@ -33,6 +33,8 @@ const StaffDetail = (staff) => {
       );
       // console.log(response.data);
       toast.success(response.data);
+      staff.sendDataToParent(true);
+      setOpen(!open);
     } catch (err) {
       // console.log(err);
       toast.error(err);

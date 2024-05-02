@@ -72,7 +72,7 @@ public class PatientController {
         return ResponseEntity.ok(result);
     }
 
-    @PreAuthorize("hasAnyAuthority('DOCTOR','STAFF')")
+    @PreAuthorize("hasAnyAuthority('DOCTOR','STAFF','HEAD_DOCTOR')")
     @PostMapping(value = "/getProfileDetails",produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getProfileDetails(@RequestBody JsonNode jsonNode) {
         String authToken = jsonNode.get("authToken").asText();
@@ -114,6 +114,7 @@ public class PatientController {
         return patientService.userAuthInit(patientSBXId, requesterId, requesterType);
     }
 
+
     @PostMapping(value = "/auth/userAuthVerify",produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public ResponseEntity<SseEmitter> userAuthVerify(@RequestBody JsonNode jsonNode) throws IOException {
         String txnId = jsonNode.get("transactionId").asText();
@@ -129,14 +130,13 @@ public class PatientController {
         return patientService.savePatient(patientDetailsDto);
         }
 
-    @PreAuthorize("hasAnyAuthority('DOCTOR','STAFF')")
     @PostMapping(value = "/getLgdStatesList",produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getLgdStatesList(){
         String result = patientService.getLgdStatesList();
         return ResponseEntity.ok(result);
     }
 
-    @PreAuthorize("hasAnyAuthority('DOCTOR','STAFF')")
+    @PreAuthorize("hasAnyAuthority('DOCTOR','STAFF','HEAD_DOCTOR')")
     @GetMapping(value = "/getPatientList", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getAllPatientList(){
         List<PatientDetails> patientDetailsList = patientService.getPatientDetailsList();
@@ -144,20 +144,20 @@ public class PatientController {
         return ResponseEntity.ok(patientDetailsList);
     }
 
-    @PreAuthorize("hasAnyAuthority('DOCTOR','STAFF')")
+    @PreAuthorize("hasAnyAuthority('DOCTOR','STAFF','HEAD_DOCTOR')")
     @GetMapping(value = "/getPatientDetails", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getPatientDetails(@RequestParam String id){
         PatientDetails patientDetails = patientService.getPatientDetails(Integer.parseInt(id));
         return ResponseEntity.ok(patientDetails);
     }
 
-    @PreAuthorize("hasAnyAuthority('DOCTOR','STAFF')")
+    @PreAuthorize("hasAnyAuthority('DOCTOR','STAFF','HEAD_DOCTOR')")
     @PostMapping(value = "/deletePatient", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> deletePatient(@RequestBody JsonNode jsonNode){
         return patientService.deletePatient(jsonNode);
     }
 
-    @PreAuthorize("hasAnyAuthority('DOCTOR','STAFF')")
+    @PreAuthorize("hasAnyAuthority('DOCTOR','STAFF','HEAD_DOCTOR')")
     @PostMapping(value = "/deleteAppointment", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> deleteAppointement(@RequestBody JsonNode jsonNode){
         return patientService.deleteAppointment(jsonNode);

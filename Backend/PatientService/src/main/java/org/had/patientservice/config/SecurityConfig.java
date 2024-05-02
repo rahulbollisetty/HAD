@@ -26,7 +26,8 @@ public class SecurityConfig {
                 .cors(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/patient/auth/**").permitAll()
-                                .anyRequest().authenticated()
+                        .requestMatchers("/patient/getLgdStatesList").permitAll()
+                        .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))

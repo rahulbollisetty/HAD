@@ -2,13 +2,13 @@ import { toast } from "react-toastify";
 import { useForm } from "react-hook-form";
 import { FaRegListAlt } from "react-icons/fa";
 import { FaUser } from "react-icons/fa6";
-import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
+import axios from "../../api/axios";
+import { RiHospitalFill } from "react-icons/ri";
 
 function PracticeDetails() {
   const [states, setStates] = useState([]);
-  const axiosPrivate = useAxiosPrivate();
   const [district, setdistrict] = useState([]);
   const {
     register,
@@ -19,10 +19,11 @@ function PracticeDetails() {
     formState: { errors },
   } = useForm();
 
+  const navigate = useNavigate();
   useEffect(() => {
     const getStates = async () => {
       try {
-        const response = await axiosPrivate.post(
+        const response = await axios.post(
           "http://127.0.0.1:9005/patient/getLgdStatesList"
         );
         setStates(response.data);
@@ -40,18 +41,18 @@ function PracticeDetails() {
     // console.log(getValues());
 
     try {
-      const resp = await axiosPrivate.post(
+      const resp = await axios.post(
         "http://127.0.0.1:9005/auth/registerFacility",
         getValues()
       );
-      // console.log(resp);
+      console.log(resp);
       if (resp.status === 200) {
-        toast.success(resp.data.status);
-        // navigate("/login");
+        navigate("/login");
+        toast.success(resp.data);
       }
     } catch (error) {
       // console.log(error);
-      toast.error(error.response.data);
+      // toast.error(error.response);
     }
   };
   const handleDistrict = (event) => {
@@ -75,21 +76,28 @@ function PracticeDetails() {
             <div>
               <div className="h-full flex items-center justify-between">
                 <div className="w-24 h-1 bg-[#02685A] my-2 rounded-l-lg"></div>
-                <div className="w-20 h-20 bg-[#02685A]  my-1.5 rounded-full"></div>
+                <div className="w-20 h-20 bg-[#02685A] my-1.5 rounded-full flex justify-center items-center">
+                  <FaRegListAlt className="h-[25px] w-[25px] text-white" />
+                </div>
                 <div className="w-36 h-1 bg-[#02685A] my-2"></div>
-                <div className="w-20 h-20 bg-[#02685A]  my-1.5 rounded-full"></div>
+                <div className="w-20 h-20 bg-[#02685A] my-1.5 rounded-full flex justify-center items-center">
+                  <FaUser className="h-[25px] w-[25px] text-white" />
+                </div>
                 <div className="w-36 h-1 bg-[#02685A] my-2"></div>
                 <div className="w-23 h-23 bg-[#5AAC74] rounded-full">
-                  <div className="w-20 h-20 bg-[#02685A] mx-1.5 my-1.5 rounded-full"></div>
+                  <div className="w-20 h-20 bg-[#02685A] mx-1.5 my-1.5 rounded-full flex justify-center items-center">
+                    <RiHospitalFill className="h-[30px] w-[30px] text-white" />
+                  </div>
                 </div>
-                <div className="w-24 h-1 bg-[#DDDDDD] my-2 rounded-r-lg"></div>
+                <div className="w-24 h-1 bg-[#02685A] my-2 rounded-r-lg"></div>
               </div>
 
+
               <div className="flex mt-2">
-                <p className="ml-24 text-[#7F8C8D] font-semibold text-xl">
+                <p className="ml-24 text-[#02685A] font-semibold text-xl">
                   Link HPR
                 </p>
-                <p className="ml-32 text-[#7F8C8D] font-semibold text-xl">
+                <p className="ml-28 text-[#02685A] font-semibold text-xl">
                   Account Details
                 </p>
                 <p className="ml-20 text-[#02685A] font-semibold text-xl">
@@ -151,7 +159,6 @@ function PracticeDetails() {
                   {...register("specialization", { required: "Required" })}
                 />
               </div>
-             
             </div>
 
             <div className="flex my-6 mx-32">
@@ -223,16 +230,7 @@ function PracticeDetails() {
                 />
               </div>
 
-              <div className="flex-1">
-                <p className="text-sm font-semiboldtext-[#787887]">
-                  Bridge ID*
-                </p>
-                <input
-                  className="mt-3 rounded-md w-full"
-                  type="text"
-                  {...register("bridgeId", { required: "Required" })}
-                />
-              </div>
+             
             </div>
 
             <div className="w-full h-0.5 bg-[#DDDDDD] mt-20 my-2 "></div>

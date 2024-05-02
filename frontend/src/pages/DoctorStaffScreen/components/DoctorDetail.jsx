@@ -32,8 +32,10 @@ const DoctorDetail = (doctor) => {
         `http://127.0.0.1:9005/auth/deleteFaculty`,
         requestBody
       );
-      toast.success("response.data");
+      toast.success(response.data);
       // console.log(response.data);
+      doctor.sendDataToParent(true);
+      setOpen(!open);
     } catch (err) {
       // console.log(err);
       toast.error(err);

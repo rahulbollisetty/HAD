@@ -92,12 +92,11 @@ function PastRecords({ patientId, sendDataToParent }) {
         <p className="font-semibold relative text-2xl ml-4 mt-4 mb-4 text-[#444444]">
           All Appointment Details
         </p>
-        {role === "STAFF" ||
-          (role === "HEAD_DOCTOR" && (
+        {(role === "STAFF" || role==="HEAD_DOCTOR")  && (
             <>
               <AddAppointmentForm sendDataToParent={handleDataFromChild} patientId={patientId} />
             </>
-          ))}
+          )}
       </div>
       <div className="h-[1px] bg-[#827F7F82]"></div>
       <div className="sm:rounded-lg 2xl:max-h-[580px] 4xl:max-h-[800px] lg:max-h-[50px] flex flex-col overflow-auto">
@@ -145,7 +144,7 @@ function PastRecords({ patientId, sendDataToParent }) {
                       scope="row"
                       className="px-6 py-4 font-medium text-[#444] whitespace-nowrap"
                     >
-                      {item.doctor_name}
+                      {item.doctorName}
                     </th>
                     <td className="px-6 py-4">{item.date}</td>
                     <td className="px-6 py-4">{item.time}</td>

@@ -2,6 +2,9 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import useFetchEventSource from "../../../hooks/useFetchEventSource";
 import { toast } from 'react-toastify';
+import useAuth from "../../../hooks/useAuth";
+import { jwtDecode } from "jwt-decode";
+
 function AbhaVerify({sendDataToParent}) {
   const {
     register: register1,
@@ -22,7 +25,9 @@ function AbhaVerify({sendDataToParent}) {
   const eventSource = useFetchEventSource();
 
   const [txnId, setTxnId] = useState("");
-
+  const {auth} = useAuth();
+  const decoded = auth?.accessToken ? jwtDecode(auth.accessToken) : undefined;
+  
   const sendData = (data) => {
     sendDataToParent(data); // Call the function to send data to parent
   };
@@ -52,7 +57,7 @@ function AbhaVerify({sendDataToParent}) {
                 onClick={handleSubmit1(async () => {
                   const data = {
                     patientSBXId: getValues1("patientSBXId"),
-                    requesterId: "IN2210000258", // change this with jwt hospital Id
+                    requesterId: decoded.hospitalId, // change this with jwt hospital Id
                     requesterType: "HIP",
                   };
 

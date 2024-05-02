@@ -1,4 +1,4 @@
-package org.had.patientservice.converters;
+package org.had.consentservice.converters;
 
 import javax.crypto.Cipher;
 import javax.crypto.NoSuchPaddingException;

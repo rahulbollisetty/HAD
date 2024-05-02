@@ -120,7 +120,6 @@ public class AuthService {
         String facilityName = jsonNode.get("facilityName").asText();
         Integer pincode = jsonNode.get("pincode").asInt();
         String specialization = jsonNode.get("specialization").asText();
-        String bridgeId = jsonNode.get("bridgeId").asText();
 
         HospitalDetails hospitalDetails = new HospitalDetails();
         hospitalDetails.setAddress(address);
@@ -144,7 +143,6 @@ public class AuthService {
         var values = new HashMap<String, String>() {{
             put("facilityName", facilityName);
             put("facilityId", facilityId);
-            put("bridgeId", bridgeId);
         }};
 
         String requestBody;

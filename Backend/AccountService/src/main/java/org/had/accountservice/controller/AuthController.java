@@ -12,6 +12,7 @@ import org.had.accountservice.entity.DoctorDetails;
 import org.had.accountservice.entity.RefreshToken;
 import org.had.accountservice.entity.StaffDetails;
 import org.had.accountservice.exception.TokenRefreshException;
+import org.had.accountservice.repository.UserCredentialRepository;
 import org.had.accountservice.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
@@ -50,6 +51,8 @@ public class AuthController {
 
     @Autowired
     private RefreshTokenService refreshTokenService;
+    @Autowired
+    private UserCredentialRepository userCredentialRepository;
 
     @PostMapping("/login")
     public ResponseEntity<?> authenticateAndGetToken(@RequestBody AuthRequest authRequest) {
@@ -78,6 +81,9 @@ public class AuthController {
 
     @PostMapping(value = "/registerDoctor", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> registerDoctor(@Valid @RequestBody DoctorDetailsDTO doctorDetailsDTO) {
+        if(userCredentialRepository.existsByRole("HEAD_DOCTOR")){
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Head Doctor already exists !");
+        }
         String result = doctorService.addDoctor(doctorDetailsDTO);
         if (result.equals("Doctor added to system")) {
             Authentication authenticate = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(doctorDetailsDTO.getUsername(), doctorDetailsDTO.getPassword()));
@@ -95,6 +101,15 @@ public class AuthController {
         }
         return ResponseEntity.badRequest().body(result);
     }
+
+    @GetMapping(value = "/isHeadDoctorPresent", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> isHeadDoctorPresent() {
+        if(userCredentialRepository.existsByRole("HEAD_DOCTOR")){
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Head Doctor already exists !");
+        }
+        return ResponseEntity.ok().body(true);
+    }
+
 
     @PostMapping(value = "/sendEmail")
     public String sendMail(@RequestBody JsonNode jsonNode) {
@@ -132,7 +147,7 @@ public class AuthController {
         return staffService.getStaffDetailsByUsername(username);
     }
 
-    @PostMapping(value = "/get-doctor-details-by-username", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = {"/get-doctor-details-by-username","get-head_doctor-details-by-username"}, produces = MediaType.APPLICATION_JSON_VALUE)
     public DoctorDetails getDoctorDetailsByUsername(@RequestBody JsonNode jsonNode) {
         String username = jsonNode.get("username").asText();
         return doctorService.getDoctorDetailsByUsername(username);
@@ -202,8 +217,9 @@ public class AuthController {
     }
 
     @PostMapping(value = "registerFacility", produces = MediaType.APPLICATION_JSON_VALUE)
-    public String registerFacility(@RequestBody JsonNode jsonNode) {
-        return authService.registerFacility(jsonNode);
+    public ResponseEntity<?> registerFacility(@RequestBody JsonNode jsonNode) {
+        authService.registerFacility(jsonNode);
+        return ResponseEntity.ok("Facility added to system");
     }
 
     @PostMapping(value = "editFacility", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -217,7 +233,7 @@ public class AuthController {
         return "Details edited successfully";
     }
 
-    @PreAuthorize("hasAnyAuthority('DOCTOR','STAFF')")
+    @PreAuthorize("hasAnyAuthority('HEAD_DOCTOR','STAFF')")
     @GetMapping(value = "/getAllStaffList",produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getAllStaffList(){
         List<StaffDetails> staffDetailsList = authService.getAllStaffList();

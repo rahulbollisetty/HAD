@@ -2,6 +2,7 @@ package org.had.consentservice.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.had.consentservice.converters.StringCryptoConverter;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -21,6 +22,7 @@ public class CareContexts {
 
     private String hipName;
 
+    @Convert(converter = StringCryptoConverter.class)
     private String patientSbx;
 
     private String patientReference;

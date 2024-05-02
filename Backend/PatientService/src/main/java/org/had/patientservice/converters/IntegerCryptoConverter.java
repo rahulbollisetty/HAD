@@ -1,4 +1,4 @@
-package org.had.accountservice.converters;
+package org.had.patientservice.converters;
 
 
 import jakarta.persistence.Converter;

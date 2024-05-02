@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.had.accountservice.converters.StringCryptoConverter;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -21,6 +22,7 @@ public class CareContexts {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @Convert(converter = StringCryptoConverter.class)
     private String patientSbx;
 
     private String patientReference;

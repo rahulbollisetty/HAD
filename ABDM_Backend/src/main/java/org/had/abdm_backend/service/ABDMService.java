@@ -966,7 +966,7 @@ public class ABDMService {
 
         String facilityName = jsonNode.get("facilityName").asText();
         String facilityId = jsonNode.get("facilityId").asText();
-        String bridgeId = jsonNode.get("bridgeId").asText();
+        String bridgeId = "SBX_004922";
 
         Map<String, Object> HRP = new HashMap<>();
         HRP.put("bridgeId", bridgeId);

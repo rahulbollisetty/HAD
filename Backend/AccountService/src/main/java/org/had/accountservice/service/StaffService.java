@@ -31,6 +31,9 @@ public class StaffService {
         if (userCredentialRepository.findByUsername(staffDetailsDTO.getUsername()).isPresent()) {
             return "Username is already taken";
         }
+        if(doctorDetailsRepository.findByEmail(staffDetailsDTO.getEmail()).isPresent()){
+            return "Email is already taken, or matches with Doctor, please choose another one";
+        }
         UserCredential userCredential = new UserCredential();
         userCredential.setUsername(staffDetailsDTO.getUsername());
         userCredential.setPassword(passwordEncoder.encode(staffDetailsDTO.getPassword()));
@@ -58,6 +61,7 @@ public class StaffService {
         staffDetails.setPincode(staffDetails.getPincode());
         staffDetails.setAddress(staffDetailsDTO.getAddress());
 //        StaffDetails.setMobile(staffDetails.getMobile());
+        staffDetails.setEmail(staffDetailsDTO.getEmail());
         return staffDetails;
     }
 

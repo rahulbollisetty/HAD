@@ -56,7 +56,7 @@ function Profile({ patientId }) {
               <div className="flex-1">
                 <span className="font-semibold flex ml-auto mr-20 text-[#7B7878]">
                   ABHA Id:
-                  <p className="ml-6 text-black">{PatientDetails.abhaNumber}</p>
+                  <p className="ml-6 text-black">{PatientDetails.abhaAddress}</p>
                 </span>
               </div>
               <div className="flex-1">

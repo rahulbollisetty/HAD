@@ -71,7 +71,7 @@ const AllPatientList = (props) => {
               </div>
               {(role === "HEAD_DOCTOR" || role === "STAFF") && (
                 <>
-                  <AddPatientForm  sendDataToParent={handleDataFromChild} />
+                  <AddPatientForm  sendDataToAllPatientList={handleDataFromChild} />
                 </>
               )}
             </div>

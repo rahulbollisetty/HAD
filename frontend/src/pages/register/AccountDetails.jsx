@@ -5,10 +5,10 @@ import { useForm } from "react-hook-form";
 import { FaRegListAlt } from "react-icons/fa";
 import { FaUser } from "react-icons/fa6";
 import { RiHospitalFill } from "react-icons/ri";
-import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import { useNavigate } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
 
-function AccountDetails({ data }) {
+function AccountDetails({ isHeadDoc, data }) {
   const {
     register,
     handleSubmit,
@@ -37,9 +37,9 @@ function AccountDetails({ data }) {
     setValue("address", data.address);
     setValue("dob", data.dob);
     setValue("isHeadDoctor", isHeadDoctor);
+    if (isHeadDoc) setValue("isHeadDoctor", isHeadDoc);
   });
 
-  const axiosPrivate = useAxiosPrivate();
   const onSubmit = async () => {
     try {
       // console.log(getValues())
@@ -47,11 +47,12 @@ function AccountDetails({ data }) {
         "http://127.0.0.1:9005/auth/registerDoctor",
         getValues()
       );
-      // console.log(resp);
+      console.log(resp);
+      const decoded = jwtDecode(resp.data.token)
       if (resp.status === 200) {
-        toast.success(resp.data.status);
-        if (isHeadDoctor) navigate("/register/HPR");
         navigate("/login");
+        toast.success(resp.data.status);
+        if (decoded?.role === "HEAD_DOCTOR") navigate("/register/HPR");
       }
     } catch (error) {
       // console.log(error);
@@ -69,38 +70,72 @@ function AccountDetails({ data }) {
           </div>
 
           <div className="h-40 flex items-center justify-center">
-            <div>
-              <div className="h-full flex items-center justify-between">
-                <div className="w-24 h-1 bg-[#02685A] my-2 rounded-l-lg"></div>
-                <div className="w-20 h-20 bg-[#02685A] my-1.5 rounded-full flex justify-center items-center">
-                  <FaRegListAlt className="h-[25px] w-[25px]" />
-                </div>
-                <div className="w-36 h-1 bg-[#02685A] my-2"></div>
-                <div className="w-23 h-23 bg-[#5AAC74] rounded-full">
-                  <div className="w-20 h-20 bg-[#02685A] mx-1.5 my-1.5 rounded-full flex justify-center items-center">
-                    <FaUser className="h-[30px] w-[30px]" />
+            {isHeadDoc ? (
+              <div>
+                <div className="h-full flex items-center justify-between">
+                  <div className="w-24 h-1 bg-[#02685A] my-2 rounded-l-lg"></div>
+                  <div className="w-20 h-20 bg-[#02685A] my-1.5 rounded-full flex justify-center items-center">
+                    <FaRegListAlt className="h-[25px] w-[25px]" />
                   </div>
+                  <div className="w-36 h-1 bg-[#02685A] my-2"></div>
+                  <div className="w-23 h-23 bg-[#5AAC74] rounded-full">
+                    <div className="w-20 h-20 bg-[#02685A] mx-1.5 my-1.5 rounded-full flex justify-center items-center">
+                      <FaUser className="h-[30px] w-[30px]" />
+                    </div>
+                  </div>
+                  <div className="w-36 h-1 bg-[#02685A] my-2"></div>
+                  <div className="w-20 h-20 bg-[#DDDDDD] rounded-full flex justify-center items-center">
+                  <RiHospitalFill className="h-[25px] w-[25px]" />
                 </div>
-                <div className="w-36 h-1 bg-[#02685A] my-2"></div>
-                {/* <div className="w-36 h-1 bg-[#DDDDDD] my-2"></div> */}
-                {/* <div className="w-20 h-20 bg-[#DDDDDD] rounded-full flex justify-center items-center">
+                <div className="w-24 h-1 bg-[#DDDDDD] my-2 rounded-r-lg"></div>
+                </div>
+
+                <div className="flex mt-2">
+                  <p className="ml-24 text-[#02685A] font-semibold text-xl">
+                    Link HPR
+                  </p>
+                  <p className="ml-28 text-[#02685A] font-semibold text-xl">
+                    Account Details
+                  </p>
+                  <p className="ml-20 text-[#7F8C8D] font-semibold text-xl">
+                  Practice Details
+                </p>
+                </div>
+              </div>
+            ) : (
+              <div>
+                <div className="h-full flex items-center justify-between">
+                  <div className="w-24 h-1 bg-[#02685A] my-2 rounded-l-lg"></div>
+                  <div className="w-20 h-20 bg-[#02685A] my-1.5 rounded-full flex justify-center items-center">
+                    <FaRegListAlt className="h-[25px] w-[25px]" />
+                  </div>
+                  <div className="w-36 h-1 bg-[#02685A] my-2"></div>
+                  <div className="w-23 h-23 bg-[#5AAC74] rounded-full">
+                    <div className="w-20 h-20 bg-[#02685A] mx-1.5 my-1.5 rounded-full flex justify-center items-center">
+                      <FaUser className="h-[30px] w-[30px]" />
+                    </div>
+                  </div>
+                  <div className="w-36 h-1 bg-[#02685A] my-2"></div>
+                  {/* <div className="w-36 h-1 bg-[#DDDDDD] my-2"></div> */}
+                  {/* <div className="w-20 h-20 bg-[#DDDDDD] rounded-full flex justify-center items-center">
                   <RiHospitalFill className="h-[25px] w-[25px]" />
                 </div>
                 <div className="w-24 h-1 bg-[#DDDDDD] my-2 rounded-r-lg"></div> */}
-              </div>
+                </div>
 
-              <div className="flex mt-2">
-                <p className="ml-24 text-[#02685A] font-semibold text-xl">
-                  Link HPR
-                </p>
-                <p className="ml-28 text-[#02685A] font-semibold text-xl">
-                  Account Details
-                </p>
-                {/* <p className="ml-20 text-[#7F8C8D] font-semibold text-xl">
+                <div className="flex mt-2">
+                  <p className="ml-24 text-[#02685A] font-semibold text-xl">
+                    Link HPR
+                  </p>
+                  <p className="ml-28 text-[#02685A] font-semibold text-xl">
+                    Account Details
+                  </p>
+                  {/* <p className="ml-20 text-[#7F8C8D] font-semibold text-xl">
                   Practice Details
                 </p> */}
+                </div>
               </div>
-            </div>
+            )}
           </div>
 
           <div className="flex px-32 bg-white mt-10">
@@ -166,9 +201,7 @@ function AccountDetails({ data }) {
                   />
                 </div>
                 <div className="flex-1">
-                  <p className="text-sm font-semibold ">
-                    Registration Number*
-                  </p>
+                  <p className="text-sm font-semibold ">Registration Number*</p>
                   <input
                     className="mt-3 rounded-md w-full"
                     type="text"
@@ -178,9 +211,7 @@ function AccountDetails({ data }) {
                   />
                 </div>
                 <div className="flex-1">
-                  <p className="text-sm font-semibold ">
-                    Email*
-                  </p>
+                  <p className="text-sm font-semibold ">Email*</p>
                   <input
                     className="mt-3 rounded-md w-full"
                     type="text"

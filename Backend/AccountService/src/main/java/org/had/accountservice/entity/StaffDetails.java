@@ -7,8 +7,10 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.had.accountservice.converters.StringCryptoConverter;
 
-import java.util.Date;
+import java.sql.Date;
+
 
 @Getter
 @Setter
@@ -21,32 +23,42 @@ public class StaffDetails {
     private Integer Staff_Id;
 
     @NotNull
+    @Convert(converter = StringCryptoConverter.class)
     private String first_Name;
 
     @NotNull
+    @Convert(converter = StringCryptoConverter.class)
     private  String last_Name;
 
     @NotNull
-    private Date dob;
+    @Convert(converter = StringCryptoConverter.class)
+    private String dob;
 
     @NotNull
+    @Convert(converter = StringCryptoConverter.class)
     private String gender;
 
     @NotNull
+    @Convert(converter = StringCryptoConverter.class)
     private String mobile;
 
     @NotNull
+    @Convert(converter = StringCryptoConverter.class)
     private String state;
 
     @NotNull
+    @Convert(converter = StringCryptoConverter.class)
     private String email;
 
     @NotNull
+    @Convert(converter = StringCryptoConverter.class)
     private String district;
 
+    @Convert(converter = StringCryptoConverter.class)
     private String pincode;
 
     @NotNull
+    @Convert(converter = StringCryptoConverter.class)
     private String address;
 
 

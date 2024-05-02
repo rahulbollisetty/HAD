@@ -1,13 +1,12 @@
 import React from "react";
-import useAxiosPrivate from "../../../hooks/useAxiosPrivate";
 import { toast } from "react-toastify";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Loading from "../../../utilComponents/Loading";
 import { useParams } from "react-router-dom";
+import axios from "../../../api/axios";
 
 export default function VerifyEmail() {
-  const axiosPrivate = useAxiosPrivate();
   const navigate = useNavigate();
   useEffect(() => {
     const windowValues = window.location.search;
@@ -22,7 +21,7 @@ export default function VerifyEmail() {
     };
     const verifyToken = async () => {
       try {
-        const resp = await axiosPrivate.post(
+        const resp = await axios.post(
           "http://127.0.0.1:9005/auth/verifyEmail",
           requestBody
         );
@@ -37,7 +36,7 @@ export default function VerifyEmail() {
           toast.success(resp.data);
           if (role === "HEAD_DOCTOR") role = role.slice(5);
           navigate(
-            `/register/${role.toLocaleLowerCase()}/?isHeadDoctor=${isHeadDoctor}`
+            `/register/${role.toLocaleLowerCase()}/?isHeadDoctor=${isHeadDoctor}`,{ state: { token:  token} }
           );
         }
       } catch (error) {

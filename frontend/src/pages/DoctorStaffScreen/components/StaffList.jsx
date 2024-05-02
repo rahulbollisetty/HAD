@@ -29,15 +29,31 @@ const StaffList = () => {
       }
     };
     getStaffDetails();
-    setRole(decoded?.role.toLowerCase());
+    setRole(decoded?.role);
 
   }, []);
+
+  const handleDataFromChild = async (data) => {
+    if (data) {
+      try {
+        const response = await axiosPrivate.get(
+          `http://127.0.0.1:9005/auth/getAllStaffList`
+        );
+        // console.log(response.data);
+        setAllStaffList(response.data);
+      } catch (err) {
+        if (!err?.response) {
+          // console.error("No Server Response");
+        }
+      }
+    }
+  };
   return (
     <div className="flex flex-col h-full">
       <div className="basis-[15%]">
         <div className="text-[1.75rem] p-4 text-[#02685A] font-semibold flex flex-row m-4 justify-between items-center">
           <div className="relative">All Staff List</div>
-          {role === "head_doctor" && (
+          {role === "HEAD_DOCTOR" && (
             <>
               <AddDoctorForm />
             </>
@@ -102,7 +118,7 @@ const StaffList = () => {
                   <td className="px-6 py-4">{staff.mobile}</td>
                   <td className="px-6 py-4">{staff.address}</td>
                   <td className="px-6 py-4 text-right">
-                    <StaffDetail staff={staff} />
+                    <StaffDetail sendDataToParent={handleDataFromChild} staff={staff} />
                   </td>
                 </tr>
               ))}

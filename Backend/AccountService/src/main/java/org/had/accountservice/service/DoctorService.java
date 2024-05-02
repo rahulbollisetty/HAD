@@ -7,6 +7,7 @@ import org.had.accountservice.entity.DoctorDetails;
 import org.had.accountservice.entity.UserCredential;
 import org.had.accountservice.exception.MyWebClientException;
 import org.had.accountservice.repository.DoctorDetailsRepository;
+import org.had.accountservice.repository.StaffDetailsRepository;
 import org.had.accountservice.repository.UserCredentialRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -42,6 +43,8 @@ public class DoctorService {
 
     @Value("${abdm.url}")
     private String abdmUrl;
+    @Autowired
+    private StaffDetailsRepository staffDetailsRepository;
 
     public String getDoctorDetails(String otp, String txnId){
         var values = new HashMap<String, String>() {{
@@ -97,6 +100,9 @@ public class DoctorService {
 
         if (userCredentialRepository.findByUsername(doctorDetailsDTO.getUsername()).isPresent()) {
             return "Username is already taken";
+        }
+        if(staffDetailsRepository.findByEmail(doctorDetailsDTO.getEmail()).isPresent()){
+            return "Email is already taken by staff, please choose another one";
         }
 
         UserCredential userCredential = new UserCredential();

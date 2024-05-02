@@ -31,6 +31,7 @@ import { Settings } from "@mui/icons-material";
 import BaseScreen from "./pages/BaseScreen";
 import AllPatientList from "./pages/PatientScreen/components/AllPatientList";
 import ForgotPassword from "./pages/Login/ForgotPassword";
+import RegisterHeadDoctor from "./pages/register/RegisterHeadDoctor";
 function App() {
 
 
@@ -55,24 +56,26 @@ function App() {
           
           <Route path="login" element={<Login />} />
           <Route path="register/doctor" element={<Register />} />
+          <Route path="register/head_doctor" element={<RegisterHeadDoctor />} />
+
           <Route path="register/staff" element={<StaffDetails />} />
           <Route path="register/" element={<VerifyEmail />} />
           <Route path="auth/forgotPassword" element={<ForgotPassword />} />
           {/* <Route path="linkpagae" element={<LinkPage />} /> */}
-          <Route path="unauthorized" element={<LinkHPR />} />
+          <Route path="unauthorized" element={<Unauthorized />} />
           <Route path="forgotPassword" element={<ForgotPassword />} />
 
           <Route path="settings/head_doctor" element={<EditTab />} />
 
+              <Route path="register/faculty" element={<AddDoctorForm />} />
+              <Route path="register/HPR" element={<PracticeDetails />} />
           {/* we want to protect these routes */}
           <Route element={<PersistLogin />}>
-            <Route element={<RequireAuth allowedRoles={["DOCTOR", "STAFF"]} />}>
-              <Route path="register/faculty" element={<AddDoctorForm />} />
+            <Route element={<RequireAuth allowedRoles={["HEAD_DOCTOR","DOCTOR","STAFF"]} />}>
               <Route
                 path="/"
                 element={<BaseScreen active_tab={"All Patient"} />}
               />
-              <Route path="register/HPR" element={<PracticeDetails />} />
 
               <Route
                 path="/settings"

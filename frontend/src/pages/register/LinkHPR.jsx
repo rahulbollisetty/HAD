@@ -7,7 +7,8 @@ import { FaUser } from "react-icons/fa6";
 import { RiHospitalFill } from "react-icons/ri";
 import AccountDetails from "./AccountDetails";
 import Loading from "../../utilComponents/Loading";
-function LinkHPR() {
+import { useNavigate } from "react-router-dom";
+function LinkHPR({ isHead }) {
   const {
     register,
     handleSubmit,
@@ -21,6 +22,7 @@ function LinkHPR() {
   const [doctorDetails, setDoctorDetails] = useState({});
   const [txnId, setTxnId] = useState("");
 
+  const navigate = useNavigate();
   // useEffect(() => {
   //   const windowValues = window.location.search;
   //   const requestParams = new URLSearchParams(windowValues);
@@ -34,9 +36,9 @@ function LinkHPR() {
 
   const generateOTP = async () => {
     const requestBody = {
-      hprId : getValues("hprId"),
-    }
-    requestBody.hprId += "@hpr.abdm"
+      hprId: getValues("hprId"),
+    };
+    requestBody.hprId += "@hpr.abdm";
     try {
       const resp = await axios.post(
         "http://127.0.0.1:9005/auth/generateAadharOTPHPR",
@@ -53,15 +55,15 @@ function LinkHPR() {
       setSuccess(false);
       toast.error(error.response.data.details[0].message);
     }
-  }
+  };
 
   const onSubmit = async () => {
     setLoading(true);
     const RequestBody = {
       txnId: txnId,
-      otp : getValues("otp"),
+      otp: getValues("otp"),
     };
-    
+
     try {
       const resp = await axios.post(
         "http://127.0.0.1:9005/auth/get-doctor-details",
@@ -84,7 +86,7 @@ function LinkHPR() {
   return (
     <div className="min-h-screen min-w-screen">
       {success ? (
-        <AccountDetails data={doctorDetails} />
+        <AccountDetails isHeadDoc={isHead} data={doctorDetails} />
       ) : (
         <div className="h-full w-full flex justify-center items-center">
           {isLoading ? (
@@ -99,37 +101,71 @@ function LinkHPR() {
                   </div>
 
                   <div className="h-40 flex items-center justify-center">
-                    <div>
-                      <div className="h-full flex items-center justify-between">
-                        <div className="w-24 h-1 bg-[#02685A] my-2 rounded-l-lg flex-1"></div>
-                        <div className="w-23 h-23 bg-[#5AAC74] rounded-full flex-0">
-                          <div className="w-20 h-20 bg-[#02685A] mx-1.5 my-1.5 rounded-full flex justify-center items-center">
-                            <FaRegListAlt className="h-[30px] w-[30px]" />
+                    {isHead ? (
+                      <div>
+                        <div className="h-full flex items-center justify-between">
+                          <div className="w-24 h-1 bg-[#02685A] my-2 rounded-l-lg flex-1"></div>
+                          <div className="w-23 h-23 bg-[#5AAC74] rounded-full flex-0">
+                            <div className="w-20 h-20 bg-[#02685A] mx-1.5 my-1.5 rounded-full flex justify-center items-center">
+                              <FaRegListAlt className="h-[30px] w-[30px]" />
+                            </div>
                           </div>
-                        </div>
-                        <div className="w-36 h-1 bg-[#DDDDDD] my-2 flex-1"></div>
-                        <div className="w-20 h-20 bg-[#DDDDDD] rounded-full flex justify-center items-center">
-                          <FaUser className="h-[25px] w-[25px]" />
-                        </div>
-                        <div className="w-36 h-1 bg-[#DDDDDD] my-2 flex-1"></div>
-                        {/* <div className="w-20 h-20 bg-[#DDDDDD] rounded-full flex justify-center items-center">
+                          <div className="w-36 h-1 bg-[#DDDDDD] my-2 flex-1"></div>
+                          <div className="w-20 h-20 bg-[#DDDDDD] rounded-full flex justify-center items-center">
+                            <FaUser className="h-[25px] w-[25px]" />
+                          </div>
+                          <div className="w-36 h-1 bg-[#DDDDDD] my-2 flex-1"></div>
+                          <div className="w-20 h-20 bg-[#DDDDDD] rounded-full flex justify-center items-center">
                           <RiHospitalFill className="h-[25px] w-[25px]" />
-                        </div> */}
-                        {/* <div className="w-24 h-1 bg-[#DDDDDD] my-2 rounded-r-lg"></div> */}
-                      </div>
+                        </div>
+                          <div className="w-24 h-1 bg-[#DDDDDD] my-2 rounded-r-lg"></div>
+                        </div>
 
-                      <div className="flex mt-2">
-                        <p className="ml-32 text-[#02685A] font-semibold text-xl">
-                          Link HPR
-                        </p>
-                        <p className="ml-24 text-[#7F8C8D] font-semibold text-xl">
-                          Account Details
-                        </p>
-                        {/* <p className="ml-20 text-[#7F8C8D] font-semibold text-xl">
+                        <div className="flex mt-2">
+                          <p className="ml-32 text-[#02685A] font-semibold text-xl">
+                            Link HPR
+                          </p>
+                          <p className="ml-24 text-[#7F8C8D] font-semibold text-xl">
+                            Account Details
+                          </p>
+                          <p className="ml-20 text-[#7F8C8D] font-semibold text-xl">
                           Practice Details
-                        </p> */}
+                        </p>
+                        </div>
                       </div>
-                    </div>
+                    ) : (
+                      <div>
+                        <div className="h-full flex items-center justify-between">
+                          <div className="w-24 h-1 bg-[#02685A] my-2 rounded-l-lg flex-1"></div>
+                          <div className="w-23 h-23 bg-[#5AAC74] rounded-full flex-0">
+                            <div className="w-20 h-20 bg-[#02685A] mx-1.5 my-1.5 rounded-full flex justify-center items-center">
+                              <FaRegListAlt className="h-[30px] w-[30px]" />
+                            </div>
+                          </div>
+                          <div className="w-36 h-1 bg-[#DDDDDD] my-2 flex-1"></div>
+                          <div className="w-20 h-20 bg-[#DDDDDD] rounded-full flex justify-center items-center">
+                            <FaUser className="h-[25px] w-[25px]" />
+                          </div>
+                          <div className="w-36 h-1 bg-[#DDDDDD] my-2 flex-1"></div>
+                          {/* <div className="w-20 h-20 bg-[#DDDDDD] rounded-full flex justify-center items-center">
+                        <RiHospitalFill className="h-[25px] w-[25px]" />
+                      </div> */}
+                          {/* <div className="w-24 h-1 bg-[#DDDDDD] my-2 rounded-r-lg"></div> */}
+                        </div>
+
+                        <div className="flex mt-2">
+                          <p className="ml-32 text-[#02685A] font-semibold text-xl">
+                            Link HPR
+                          </p>
+                          <p className="ml-24 text-[#7F8C8D] font-semibold text-xl">
+                            Account Details
+                          </p>
+                          {/* <p className="ml-20 text-[#7F8C8D] font-semibold text-xl">
+                        Practice Details
+                      </p> */}
+                        </div>
+                      </div>
+                    )}
                   </div>
 
                   <div className="flex px-10 bg-white mt-10">
@@ -164,7 +200,10 @@ function LinkHPR() {
                         <p className="flex-2.2 bg-slate-200 rounded-r-md border border-[#787887] bg-[#02685A] text-white font-semibold py-1 text-lg px-20">
                           @hpr.abdm
                         </p>
-                        <button className="flex-2.2 bg-red-900 ml-20 rounded-md text-white px-6" onClick={generateOTP}>
+                        <button
+                          className="flex-2.2 bg-red-900 ml-20 rounded-md text-white px-6"
+                          onClick={generateOTP}
+                        >
                           Generate OTP
                         </button>
                       </div>

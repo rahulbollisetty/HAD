@@ -32,7 +32,6 @@ public class HprApi {
     @PostMapping(value = "/registerFacility", produces = MediaType.APPLICATION_JSON_VALUE)
     public String registerFacility(@RequestBody JsonNode jsonNode) throws JsonProcessingException {
         abdmService.setToken();
-        System.out.println("Helloo");
         return abdmService.registerFacility(jsonNode);
     }
 

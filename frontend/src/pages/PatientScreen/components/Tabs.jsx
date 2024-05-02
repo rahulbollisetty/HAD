@@ -75,8 +75,8 @@ export default function DoctorTab(id) {
   return (
     <Box className="w-full mx-2">
       <Box>
-        {role === "HEAD_DOCTOR" ||
-          (role === "DOCTOR" && (
+        {(role === "HEAD_DOCTOR" ||
+          role === "DOCTOR") && (
             <>
               <Tabs
                 value={activeTab}
@@ -133,10 +133,10 @@ export default function DoctorTab(id) {
                 />
               </Tabs>
             </>
-          ))}
+          )}
       </Box>
-      {role === "HEAD_DOCTOR" ||
-        (role === "DOCTOR" && (
+      {(role === "HEAD_DOCTOR" ||
+          role === "DOCTOR") && (
           <>
             <CustomTabPanel value={activeTab} index={0}>
               <PastRecords
@@ -156,7 +156,7 @@ export default function DoctorTab(id) {
               />
             </CustomTabPanel>
           </>
-        ))}
+        )}
 
       {role === "STAFF" && (
         <CustomTabPanel value={activeTab} index={0}>

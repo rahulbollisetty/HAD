@@ -5,6 +5,8 @@ import useAxiosPrivate from "../../../hooks/useAxiosPrivate";
 import encryptData from "../../../utils/encryptData";
 import createHid from "../../../utils/createHid";
 import useFetchEventSource from "../../../hooks/useFetchEventSource";
+import useAuth from "../../../hooks/useAuth";
+import { jwtDecode } from "jwt-decode";
 
 function AbhaRegister({ sendDataToParent }) {
   const {
@@ -42,6 +44,10 @@ function AbhaRegister({ sendDataToParent }) {
   const [profileData, setProfileData] = useState({});
   const [showMobileInput, setShowMobileInput] = useState(false);
   const eventSource = useFetchEventSource();
+
+  const {auth} = useAuth();
+  const decoded = auth?.accessToken ? jwtDecode(auth.accessToken) : undefined;
+  
 
   const getLinkToken = async (txnId) => {
     const data = {
@@ -404,7 +410,7 @@ function AbhaRegister({ sendDataToParent }) {
               try {
                 const data = {
                   patientSBXId: getValues1("phrAddress") + "@sbx",
-                  requesterId: "IN2210000258",
+                  requesterId: decoded.hospitalId,
                   requesterType: "HIP",
                 };
                 const abortController = new AbortController();
@@ -419,8 +425,7 @@ function AbhaRegister({ sendDataToParent }) {
                     }
                     else if (status == 200) {
                       // toast.success("Verification Initiated");
-                      const txnId = JSON.parse(response.data).body.auth
-                        .transactionId;
+                      const txnId = JSON.parse(response.data).body.auth.transactionId;
                       getLinkToken(txnId);
                     }
                     abortController.abort();

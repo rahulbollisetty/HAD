@@ -37,25 +37,25 @@ public class AppointmentController {
         return "Successfully added new appointment";
     }
 
-    @PreAuthorize("hasAnyAuthority('DOCTOR','STAFF')")
+    @PreAuthorize("hasAnyAuthority('DOCTOR','HEAD_DOCTOR','STAFF')")
     @GetMapping(value = "/getAppointmentDetails", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getAppointmentDetails(@RequestParam String id){
         return appointmentService.getAppointmentDetails(Integer.parseInt(id));
     }
 
-    @PreAuthorize("hasAnyAuthority('DOCTOR','STAFF')")
+    @PreAuthorize("hasAnyAuthority('DOCTOR','HEAD_DOCTOR')")
     @GetMapping(value = "/getAppointmentForDoctor", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getAppointmentForDoctor(@RequestParam String id, String name){
         return appointmentService.getAppointmentForDoctor(Integer.parseInt(id), name);
     }
 
-    @PreAuthorize("hasAnyAuthority('DOCTOR','STAFF')")
+    @PreAuthorize("hasAnyAuthority('DOCTOR','HEAD_DOCTOR')")
     @GetMapping(value = "/getPatientVitals", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getPatientVitals(@RequestParam String id) {
         return appointmentService.getPatientVitals(id);
     }
 
-    @PreAuthorize("hasAnyAuthority('DOCTOR','STAFF')")
+    @PreAuthorize("hasAnyAuthority('DOCTOR','HEAD_DOCTOR')")
     @PostMapping(value = "/completeAppointment", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> completeAppointment(@RequestParam("file") MultipartFile file,
                                                  @RequestParam("requestBody") String jsonBody) throws IOException {
@@ -70,13 +70,13 @@ public class AppointmentController {
         }
     }
 
-    @PreAuthorize("hasAnyAuthority('DOCTOR','STAFF')")
+    @PreAuthorize("hasAnyAuthority('DOCTOR','HEAD_DOCTOR')")
     @PostMapping(value = "/getPrescription", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getPrescription(@RequestBody JsonNode jsonNode) {
         return appointmentService.getPrescription(jsonNode);
     }
 
-    @PreAuthorize("hasAnyAuthority('DOCTOR','STAFF')")
+    @PreAuthorize("hasAnyAuthority('DOCTOR','HEAD_DOCTOR','STAFF')")
     @GetMapping(value = "/getAllAppointments", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<AppointmentDetails> getAllAppointments() {
         return appointmentService.getAllAppointments();
@@ -95,7 +95,7 @@ public class AppointmentController {
 //    }
 
 
-    @PreAuthorize("hasAnyAuthority('DOCTOR','STAFF')")
+    @PreAuthorize("hasAnyAuthority('DOCTOR','STAFF','HEAD_DOCTOR')")
     @GetMapping("/getOpData")
     public ResponseEntity<?> serveFile(@RequestParam String id) {
 
