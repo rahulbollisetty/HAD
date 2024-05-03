@@ -35,7 +35,7 @@ public class PrescriptionDetails {
     private Integer duration;
 
     @NotNull
-    @ManyToOne(cascade = CascadeType.REMOVE)
+    @ManyToOne
     @JsonIgnore
     @JoinColumn(name = "op_id")
     private OpConsultation opConsultation;

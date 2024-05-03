@@ -22,13 +22,11 @@ public class AppointmentDetails {
 
     private String doctor_id;
 
-    @Convert(converter = StringCryptoConverter.class)
     private String doctorRegNumber;
 
-    @Convert(converter = StringCryptoConverter.class)
     private String doctorName;
 
-    @ManyToOne(cascade = CascadeType.REMOVE)
+    @ManyToOne
     @JoinColumn(name = "patientId", referencedColumnName = "mrn")
     private PatientDetails patientId;
 

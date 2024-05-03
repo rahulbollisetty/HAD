@@ -171,8 +171,8 @@ function PastRecords({ patientId, sendDataToParent }) {
                         <FaCaretRight className="h-[25px] w-[25px]" />
                       </button>
                     </td>
-                    {role === "HEAD_DOCTOR" ||
-                      (role === "STAFF" && (
+                    {(role === "HEAD_DOCTOR" ||
+                      role === "STAFF") && (
                         <td className="px-6 py-4">
                           <button
                             className="inline-flex justify-center items-center gap-[10px] text-[30px]
@@ -186,7 +186,7 @@ function PastRecords({ patientId, sendDataToParent }) {
                             </div>
                           </button>
                         </td>
-                      ))}
+                      )}
                   </tr>
                 ))}
               </>

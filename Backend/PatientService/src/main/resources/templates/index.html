@@ -122,7 +122,7 @@
         <h2 style="text-align: center;">OP Consultation Note</h2>
         <div class="header-line">
             <div class="header-item">
-                <h1 th:text="${'Dr. '+  appointment.doctor_name}"></h1>
+                <h1 th:text="${'Dr. '+  appointment.doctorName}"></h1>
                 <div style="line-height: 1.5px;">
                     <p style="display: block; font-size: small" th:text="${hospitalName}"></p>
                     <p style="display: block; font-size: small" th:text="${hospitalId}"></p>
@@ -262,7 +262,7 @@
 
     <div style="margin-top: 80px">    </div>
 
-        <h5 style="text-align: right; padding-bottom: 10px;" th:text="${'Dr. ' + appointment.doctor_name}"></h5>
+        <h5 style="text-align: right; padding-bottom: 10px;" th:text="${'Dr. ' + appointment.doctorName}"></h5>
         <p style="font-size: 9px; text-align: center; padding-bottom: 10px;">This is a digitally generated Prescription</p>
     </div>
 </div>

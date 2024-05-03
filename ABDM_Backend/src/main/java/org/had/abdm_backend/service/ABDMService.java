@@ -506,7 +506,7 @@ public class ABDMService {
         content.put("requestId", requestId);
         content.put("timestamp", timeStamp);
         content.put("link",link);
-
+System.out.println(content);
         var objectMapper = new ObjectMapper();
         String requestBody = null;
         try {

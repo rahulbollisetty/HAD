@@ -81,9 +81,7 @@ public class AuthController {
 
     @PostMapping(value = "/registerDoctor", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> registerDoctor(@Valid @RequestBody DoctorDetailsDTO doctorDetailsDTO) {
-        if(userCredentialRepository.existsByRole("HEAD_DOCTOR")){
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("Head Doctor already exists !");
-        }
+
         String result = doctorService.addDoctor(doctorDetailsDTO);
         if (result.equals("Doctor added to system")) {
             Authentication authenticate = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(doctorDetailsDTO.getUsername(), doctorDetailsDTO.getPassword()));

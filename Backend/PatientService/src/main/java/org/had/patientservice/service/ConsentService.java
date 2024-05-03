@@ -144,17 +144,17 @@ public class ConsentService {
 
         Set<CareContexts> careContextsList = careContextsRepository.findByConsentDetails(consentDetails);
         for (CareContexts careContexts : careContextsList) {
-            if(! pattern.matcher(careContexts.getCareContextReference()).matches() ){
-                continue;
-            }
-            else{
-                String[] parts = careContexts.getCareContextReference().split("\\.");
-                String appointmentId = parts[2];
-                AppointmentDetails appointmentDetails = appointmentRepository.findById(Integer.parseInt(appointmentId)).orElse(null);
-                if(appointmentDetails == null){
-                    continue;
-                }
-            }
+//            if(! pattern.matcher(careContexts.getCareContextReference()).matches() ){
+//                continue;
+//            }
+//            else{
+//                String[] parts = careContexts.getCareContextReference().split("\\.");
+//                String appointmentId = parts[2];
+//                AppointmentDetails appointmentDetails = appointmentRepository.findById(Integer.parseInt(appointmentId)).orElse(null);
+//                if(appointmentDetails == null){
+//                    continue;
+//                }
+//            }
 
             String fhirContent = fhirService.connvertCareContextToJsonString(careContexts);
             String encryptedContent = fideliusService.encrypt(fhirContent,senderNonce,requesterNonce,senderPrivateKey,requesterPublicKey);

@@ -28,7 +28,7 @@ public class AppointmentController {
     @Autowired
     private AppointmentService appointmentService;
 
-    @PreAuthorize("hasAnyAuthority('DOCTOR','STAFF')")
+    @PreAuthorize("hasAnyAuthority('DOCTOR','STAFF','HEAD_DOCTOR')")
     @PostMapping(value = "/createAppointment", produces = MediaType.APPLICATION_JSON_VALUE)
     public String createNewAppointment(@Valid @RequestBody AppointmentDto appointmentDto){
 
