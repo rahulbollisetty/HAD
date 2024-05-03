@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.had.consentservice.converters.IntegerCryptoConverter;
 import org.had.consentservice.converters.StringCryptoConverter;
 
 @Entity
@@ -27,7 +28,7 @@ public class ConsentRequest {
     @Convert(converter = StringCryptoConverter.class)
     private String patient_id_sbx;
 
-    @Convert(converter = StringCryptoConverter.class)
+    @Convert(converter = IntegerCryptoConverter.class)
     private Integer patient_id;
 
     @Convert(converter = StringCryptoConverter.class)

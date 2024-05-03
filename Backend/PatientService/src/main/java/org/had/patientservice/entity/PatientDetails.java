@@ -24,10 +24,10 @@ public class PatientDetails {
     @Convert(converter = StringCryptoConverter.class)
     private String address;
 
-    @Convert(converter = StringCryptoConverter.class)
+//    @Convert(converter = StringCryptoConverter.class)
     private String abhaAddress;
 
-    @Convert(converter = StringCryptoConverter.class)
+//    @Convert(converter = StringCryptoConverter.class)
     private String abhaNumber;
 
     @Convert(converter = StringCryptoConverter.class)

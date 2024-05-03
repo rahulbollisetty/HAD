@@ -85,7 +85,7 @@ const AllPatientList = (props) => {
                     Patient Name
                   </th>
                   <th scope="col" className="px-6 py-3">
-                    Name
+                    Patient SBX
                   </th>
                   {/* <th scope="col" className="px-6 py-3">
                   Registration Number
