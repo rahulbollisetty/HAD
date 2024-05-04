@@ -72,6 +72,7 @@ function AbhaRegister({ sendDataToParent }) {
             const modifiedData = {
               ...profileData,
               accessToken: linkToken,
+              abhaAddress: getValues1("phrAddress") + "@sbx",
             };
             sendDataToParent(modifiedData);
             // toast.success("Details Fetched!!");

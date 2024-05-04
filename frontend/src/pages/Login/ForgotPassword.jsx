@@ -102,7 +102,7 @@ export default function ForgotPassword() {
             <div className="flex items-center justify-center py-4">
               <input
                 className="w-[30%] mr-[10px] rounded-[5px] mb-[5px]"
-                type="password"
+                type="email"
                 placeholder="Enter registered Email"
                 {...register("email", { required: true })}
               />

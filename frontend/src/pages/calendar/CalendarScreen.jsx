@@ -31,7 +31,7 @@ const CalendarScreen = () => {
       const newEvents = resp.data.map((app) => ({
         start: moment(app.date + "T" + app.time).toDate(),
         end: moment(add15Minutes(app.date + "T" + app.time)).toDate(),
-        title: app.notes + " (Dr. " + app.doctor_name + ")",
+        title: app.notes + " (Dr. " + app.doctorName + ")",
         appointment_id: app.appointment_id,
         status: app.status,
         patientId: app.patientId?.mrn,
@@ -77,7 +77,7 @@ const CalendarScreen = () => {
     const newEvents = doctorAppointments.map((app) => ({
       start: moment(app.date + "T" + app.time).toDate(),
       end: moment(add15Minutes(app.date + "T" + app.time)).toDate(),
-      title: app.notes + " (Dr. " + app.doctor_name + ")",
+      title: app.notes + " (Dr. " + app.doctorName + ")",
       appointment_id: app.appointment_id,
       status: app.status,
       patientId: app.patientId?.mrn,
@@ -93,7 +93,7 @@ const CalendarScreen = () => {
   };
 
   const handleEventClick = (event) => {
-    if(role === "DOCTOR"){
+    if(role === "DOCTOR" || role == "HEAD_DOCTOR"){
 
       navigate(`/patientScreen/${event.patientId}`,{ state: { appointmentId: event.appointment_id,appointmentStatus:event.appStatus } });
       navigate(0);

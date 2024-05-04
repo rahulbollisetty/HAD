@@ -8,6 +8,7 @@ import org.had.patientservice.dto.PatientDetailsDto;
 import org.had.patientservice.entity.PatientDetails;
 import org.had.patientservice.entity.PatientRegistrationLogDetails;
 import org.had.patientservice.entity.RecordDeletionLogDetails;
+import org.had.patientservice.service.ConsentService;
 import org.had.patientservice.service.PatientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -28,6 +29,8 @@ public class PatientController {
 
     @Autowired
     private PatientService patientService;
+    @Autowired
+    private ConsentService consentService;
 
     @PreAuthorize("hasAnyAuthority('DOCTOR','STAFF')")
     @PostMapping(value = "/aadhaarOTPInit",produces = MediaType.APPLICATION_JSON_VALUE)
@@ -174,5 +177,6 @@ public class PatientController {
     public List<RecordDeletionLogDetails> getAllRecordDeletionLogs(){
         return patientService.getAllRecordDeletionLogs();
     }
+
 
 }

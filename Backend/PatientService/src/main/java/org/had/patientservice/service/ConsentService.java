@@ -55,7 +55,7 @@ public class ConsentService {
     @Value("${abdm.url}")
     private String abdmUrl;
 
-    private static final String careContetRegexPattern = "hospital\\d+\\.\\d{4}-\\d{2}-\\d{2}\\.\\d+";
+    private static final String careContetRegexPattern = "[A-Za-z]+\\d+\\.\\d{4}-\\d{2}-\\d{2}\\.\\d+";
 
     private static final Pattern pattern = Pattern.compile(careContetRegexPattern);
 
@@ -144,17 +144,17 @@ public class ConsentService {
 
         Set<CareContexts> careContextsList = careContextsRepository.findByConsentDetails(consentDetails);
         for (CareContexts careContexts : careContextsList) {
-//            if(! pattern.matcher(careContexts.getCareContextReference()).matches() ){
-//                continue;
-//            }
-//            else{
-//                String[] parts = careContexts.getCareContextReference().split("\\.");
-//                String appointmentId = parts[2];
-//                AppointmentDetails appointmentDetails = appointmentRepository.findById(Integer.parseInt(appointmentId)).orElse(null);
-//                if(appointmentDetails == null){
-//                    continue;
-//                }
-//            }
+            if(!pattern.matcher(careContexts.getCareContextReference()).matches() ){
+                continue;
+            }
+            else{
+                String[] parts = careContexts.getCareContextReference().split("\\.");
+                String appointmentId = parts[2];
+                AppointmentDetails appointmentDetails = appointmentRepository.findById(Integer.parseInt(appointmentId)).orElse(null);
+                if(appointmentDetails == null){
+                    continue;
+                }
+            }
 
             String fhirContent = fhirService.connvertCareContextToJsonString(careContexts);
             String encryptedContent = fideliusService.encrypt(fhirContent,senderNonce,requesterNonce,senderPrivateKey,requesterPublicKey);
@@ -223,4 +223,16 @@ public class ConsentService {
                 .bodyToMono(String.class).block();
 
     }
+
+//    public void test() {
+//                    if(pattern.matcher(temp).matches()){
+//                        System.out.println(temp);
+//                        String[] parts = temp.split("\\.");
+//                        String appointmentId = parts[2];
+//                        AppointmentDetails appointmentDetails = appointmentRepository.findById(Integer.parseInt(appointmentId)).orElse(null);
+//                        System.out.println(appointmentDetails);
+//                    }
+//
+//
+//    }
 }

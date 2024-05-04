@@ -253,7 +253,14 @@ const BaseScreen = ({ active_tab }) => {
         </div>
         <div className="basis-full bg-[#F1F5FC] overflow-hidden">
           <div className="flex flex-col h-full">
-            <div className="h-[64px] w-full pb-16 bg-white"></div>
+            <div className="h-[64px] w-full pb-16 bg-white">
+              {decoded && 
+              <div className="flex justify-end p-4 me-8 gap-2">
+                <h4 className="text-[20px]">{decoded.hospitalName}</h4>
+                <h4 className="text-[20px]">({decoded.hospitalId})</h4>
+              </div>
+            }
+            </div>
             <div className="bg-white grow m-3">
               {/* <div className="flex flex-col">
               <Profile patientId={id}/>

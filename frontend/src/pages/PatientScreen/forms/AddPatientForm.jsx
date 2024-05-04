@@ -66,7 +66,7 @@ function AddPatientForm({sendDataToAllPatientList}) {
     setValue("abhaAddress", data.abhaAddress || "");
     setValue("abhaNumber", data.abhaNumber || "");
     setValue("linkToken", data.accessToken || "");
-    setValue("datafrom", "AbhaRegister");
+    setValue("dataFrom", "AbhaRegister");
     setValue("role", role);
     setValue("facultyName", name);
   };
